@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html ng-app="main">
+<head>
+  <title>Review</title>
+  <!-- bower:css -->
+  <!-- endbower -->
+  
+  <link rel="stylesheet" href="bower_components/angular-material/angular-material.css" />
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <!-- inject:css -->
+  <!-- endinject -->
+  
+</head>
+
+<body ng-controller="MainController as vm">
+
+<div ng-controller="AppCtrl" layout="column" style="height:100%;" ng-cloak>
+
+  <section layout="row" flex>
+
+    <md-sidenav
+        class="md-sidenav-left"
+        md-component-id="left"
+      md-is-locked-open="$mdMedia('gt-md')"
+        md-whiteframe="4">
+
+      <md-toolbar layout="row"  layout-align="center center"
+
+        ng-controller="LeftCtrl" class="md-theme-indigo">
+
+        <h1 class="md-toolbar-tools">Menu</h1>
+        <i ng-click="close()"  class="material-icons">list</i>
+        <div>&nbsp&nbsp&nbsp&nbsp&nbsp</div>
+ 
+
+      </md-toolbar>
+     <md-content layout-padding >
+       
+      <md-list flex>
+        <!--md-subheader class="md-no-sticky">Hello</md-subheader-->
+        <md-list-item class="md-3-line"  ng-click="null">
+         
+          <div layout="row"  layout-align="left center" class="md-list-item-text" layout="column">
+            <i class="material-icons">grade</i>
+            <div>&nbsp&nbsp&nbsp</div>
+            <h3>Project</h3> 
+          </div>
+        </md-list-item>
+         <md-list-item class="md-3-line"  ng-click="null">
+         
+          <div layout="row"  layout-align="left center" class="md-list-item-text" layout="column">
+            <i class="material-icons">description</i>
+            <div>&nbsp&nbsp&nbsp</div>
+            <h3>Review</h3>
+          </div>
+        </md-list-item>
+       
+      </md-list>
+   
+        <p hide show-gt-md>
+     
+
+        </p>
+      </md-content>
+
+    </md-sidenav>
+
+    <md-content flex layout-padding>
+
+      <div layout="column" layout-align="top center">
+        
+        <div>
+          <md-button ng-click="toggleLeft()"
+            class="md-primary" hide-gt-md >
+            Toggle left
+          </md-button>
+        </div>
+
+        
+      <div flex>
+      <main-page></main-page>
+    </div>
+
+    </md-content>
+
+   
+
+  </section>
+
+</div>
+
+   <!-- bower:js -->
+  <!-- endbower -->
+  <!-- inject:js -->
+  <!-- endinject -->
+
+</body>
+</html>

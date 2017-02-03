@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html ng-app="main">
+<head>
+  <title>Review</title>
+  <!-- bower:css -->
+  <link rel="stylesheet" href="bower_components/perfect-scrollbar/css/perfect-scrollbar.css" />
+  <link rel="stylesheet" href="bower_components/angular-xeditable/dist/css/xeditable.css" />
+  <link rel="stylesheet" href="bower_components/angular-datatables/dist/css/angular-datatables.css" />
+  <link rel="stylesheet" href="bower_components/angular-datatables/dist/plugins/bootstrap/datatables.bootstrap.min.css" />
+  <link rel="stylesheet" href="bower_components/sweetalert2/dist/sweetalert2.css" />
+  <link rel="stylesheet" href="bower_components/textAngular/dist/textAngular.css" />
+  <link rel="stylesheet" href="bower_components/fullcalendar/dist/fullcalendar.css" />
+  <link rel="stylesheet" href="bower_components/ng-sortable/dist/ng-sortable.css" />
+  <link rel="stylesheet" href="bower_components/datatables.net-jqui/css/dataTables.jqueryui.css" />
+  <!-- endbower -->
+  
+  <link rel="stylesheet" href="bower_components/angular-material/angular-material.css" />
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <!-- inject:css -->
+  <link rel="stylesheet" href="app/css/app.css">
+  <!-- endinject -->
+  
+</head>
+
+<body ng-controller="MainController as vm">
+
+<div ng-controller="AppCtrl" layout="column" style="height:100%;" ng-cloak>
+
+  <section layout="row" flex>
+
+    <md-sidenav
+        class="md-sidenav-left"
+        md-component-id="left"
+      md-is-locked-open="$mdMedia('gt-md')"
+        md-whiteframe="4">
+
+      <md-toolbar layout="row"  layout-align="center center"
+
+        ng-controller="LeftCtrl" class="md-theme-indigo">
+
+        <h1 class="md-toolbar-tools">Menu</h1>
+        <i ng-click="close()"  class="material-icons">list</i>
+        <div>&nbsp&nbsp&nbsp&nbsp&nbsp</div>
+ 
+
+      </md-toolbar>
+     <md-content layout-padding >
+       
+      <md-list flex>
+        <!--md-subheader class="md-no-sticky">Hello</md-subheader-->
+        <md-list-item class="md-3-line"  ng-click="null">
+         
+          <div layout="row"  layout-align="left center" class="md-list-item-text" layout="column">
+            <i class="material-icons">grade</i>
+            <div>&nbsp&nbsp&nbsp</div>
+            <h3>Project</h3> 
+          </div>
+        </md-list-item>
+         <md-list-item class="md-3-line"  ng-click="null">
+         
+          <div layout="row"  layout-align="left center" class="md-list-item-text" layout="column">
+            <i class="material-icons">description</i>
+            <div>&nbsp&nbsp&nbsp</div>
+            <h3>Review</h3>
+          </div>
+        </md-list-item>
+       
+      </md-list>
+   
+        <p hide show-gt-md>
+     
+
+        </p>
+      </md-content>
+
+    </md-sidenav>
+
+    <md-content flex layout-padding>
+
+      <div layout="column" layout-align="top center">
+        
+        <div>
+          <md-button ng-click="toggleLeft()"
+            class="md-primary" hide-gt-md >
+            Toggle left
+          </md-button>
+        </div>
+
+        
+      <div flex>
+      <main-page></main-page>
+    </div>
+
+    </md-content>
+
+   
+
+  </section>
+
+</div>
+
+   <!-- bower:js -->
+   <script src="bower_components/jquery/dist/jquery.js"></script>
+   <script src="bower_components/angular/angular.js"></script>
+   <script src="bower_components/angular-animate/angular-animate.js"></script>
+   <script src="bower_components/angular-aria/angular-aria.js"></script>
+   <script src="bower_components/angular-cookies/angular-cookies.js"></script>
+   <script src="bower_components/angular-messages/angular-messages.js"></script>
+   <script src="bower_components/angular-material/angular-material.js"></script>
+   <script src="bower_components/angular-resource/angular-resource.js"></script>
+   <script src="bower_components/angular-sanitize/angular-sanitize.js"></script>
+   <script src="bower_components/angular-translate/angular-translate.js"></script>
+   <script src="bower_components/angular-translate-loader-partial/angular-translate-loader-partial.js"></script>
+   <script src="bower_components/angular-ui-router/release/angular-ui-router.js"></script>
+   <script src="bower_components/mobile-detect/mobile-detect.js"></script>
+   <script src="bower_components/moment/moment.js"></script>
+   <script src="bower_components/perfect-scrollbar/js/perfect-scrollbar.js"></script>
+   <script src="bower_components/angular-xeditable/dist/js/xeditable.js"></script>
+   <script src="bower_components/datatables.net/js/jquery.dataTables.js"></script>
+   <script src="bower_components/angular-datatables/dist/angular-datatables.js"></script>
+   <script src="bower_components/angular-datatables/dist/plugins/bootstrap/angular-datatables.bootstrap.js"></script>
+   <script src="bower_components/angular-datatables/dist/plugins/colreorder/angular-datatables.colreorder.js"></script>
+   <script src="bower_components/angular-datatables/dist/plugins/columnfilter/angular-datatables.columnfilter.js"></script>
+   <script src="bower_components/angular-datatables/dist/plugins/light-columnfilter/angular-datatables.light-columnfilter.js"></script>
+   <script src="bower_components/angular-datatables/dist/plugins/colvis/angular-datatables.colvis.js"></script>
+   <script src="bower_components/angular-datatables/dist/plugins/fixedcolumns/angular-datatables.fixedcolumns.js"></script>
+   <script src="bower_components/angular-datatables/dist/plugins/fixedheader/angular-datatables.fixedheader.js"></script>
+   <script src="bower_components/angular-datatables/dist/plugins/scroller/angular-datatables.scroller.js"></script>
+   <script src="bower_components/angular-datatables/dist/plugins/tabletools/angular-datatables.tabletools.js"></script>
+   <script src="bower_components/angular-datatables/dist/plugins/buttons/angular-datatables.buttons.js"></script>
+   <script src="bower_components/angular-datatables/dist/plugins/select/angular-datatables.select.js"></script>
+   <script src="bower_components/es6-promise/es6-promise.js"></script>
+   <script src="bower_components/sweetalert2/dist/sweetalert2.js"></script>
+   <script src="bower_components/rangy/rangy-core.js"></script>
+   <script src="bower_components/rangy/rangy-classapplier.js"></script>
+   <script src="bower_components/rangy/rangy-highlighter.js"></script>
+   <script src="bower_components/rangy/rangy-selectionsaverestore.js"></script>
+   <script src="bower_components/rangy/rangy-serializer.js"></script>
+   <script src="bower_components/rangy/rangy-textrange.js"></script>
+   <script src="bower_components/textAngular/dist/textAngular.js"></script>
+   <script src="bower_components/textAngular/dist/textAngular-sanitize.js"></script>
+   <script src="bower_components/textAngular/dist/textAngularSetup.js"></script>
+   <script src="bower_components/flow.js/dist/flow.js"></script>
+   <script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
+   <script src="bower_components/fullcalendar/dist/fullcalendar.js"></script>
+   <script src="bower_components/angular-ui-calendar/src/calendar.js"></script>
+   <script src="bower_components/ng-sortable/dist/ng-sortable.js"></script>
+   <script src="bower_components/datatables.net-jqui/js/dataTables.jqueryui.js"></script>
+   <!-- endbower -->
+  <!-- inject:js -->
+  <script src="app/js/main-controller.js"></script>
+  <script src="app/js/review-controller.js"></script>
+  <script src="app/js/sidebar-controller.js"></script>
+  <!-- endinject -->
+
+</body>
+</html>

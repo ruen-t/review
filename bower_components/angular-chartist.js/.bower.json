@@ -1,0 +1,14 @@
+{
+  "name": "angular-chartist.js",
+  "homepage": "https://github.com/paradox41/angular-chartist.js",
+  "version": "4.3.0",
+  "_release": "4.3.0",
+  "_resolution": {
+    "type": "version",
+    "tag": "v4.3.0",
+    "commit": "247459a4af00d80b1c48446f0d6abcf13c586fea"
+  },
+  "_source": "https://github.com/paradox41/angular-chartist.js.git",
+  "_target": "^4.2.1",
+  "_originalSource": "angular-chartist.js"
+}
