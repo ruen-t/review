@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html ng-app="main">
 <head>
+<base href="/">
   <title>Review</title>
   <!-- bower:css -->
   <link rel="stylesheet" href="bower_components/perfect-scrollbar/css/perfect-scrollbar.css" />
@@ -24,7 +25,7 @@
 
 <body ng-controller="MainController as vm">
 
-<div ng-controller="AppCtrl" layout="column" style="height:100%;" ng-cloak>
+<div ng-controller="AppCtrl as sideCtrl" layout="column" style="height:100%;" ng-cloak>
 
   <section layout="row" flex>
 
@@ -48,22 +49,16 @@
        
       <md-list flex>
         <!--md-subheader class="md-no-sticky">Hello</md-subheader-->
-        <md-list-item class="md-3-line"  ng-click="null">
+        <md-list-item  ng-repeat="item in sideCtrl.data" href={{item.href}} class="md-3-line"  ng-click="null">
          
-          <div layout="row"  layout-align="left center" class="md-list-item-text" layout="column">
-            <i class="material-icons">grade</i>
+          <div  layout="row"  layout-align="left center" class="md-list-item-text" layout="column">
+            <i  class="material-icons">{{item.icon}}</i>
             <div>&nbsp&nbsp&nbsp</div>
-            <h3>Project</h3> 
+            <h3>{{item.name}}</h3> 
           </div>
+          
         </md-list-item>
-         <md-list-item class="md-3-line"  ng-click="null">
-         
-          <div layout="row"  layout-align="left center" class="md-list-item-text" layout="column">
-            <i class="material-icons">description</i>
-            <div>&nbsp&nbsp&nbsp</div>
-            <h3>Review</h3>
-          </div>
-        </md-list-item>
+        
        
       </md-list>
    
@@ -88,7 +83,8 @@
 
         
       <div flex>
-      <main-page></main-page>
+      <!--main-page></main-page-->
+      <ng-view></ng-view>
     </div>
 
     </md-content>
@@ -146,9 +142,11 @@
    <script src="bower_components/angular-ui-calendar/src/calendar.js"></script>
    <script src="bower_components/ng-sortable/dist/ng-sortable.js"></script>
    <script src="bower_components/datatables.net-jqui/js/dataTables.jqueryui.js"></script>
+   <script src="bower_components/angular-route/angular-route.js"></script>
    <!-- endbower -->
   <!-- inject:js -->
   <script src="app/js/main-controller.js"></script>
+  <script src="app/js/project-controller.js"></script>
   <script src="app/js/review-controller.js"></script>
   <script src="app/js/sidebar-controller.js"></script>
   <!-- endinject -->

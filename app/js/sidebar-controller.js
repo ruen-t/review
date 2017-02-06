@@ -1,5 +1,5 @@
 angular
-  .module('sidenavDemo1', ['ngMaterial'])
+  .module('sidenav', ['ngMaterial'])
   .controller('AppCtrl', function ($scope, $timeout, $mdSidenav, $log) {
     $scope.toggleLeft = buildDelayedToggler('left');
     $scope.toggleRight = buildToggler('right');
@@ -7,13 +7,18 @@ angular
       return $mdSidenav('right').isOpen();
     };
     $scope.closeLeft = function () {
-      // Component lookup should always be available since we are not using `ng-if`
+     
       $mdSidenav('left').close()
         .then(function () {
           $log.debug("close LEFT is done");
         });
 
     };
+    var vm = this;
+    vm.data = [
+      {name:"Project",href:"#/project",icon:"grade"},
+      {name:"Review",href:"#/review",icon:"description"},
+    ];
     /**
      * Supplies a function that will continue to operate until the
      * time is up.

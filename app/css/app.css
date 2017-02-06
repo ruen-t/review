@@ -9,7 +9,7 @@ md-sidenav.md-closed.md-locked-open-add-active {
     max-width: 200px !important;
 } 
 abbr[title] { text-decoration: underline; text-decoration: underline dotted; }
-
+a {text-decoration: none}
 
 svg:not(:root) { overflow: hidden; }
 
