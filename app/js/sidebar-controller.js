@@ -18,6 +18,7 @@ angular
     vm.data = [
       {name:"Project",href:"#/project",icon:"grade"},
       {name:"Review",href:"#/review",icon:"description"},
+      {name:"New",href:"#/new",icon:"print"},
     ];
     /**
      * Supplies a function that will continue to operate until the
