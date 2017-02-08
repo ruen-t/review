@@ -1,32 +1,32 @@
 
 <div >
     
-    <table datatable="ng" class="row-border hover">
+    <table datatable="ng" class="row-border hover" style="width: 100%">
         <thead>
         <tr>
             <th>No</th>
-            <th>Date</th>
+            <th>{{'DATE'|translate}}</th>
 
-	    <th>Reviewer</th>
-	    <th>Shop</th>
-	    <th>Project</th>
-	    <th>Development</th>
-	    <th>Type</th>
-	    <th>Location</th>
-	    <th>Comment</th>
+	    <th>{{'REVIEWER'|translate}}</th>
+	    <th>{{'SHOP'|translate}}</th>
+	    <th>{{'PROJECT'|translate}}</th>
+	    <th>{{'DEVELOPMENT'|translate}}</th>
+	    <th>{{'TYPE'|translate}}</th>
+	    <th>{{'LOCATION'|translate}}</th>
+	    <th>{{'COMMENT'|translate}}</th>
         </tr>
         </thead>
         <tbody>
-        <tr ng-repeat="review in vm.project">
-            <td>{{ review.id }}</td>
-            <td>{{ review.review_date }}</td>
+        <tr ng-repeat="review in vm.review" ng-click="vm.reviewSelect(review.id)">
+            <td> <md-checkbox ng-checked="review.selected"></md-checkbox></td>
+            <td>{{ review.date }}</td>
             <td><span ng-repeat="review in review.reviewer">{{persion.name}}</span></td>
-            <td>{{ review.shop.shop_name }}</td>
-            <td>{{ review.project.project_name }}</td>
-            <td>{{ review.development.development_detail}}</td>
-            <td>{{ review.review_type.review_type_name }}</td>
-            <td>{{ review.review_location.meeting_space_code}}</td>
-            <td>{{ review.review_comment }}</td>
+            <td>{{ review.shop }}</td>
+            <td>{{ review.project }}</td>
+            <td>{{ review.development}}</td>
+            <td>{{ review.type }}</td>
+            <td>{{ review.location}}</td>
+            <td>{{ review.comment }}</td>
         </tr>
         </tbody>
     </table>

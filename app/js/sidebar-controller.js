@@ -1,11 +1,17 @@
 angular
   .module('sidenav', ['ngMaterial'])
-  .controller('AppCtrl', function ($scope, $timeout, $mdSidenav, $log) {
+  .controller('AppCtrl',['$scope', '$timeout', '$mdSidenav', '$log', function ($scope, $timeout, $mdSidenav, $log) {
+    var vm = this;
+    vm.toggleLeft = buildDelayedToggler('left');
     $scope.toggleLeft = buildDelayedToggler('left');
     $scope.toggleRight = buildToggler('right');
     $scope.isOpenRight = function(){
       return $mdSidenav('right').isOpen();
     };
+    $("header").on("click","#logo",function(){
+      console.log("hello")
+      vm.toggleLeft();
+    })
     $scope.closeLeft = function () {
      
       $mdSidenav('left').close()
@@ -14,16 +20,17 @@ angular
         });
 
     };
-    var vm = this;
+   
     vm.data = [
-      {name:"Project",href:"#/project",icon:"grade"},
-      {name:"Review",href:"#/review",icon:"description"},
-      {name:"New",href:"#/new",icon:"print"},
+     {name:"Review",href:"#/review",icon:"description"},
+      {name:"Manual",href:"#/project",icon:"grade"},
+      {name:"Hello",href:"#/new",icon:"print"},
     ];
     /**
      * Supplies a function that will continue to operate until the
      * time is up.
      */
+    
     function debounce(func, wait, context) {
       var timer;
 
@@ -63,8 +70,8 @@ angular
           });
       };
     }
-  })
-  .controller('LeftCtrl', function ($scope, $timeout, $mdSidenav, $log) {
+  }])
+  .controller('LeftCtrl',['$scope', '$timeout', '$mdSidenav', '$log', function ($scope, $timeout, $mdSidenav, $log) {
     $scope.close = function () {
       // Component lookup should always be available since we are not using `ng-if`
       $mdSidenav('left').close()
@@ -73,8 +80,8 @@ angular
         });
 
     };
-  })
-  .controller('RightCtrl', function ($scope, $timeout, $mdSidenav, $log) {
+  }])
+  .controller('RightCtrl',['$scope', '$timeout', '$mdSidenav', '$log', function ($scope, $timeout, $mdSidenav, $log) {
     $scope.close = function () {
       // Component lookup should always be available since we are not using `ng-if`
       $mdSidenav('right').close()
@@ -82,4 +89,4 @@ angular
           $log.debug("close RIGHT is done");
         });
     };
-  });
+  }]);

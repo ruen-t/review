@@ -1,0 +1,14 @@
+{
+    
+      "DATE": "Date",
+      "REVIEWER": "Reviewer",
+      "SHOP": "Shop",
+      "PROJECT": "Project",
+      "DEVELOPMENT": "Development",
+      "TYPE": "Type",
+      "LOCATION": "Location",
+      "COMMENT": "Comment",
+      "BUTTON_LANG_JP": "Japanese",
+      "BUTTON_LANG_EN": "English"
+    
+}

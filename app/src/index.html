@@ -12,19 +12,25 @@
   <!-- endinject -->
   
 </head>
-
+<header>
+  <logo></logo>
+</header>
 <body ng-controller="MainController as vm">
 
 <div ng-controller="AppCtrl as sideCtrl" layout="column" style="height:100%;" ng-cloak>
 
   <section layout="row" flex>
 
-    <md-sidenav
+    <!--md-sidenav
         class="md-sidenav-left"
         md-component-id="left"
       md-is-locked-open="$mdMedia('gt-md')"
+        md-whiteframe="4"-->
+  <md-sidenav
+        class="md-sidenav-left"
+        md-component-id="left"
+     
         md-whiteframe="4">
-
       <md-toolbar layout="row"  layout-align="center center"
 
         ng-controller="LeftCtrl" class="md-theme-indigo">
@@ -38,11 +44,11 @@
      <md-content layout-padding >
        
       <md-list flex>
-        <!--md-subheader class="md-no-sticky">Hello</md-subheader-->
+        
         <md-list-item  ng-repeat="item in sideCtrl.data" href={{item.href}} class="md-3-line"  ng-click="null">
          
           <div  layout="row"  layout-align="left center" class="md-list-item-text" layout="column">
-            <i  class="material-icons">{{item.icon}}</i>
+            <i  class="material-icons" >{{item.icon}}</i>
             <div>&nbsp&nbsp&nbsp</div>
             <h3>{{item.name}}</h3> 
           </div>
@@ -64,15 +70,8 @@
 
       <div layout="column" layout-align="top center">
         
-        <div>
-          <md-button ng-click="toggleLeft()"
-            class="md-primary" hide-gt-md >
-            Toggle left
-          </md-button>
-        </div>
-
         
-      <div flex>
+      <div flex style="width: 100%">
       <!--main-page></main-page-->
       <ng-view></ng-view>
     </div>

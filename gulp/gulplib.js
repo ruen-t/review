@@ -52,10 +52,12 @@ gulp.task('bower', function() {
    bower()
     .pipe(jsFilter)
     .pipe(concat('vendor.js'))
+    .pipe(uglify())
     .pipe(gulp.dest(dist.js))
     //.pipe(jsFilter.restore())
     bower().pipe(cssFilter)
     .pipe(concat('vendor.css'))
+    .pipe(cssmin())
     .pipe(gulp.dest(dist.css))
     //.pipe(cssFilter.restore())
     /* bower().pipe(rename(function(path) {
@@ -70,6 +72,7 @@ function buildCSS() {
   return gulp.src(src.styles)
     .pipe(stylus({use: ['nib']}))
     .pipe(concat('app.css'))
+
     .pipe(gulp.dest(dist.css))
 }
 
@@ -83,6 +86,7 @@ function buildJS() {
       debug: true
     }))*/
     .pipe(concat('app.js'))
+    //.pipe(uglify())
     .pipe(gulp.dest(dist.js))
 }
 
@@ -119,14 +123,14 @@ gulp.task('minifyhtml', function() {
     .pipe(gulp.dest(dist.html));
 });
 gulp.task('compress-css', ['css'], function() {
-  return gulp.src(dist.css)
+  /*return gulp.src(dist.css+"app.css")
     .pipe(cssmin())
-    .pipe(gulp.dest(dist.css))
+    .pipe(gulp.dest(dist.vendor))*/
 })
 gulp.task('compress-js', ['js'], function() {
-  return gulp.src(dist.js)
+  /*return gulp.src(dist.js+"vendor.js")
     .pipe(uglify())
-    .pipe(gulp.dest(dist.js))
+    .pipe(gulp.dest(dist.vendor+"vendor.min.js"))*/
 })
 gulp.task('compress', ['compress-css', 'compress-js'])
 

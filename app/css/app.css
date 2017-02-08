@@ -19,17 +19,21 @@ svg:not(:root) { overflow: hidden; }
 svg { fill: currentColor; }
 
 html, body { overflow-x: hidden; position: relative; }
-
 /* 個別の設定
 - - - - - - - - - - - - - - - - - - - */
 /* HTMLの設定 */
 
+/* Rules for icon sizes: */
+.material-icons.md-18 { font-size: 18px; }
+.material-icons.md-24 { font-size: 24px; } /* Default */
+.material-icons.md-36 { font-size: 36px; }
+.material-icons.md-48 { font-size: 48px; }
+
 
 /* 基本のフォント設定 */
-html, body, h1, h2, h3, h4, h5, h6, p, blockquote, pre, abbr, address, cite, code, dt, dd, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, figcaption, figure {  font-size: 16px; font-weight: normal; font-family: 'ヒラギノ角ゴ ProN W3', 'HiraKakuProN-W3', 'メイリオ', Meiryo, 'ＭＳ Ｐゴシック', sans-serif; text-align: left; line-height: 160%; letter-spacing: 0; }
 
 
-header { width: 100%; padding: 10px; background: #fff; border-bottom: 1px solid #eee; display: table; table-layout: fixed; position: fixed; top: 0; left: 0; z-index: 999; }
+header { width: 100%; padding: 10px; background: #fff; border-bottom: 1px solid #eee; display: table; table-layout: fixed; position: fixed; top: 0; left: 0; z-index: 1; }
 header > * { display: table-cell; vertical-align: middle; }
 header .left { text-align: left; }
 header .right { text-align: right; }
