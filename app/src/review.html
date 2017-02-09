@@ -4,7 +4,31 @@
     <table datatable="ng" class="row-border hover" style="width: 100%">
         <thead>
         <tr>
-            <th>No</th>
+            <th> <md-menu>
+            <i ng-click="$mdOpenMenu()" class="material-icons">menu</i>
+            <md-menu-content>
+              <md-menu-item>
+                <md-button ng-click="">
+                  {{'ADD'|translate}}
+                </md-button>
+              </md-menu-item>
+              <md-menu-divider></md-menu-divider>
+              
+              <md-menu-item>
+                <md-button ng-disabled="!vm.checkSelected()" >
+                 {{'EDIT'|translate}}
+                </md-button>
+              </md-menu-item>
+              
+              <md-menu-item>
+                <md-button ng-disabled="!vm.checkSelected()" ng-click="vm.deleteReview()">
+                  {{'DELETE'|translate}}
+                  
+                </md-button>
+              </md-menu-item>
+            </md-menu-content>
+          </md-menu>
+                </th>
             <th>{{'DATE'|translate}}</th>
 
 	    <th>{{'REVIEWER'|translate}}</th>
@@ -19,7 +43,7 @@
         <tbody>
         <tr ng-repeat="review in vm.review" ng-click="vm.reviewSelect(review.id)">
             <td> <md-checkbox ng-checked="review.selected"></md-checkbox></td>
-            <td>{{ review.date }}</td>
+            <td>{{ review.date|date:'yyyy-MM-dd' }}</td>
             <td><span ng-repeat="review in review.reviewer">{{persion.name}}</span></td>
             <td>{{ review.shop }}</td>
             <td>{{ review.project }}</td>

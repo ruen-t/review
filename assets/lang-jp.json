@@ -1,6 +1,10 @@
 {
     
       "DATE": "日付",
+      "MENU": "メニュ",
+      "ADD":"追加",
+      "EDIT":"変更",
+      "DELETE":"消す",
       "REVIEWER": "レビューア",
       "SHOP": "ショップ",
       "PROJECT": "プロジェクト",

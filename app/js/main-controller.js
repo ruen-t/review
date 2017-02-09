@@ -77,11 +77,18 @@ function MainController($translate,$resource,$scope) {
     var headHeight = $('header').outerHeight();
 
 
-    $('body').css('padding-top', headHeight + 10);
+    $('body').css('padding-top', headHeight + 30);
   vm.changeLanguage = function (langKey) {
     $translate.use(langKey);
   };
-  vm.changeLanguage("jp")
+  $("header").on("click","#langEN",function(){
+    console.log("click")
+    $translate.use("en");
+  })
+  $("header").on("click","#langJP",function(){
+    vm.changeLanguage("jp")
+  })
+  //vm.changeLanguage("en")
 }
 
 function reviewHtml(){

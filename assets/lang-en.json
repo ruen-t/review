@@ -1,6 +1,10 @@
 {
     
       "DATE": "Date",
+      "MENU": "Menu",
+      "ADD":"Add",
+      "EDIT":"Edit",
+      "DELETE":"Delete",
       "REVIEWER": "Reviewer",
       "SHOP": "Shop",
       "PROJECT": "Project",

@@ -8,7 +8,7 @@ angular
     $scope.isOpenRight = function(){
       return $mdSidenav('right').isOpen();
     };
-    $("header").on("click","#logo",function(){
+    $("header").on("click","#wni-header #menu",function(){
       console.log("hello")
       vm.toggleLeft();
     })
@@ -24,7 +24,7 @@ angular
     vm.data = [
      {name:"Review",href:"#/review",icon:"description"},
       {name:"Manual",href:"#/project",icon:"grade"},
-      {name:"Hello",href:"#/new",icon:"print"},
+      {name:"Print",href:"#/new",icon:"print"},
     ];
     /**
      * Supplies a function that will continue to operate until the
