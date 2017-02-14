@@ -12,6 +12,7 @@
       "TYPE": "Type",
       "LOCATION": "Location",
       "COMMENT": "Comment",
+      "DETAIL": "Detail",
       "BUTTON_LANG_JP": "Japanese",
       "BUTTON_LANG_EN": "English"
     

@@ -1,4 +1,4 @@
-angular.module('review', ['datatables', 'ngResource','ngMaterial'])
+angular.module('review', ['datatables', 'ngResource','ngMaterial','datatables.scroller'])
 .controller('ReviewController', ReviewController)
 .config(function($mdIconProvider) {
     $mdIconProvider
@@ -35,7 +35,37 @@ function ReviewController($scope, $resource,$mdDialog,$mdMenu) {
     vm.reviewSelect = reviewSelect;
     vm.checkSelected = checkSelected;
     vm.deleteReview = deleteReview;
-  
+    vm.dtInstance = {};
+        vm.dtOptions = {
+            dom         : 'rt<"bottom"<"left"<"length"l>><"right"<"info"i><"pagination"p>>>',
+            columnDefs  : [
+                {
+                    // Target the id column
+                    targets: 0,
+                    width  : '50px'
+                },
+                {
+                    // Target the id column
+                    targets: 1,
+                    width  : '200px'
+                },
+                {
+                    // Target the id column
+                    targets: 2,
+                    width  : '270px'
+                },
+                
+            ],
+          
+            pagingType  : 'full_numbers',
+            lengthMenu  : [[10, 30, 50, 100,-1],[10, 30, 50, 100,"All"]],
+            pageLength  : -1,
+            scrollY     : 'auto',
+            responsive  : true,
+           // rowCallback : rowCallback,
+           // processing : true,
+
+        };
     $.get( "http://172.16.252.110/reviewtoolapi/review/", function( data ) {
   		//vm.review = data;
   		console.log(vm.review);

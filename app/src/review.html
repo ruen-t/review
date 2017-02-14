@@ -1,7 +1,7 @@
 
 <div >
     
-    <table datatable="ng" class="row-border hover" style="width: 100%">
+    <table datatable="ng" dt-instance="vm.dtInstance" dt-options="vm.dtOptions" class="row-border hover" style="width: 100%">
         <thead>
         <tr>
             <th> <md-menu>
@@ -38,6 +38,7 @@
 	    <th>{{'TYPE'|translate}}</th>
 	    <th>{{'LOCATION'|translate}}</th>
 	    <th>{{'COMMENT'|translate}}</th>
+      <th>{{'DETAIL'|translate}}</th>
         </tr>
         </thead>
         <tbody>
@@ -51,6 +52,7 @@
             <td>{{ review.type }}</td>
             <td>{{ review.location}}</td>
             <td>{{ review.comment }}</td>
+            <td><i ng-click="" class="material-icons">info outline</i></td>
         </tr>
         </tbody>
     </table>

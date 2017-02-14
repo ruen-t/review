@@ -125,6 +125,7 @@ a #follow-button .btn{
         background-color: white;
         z-index : 3;
 	border-bottom: 1px solid #eee;
+		left :0px;
 }
 .title{
 	font-size:30px;
