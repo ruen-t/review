@@ -22,8 +22,10 @@ angular
     };
    
     vm.data = [
+    {name:"Login",href:"#/login",icon:"lock"},
      {name:"Review",href:"#/review",icon:"description"},
-      {name:"Manual",href:"#/project",icon:"grade"},
+
+      {name:"Manual",href:"#/manual",icon:"grade"},
       {name:"Print",href:"#/new",icon:"print"},
     ];
     /**

@@ -7,6 +7,13 @@ angular.module('review', ['datatables', 'ngResource','ngMaterial','datatables.sc
     $mdIconProvider
       .defaultIconSet('img/icons/sets/core-icons.svg', 24);
   })
+.config(function ($httpProvider) {
+  $httpProvider.defaults.headers.common = {};
+  $httpProvider.defaults.headers.post = {};
+  $httpProvider.defaults.headers.put = {};
+  $httpProvider.defaults.headers.delete = {};
+  $httpProvider.defaults.headers.patch = {};
+})
   .filter('keyboardShortcut', function($window) {
     return function(str) {
       if (!str) return;
@@ -157,19 +164,20 @@ function ReviewController($timeout,$scope, $resource,$mdDialog,$mdMenu,$http) {
                 // this callback will be called asynchronously
                 // when the response is available
                 //console.log(response);
-
+                
                 if(response.data){
                     
                     var data = response.data;
                      for (i in data){
-
-                       vm.review.push({select:false,id:data[i].id,manager:data[i].pm,date:data[i].review_date,location:data[i].review_location,development:data[i].development,type:data[i].review_type,reviewer:data[i].reviewer})
+                      var managerArray=data[i].pm.concat(data[i].pdm)
+                       vm.review.push({select:false,id:data[i].id,manager:managerArray,date:data[i].review_date,location:data[i].review_location,development:data[i].development,type:data[i].review_type,reviewer:data[i].reviewer})
                     }
+
                     //console.log(vm.review)
                   //  vm.dtInstance.rerender();
                    // vm.changeday(0)
                 }
-                 console.log("data is loaded")
+                 //console.log("data is loaded")
                 
                // $scope.$apply();
               }, function errorCallback(data, status, headers, config) {
@@ -236,10 +244,54 @@ var newdate = year + "-" + monthStr + "-" + dayStr;
  // console.log($("#reviewTable"))
 
 }
-function deleteReview(){
+function deleteReview(){///reviewtoolapi/review/{id}/delete/
   var id = getselectedReview();
   console.log(id);
+  console.log(deleteAPI)
+    swal({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      type: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!'
+  }).then(function () {
+    $.ajax({
+    url: "http://172.16.252.110/reviewtoolapi/review/"+id+"/edit",
+    type: 'GET',
+    success: function(result) {
+        // Do something with the result
+        vm.fetchData();
+                swal(
+                  'Deleted!',
+                  'Your file has been deleted.',
+                  'success'
+                )
+      }
+    });
 
+    /*$http({
+              method: 'DELETE',
+              url: deleteAPI+id+"/delete",
+              //data:$.param({control_op:0}),
+              
+            }).then(function successCallback(response) {
+                vm.fetchData();
+                swal(
+                  'Deleted!',
+                  'Your file has been deleted.',
+                  'success'
+                )
+              }, function errorCallback(data, status, headers, config) {
+                // called asynchronously if an error occurs
+                // or server returns response with an error status.
+        });*/
+   } 
+    
+  )
+  
+  
 
 }
 function checkSelected(){
@@ -247,21 +299,23 @@ function checkSelected(){
 }
 function getselectedReview(){
   for(var i =0;i<vm.review.length;i++){
-   if(vm.review[i].selected)return review[i].id;
+    
+   if(vm.review[i].selected)return vm.review[i].id;
   }
+  return -1
 }
 function reviewSelect(id){
-  console.log(id)
+  //console.log(id)
   var selected_review = getReview(id);
   if(!selected_review){
     //console.log("no")
-    return false;
+    vm.hasSelected = false;
   }else{
     //console.log(selected_review.id)
     var check =!selected_review.selected;
     clearSelectReview();
     selected_review.selected = check;
-    hasSelected = check;
+    vm.hasSelected = check;
     //console.log(hasSelected)
 
   }

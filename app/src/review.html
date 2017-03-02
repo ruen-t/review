@@ -67,11 +67,11 @@
         <tbody>
         <tr ng-repeat="review in vm.review"  ng-click="vm.reviewSelect(review.id)" >
             <td> <md-checkbox aria-label="check" ng-checked="review.selected"></md-checkbox></td>
-            <td>{{ review.date|date:'yyyy-MM-dd' }}</td>
+            <td>{{ review.date|date:'yyyy-MM-dd  (HH:mm)' }}</td>
              <td>{{ review.location.meeting_space_name}}</td>
             <td>[{{review.development.project.shop.shop_name}}]&nbsp{{ review.development.development_detail}} -  {{review.development.development_type.development_type_code}}</td>
             <td>{{ review.type.review_type_code }}</td>
-            <td><div ng-repeat="manager in review.manager">{{ manager.employee.employee_name }}<br></div></td>
+            <td><div ng-repeat="manager in review.manager">{{ manager.role.role_code }}:{{ manager.employee.employee_name }}<br></div></td>
             <td><span ng-repeat="reviwer in review.reviwer">{{ reviwer.name }}<br></span></td>
             <td>&nbsp&nbsp&nbsp<i class="material-icons">launch</i></td>
         </tr>

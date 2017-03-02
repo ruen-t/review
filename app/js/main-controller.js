@@ -1,4 +1,4 @@
- angular.module('main', ["ngResource","ngRoute",'sidenav','review','project','pascalprecht.translate','reviewmodify'])
+ angular.module('main', ["ngResource","ngRoute",'sidenav','review','login','pascalprecht.translate','reviewmodify'])
 .controller('MainController', MainController)
 .directive('mainPage',reviewHtml)
 .directive('logo',logoHtml)
@@ -61,9 +61,9 @@ $translateProvider.forceAsyncReload(true);
         controller: "ReviewController",
         controllerAs:"vm"
     })
-    .when("/project",{
-        templateUrl : "app/src/project.html",
-        controller: "ProjectController",
+    .when("/login",{
+        templateUrl : "app/src/login.html",
+        controller: "LoginController",
         controllerAs:"vm"
     })
     .when("/addReview",{
@@ -78,6 +78,12 @@ $translateProvider.forceAsyncReload(true);
     $mdDateLocaleProvider.formatDate = function(date) {
        return moment(date).format('YYYY-MM-DD');
     };
+})
+.config(function ($httpProvider) {
+  $httpProvider.defaults.headers.common = {};
+  $httpProvider.defaults.headers.post = {};
+  $httpProvider.defaults.headers.put = {};
+  $httpProvider.defaults.headers.patch = {};
 });
 function MainController($translate,$resource,$scope) {
     var vm = this;
