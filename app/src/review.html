@@ -1,10 +1,34 @@
 
-<div >
+<section id="reviewPage" >
+
+<md-whiteframe  style="background-color: white" class="md-whiteframe-1dp" flex-sm="400" flex-gt-sm="400" flex-gt-md="400" layout layout-align="center center">
+   
+   <div layout-gt-xs="row">
+          <!--md-input-container  flex-gt-xs>
+           <label>Search</label>
+           <input ng-model="vm.reviewAnyText"  id="review_search" type="text">
+          </md-input-container-->
+<md-checkbox aria-label="check" ng-check="vm.dateFilter" ng-click="vm.toggleDateFilter()"></md-checkbox>
+          <md-input-container >
+
+            <label>Date filter</label>
+             <md-datepicker ng-model="vm.reviewDate"   onkeydown="return false" ng-change="vm.datatableSearch(vm.reviewDate)" >
+
+
+      </md-datepicker>
+      </md-input-container>
+       <md-button md-no-ink class="md-primary" ng-click="vm.changeday(-1)" style="padding-bottom: 30px">{{'BACK'|translate}}</md-button>
+      <md-button md-no-ink class="md-primary"  ng-click="vm.changeday(1)" style="padding-bottom: 30px">{{'NEXT'|translate}}</md-button>
+  </div> 
     
-    <table datatable="ng" dt-instance="vm.dtInstance" dt-options="vm.dtOptions" class="row-border hover" style="width: 100%">
-        <thead>
+  </md-whiteframe>
+
+
+    
+    <table id="reviewTable" datatable="ng" dt-instance="vm.dtInstance" dt-options="vm.dtOptions" class="row-border hover" style="width: 100%; height:200px">
+        <thead style="background-color:#053F8F; color: white">
         <tr>
-            <th> <md-menu>
+            <th> <div><md-menu>
             <i ng-click="$mdOpenMenu()" class="material-icons">menu</i>
             <md-menu-content>
               <md-menu-item>
@@ -28,33 +52,30 @@
               </md-menu-item>
             </md-menu-content>
           </md-menu>
+          </div>
                 </th>
-            <th>{{'DATE'|translate}}</th>
 
-	    <th>{{'REVIEWER'|translate}}</th>
-	    <th>{{'SHOP'|translate}}</th>
-	    <th>{{'PROJECT'|translate}}</th>
+	    <th>{{'DATE'|translate}}</th>
+      <th>{{'LOCATION'|translate}}</th>
 	    <th>{{'DEVELOPMENT'|translate}}</th>
 	    <th>{{'TYPE'|translate}}</th>
-	    <th>{{'LOCATION'|translate}}</th>
-	    <th>{{'COMMENT'|translate}}</th>
-      <th>{{'DETAIL'|translate}}</th>
+	    <th>{{'MANAGER'|translate}}</th>
+	    <th>{{'REVIEWER'|translate}}</th>
+      <th>{{'ACTION'|translate}}</th>
         </tr>
         </thead>
         <tbody>
-        <tr ng-repeat="review in vm.review" ng-click="vm.reviewSelect(review.id)">
-            <td> <md-checkbox ng-checked="review.selected"></md-checkbox></td>
+        <tr ng-repeat="review in vm.review"  ng-click="vm.reviewSelect(review.id)" >
+            <td> <md-checkbox aria-label="check" ng-checked="review.selected"></md-checkbox></td>
             <td>{{ review.date|date:'yyyy-MM-dd' }}</td>
-            <td><span ng-repeat="review in review.reviewer">{{persion.name}}</span></td>
-            <td>{{ review.shop }}</td>
-            <td>{{ review.project }}</td>
-            <td>{{ review.development}}</td>
-            <td>{{ review.type }}</td>
-            <td>{{ review.location}}</td>
-            <td>{{ review.comment }}</td>
-            <td><i ng-click="" class="material-icons">info outline</i></td>
+             <td>{{ review.location.meeting_space_name}}</td>
+            <td>[{{review.development.project.shop.shop_name}}]&nbsp{{ review.development.development_detail}} -  {{review.development.development_type.development_type_code}}</td>
+            <td>{{ review.type.review_type_code }}</td>
+            <td><div ng-repeat="manager in review.manager">{{ manager.employee.employee_name }}<br></div></td>
+            <td><span ng-repeat="reviwer in review.reviwer">{{ reviwer.name }}<br></span></td>
+            <td>&nbsp&nbsp&nbsp<i class="material-icons">launch</i></td>
         </tr>
         </tbody>
     </table>
-</div>
+</section>
 

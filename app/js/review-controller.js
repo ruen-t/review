@@ -1,3 +1,6 @@
+var review =[
+//{id:1,date:"2017-01-11T05:18:27",selected:true,shop:"BRAND",project:"CharaTV",development:"Check for bugs",type:"CDR",location:"AA3I",comment:"hello"},
+];
 angular.module('review', ['datatables', 'ngResource','ngMaterial','datatables.scroller'])
 .controller('ReviewController', ReviewController)
 .config(function($mdIconProvider) {
@@ -24,18 +27,26 @@ angular.module('review', ['datatables', 'ngResource','ngMaterial','datatables.sc
       }).join(seperator);
     };
   })
-var review =[
-{id:1,date:"2017-01-11T05:18:27",selected:true,shop:"BRAND",project:"CharaTV",development:"Check for bugs",type:"CDR",location:"AA3I",comment:"hello"},
-{id:2,date:"2017-06-11T05:10:00",selected:false,shop:"SEA",project:"Project2",development:"Check for nothing",type:"ABC",location:"AA6I",comment:"hi"},
-];
+
 var hasSelected=false;
-function ReviewController($scope, $resource,$mdDialog,$mdMenu) {
+function ReviewController($timeout,$scope, $resource,$mdDialog,$mdMenu,$http) {
     var vm = this;
     vm.hasSelected = hasSelected;
     vm.reviewSelect = reviewSelect;
     vm.checkSelected = checkSelected;
     vm.deleteReview = deleteReview;
+    vm.fetchData = fetchData;
+    vm.changeday = changeday;
+    vm.sameDate = sameDate;
+    vm.toggleDateFilter=toggleDateFilter;
+    vm.datatableSearch  = datatableSearch;
     vm.dtInstance = {};
+    vm.dateFilter = false;
+
+    vm.refreshFlag = false;
+    vm.countRender = 0;
+    vm.reviewDate;
+
         vm.dtOptions = {
             dom         : 'rt<"bottom"<"left"<"length"l>><"right"<"info"i><"pagination"p>>>',
             columnDefs  : [
@@ -52,37 +63,178 @@ function ReviewController($scope, $resource,$mdDialog,$mdMenu) {
                 {
                     // Target the id column
                     targets: 2,
-                    width  : '270px'
+                    width  : '200px'
+                },
+                {
+                    // Target the id column
+                    targets: 3,
+                    width  : '400px'
+                },
+                {
+                    // Target the id column
+                    targets: 4,
+                    width  : '130px'
+                },
+                {
+                    // Target the id column
+                    targets: 5,
+                    width  : '200px'
+                },
+                {
+                    // Target the id column
+                    targets: 6,
+                    width  : '200px'
+                },
+                {
+                    // Target the id column
+                    targets: 7,
+                    width  : '50px'
                 },
                 
             ],
-          
+             initComplete:function(){ 
+             //init complete will be called twice after table is created and after table is fully loaded
+
+                if(vm.countRender==0){
+                    vm.fetchData();
+                }
+
+                vm.countRender++;
+               // console.log(this)
+                var api = this.api(),
+
+                    searchBox = angular.element('body').find('#review_search');
+
+                   // console.log(searchBox)
+
+                // Bind an external input as a table wide search box
+                if ( searchBox.length > 0 )
+                {
+                    console.log("trigger event")
+                    searchBox.on('keyup', function (event)
+                    { 
+                        
+                       api.search(event.target.value).draw();
+                        //console.log(event.target.value);
+                    });
+                }
+                vm.changeday(0)
+                
+           },
+           //serverSide :true,
+           //destroy:true,
             pagingType  : 'full_numbers',
             lengthMenu  : [[10, 30, 50, 100,-1],[10, 30, 50, 100,"All"]],
             pageLength  : -1,
-            scrollY     : 'auto',
+            scrollY     : '550',
             responsive  : true,
            // rowCallback : rowCallback,
            // processing : true,
 
         };
-    $.get( "http://172.16.252.110/reviewtoolapi/review/", function( data ) {
-  		//vm.review = data;
-  		console.log(vm.review);
-  	
-	});
+        vm.review=[];
+        
+
+   
    vm.openMenu= function () {
      
       $mdMenu.open();
 
     };
-    $resource('all.json').query().$promise.then(function(project) {
-      // console.log(project);  
-      vm.project = project;
-    });
-    vm.review = review;
-    
-   
+  
+
+ function fetchData(){
+  //console.log("fetch")
+  var today = new Date();
+  
+
+  $http({
+              method: 'GET',
+              url:  "http://172.16.252.110/reviewtoolapi/review/",
+              //data:$.param({control_op:0}),
+              headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+            }).then(function successCallback(response) {
+                // this callback will be called asynchronously
+                // when the response is available
+                //console.log(response);
+
+                if(response.data){
+                    
+                    var data = response.data;
+                     for (i in data){
+
+                       vm.review.push({select:false,id:data[i].id,manager:data[i].pm,date:data[i].review_date,location:data[i].review_location,development:data[i].development,type:data[i].review_type,reviewer:data[i].reviewer})
+                    }
+                    //console.log(vm.review)
+                  //  vm.dtInstance.rerender();
+                   // vm.changeday(0)
+                }
+                 console.log("data is loaded")
+                
+               // $scope.$apply();
+              }, function errorCallback(data, status, headers, config) {
+                // called asynchronously if an error occurs
+                // or server returns response with an error status.
+              });
+} 
+function toggleDateFilter(){
+  vm.dateFilter = !vm.dateFilter
+  if(!vm.dateFilter){
+   $("#reviewTable").DataTable().search("",true,true).draw();
+  }else{
+     
+    vm.changeday(0)
+  }
+  console.log(vm.dateFilter)
+}
+function changeday(day){
+ if(!vm.dateFilter)return;
+  var currentDate;
+//console.log(tomorrow.toLocaleDateString())
+  if(vm.reviewDate){
+    var currentDate = new Date(vm.reviewDate)
+   // console.log(currentDate.toLocaleDateString())
+   // dateObj.setDate((new Date(vm.reviewDate)) + 1000*3600*24)
+    currentDate.setDate(currentDate.getDate()+day);
+    //console.log(currentDate.toLocaleDateString())
+  
+  }else{
+    currentDate=new Date();
+  }
+  
+  vm.reviewDate=currentDate;
+  datatableSearch(currentDate)
+}
+function sameDate(date1,date2){
+  var d1 = new Date(date1);
+  var d2 = new Date(date2);
+  console.log(d1.getTime() === d2.getTime())
+  return d1.getTime() === d2.getTime();
+}
+function datatableSearch(val){
+ // console.log("SearchDate")
+  //console.log(val)
+  var dateObj = new Date(val);
+  var month = dateObj.getUTCMonth() + 1; //months from 1-12
+var day = dateObj.getDate();
+var year = dateObj.getFullYear();
+var monthStr = ""
+var dayStr = ""
+if(month<10){
+  monthStr = "0"+month
+}else{
+  monthStr = month;
+}
+if(day<10){
+dayStr = "0"+day;
+}else{
+  dayStr=day;
+}
+var newdate = year + "-" + monthStr + "-" + dayStr;
+ // console.log("searchDate:"+newdate)
+  $("#reviewTable").DataTable().search(newdate,true,true).draw();
+ // console.log($("#reviewTable"))
+
 }
 function deleteReview(){
   var id = getselectedReview();
@@ -91,14 +243,15 @@ function deleteReview(){
 
 }
 function checkSelected(){
-  return hasSelected;
+  return vm.hasSelected;
 }
 function getselectedReview(){
-  for(var i =0;i<review.length;i++){
-   if(review[i].selected)return review[i].id;
+  for(var i =0;i<vm.review.length;i++){
+   if(vm.review[i].selected)return review[i].id;
   }
 }
 function reviewSelect(id){
+  console.log(id)
   var selected_review = getReview(id);
   if(!selected_review){
     //console.log("no")
@@ -115,14 +268,17 @@ function reviewSelect(id){
 
 }
 function clearSelectReview(){
-  for(var i =0;i<review.length;i++){
-   review[i].selected=false;
+  for(var i =0;i<vm.review.length;i++){
+   vm.review[i].selected=false;
   }
 }
 function getReview(id){
   
-  for(var i =0;i<review.length;i++){
-    if(review[i].id==id)return review[i];
+  for(var i =0;i<vm.review.length;i++){
+    if(vm.review[i].id==id)return vm.review[i];
   }
   return null;
+}  
+   
 }
+

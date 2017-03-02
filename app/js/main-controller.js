@@ -73,8 +73,12 @@ $translateProvider.forceAsyncReload(true);
     })
     .otherwise({redirectTo:'/'});
    //$locationProvider.html5Mode(true);
+})
+.config(function($mdDateLocaleProvider) {
+    $mdDateLocaleProvider.formatDate = function(date) {
+       return moment(date).format('YYYY-MM-DD');
+    };
 });
-
 function MainController($translate,$resource,$scope) {
     var vm = this;
   
