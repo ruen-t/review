@@ -1,81 +1,275 @@
 <md-content layout-padding>
-	<div style="padding: 10px;">
-		<h1>CheckList for review entry</h1>
-		<ol>
-			<li>Check here to make sure there is no another review on the same time you want to hold</li>
-			<li>
-				Entry and notice after all members' schedules were set. Please write PM&PDM's name on entry.
-				<ul>
-					<li>'Schedule set' means all concerned members recognize the review time. This should be leaded by Product Manager or Product Developing Manager.'</li>
-				</ul>
-			</li>
-			<li>You should notice the holding 7 days before it is held. You should hand in materials for reviews 3 days before it is held. If Emergency Review is needed, Please consult to Reviewer Team( Morishita / Fukuda / Abe / Nishi / Ishizaki / Honda / Akanuma / Nakamura)</li>
-			<li>PSRs which are decided to be held after Monday afternoon, and which will be held in this week should be noticed to CI-commitee. Do not hold the PSR without CI-commitee members.</li>
-			<li>Please write given Development Issue Number in PDR,CDR,PQR,PSR entry or your hold request will be abolished.</li>
-			<li>
-				PSR Meeting guideline revision: Meeting Time Entry
-				<ul>
-					<li>
-						PM/PDM can send entry request in the following fixed time slot
-						<ul>
-							<li>a. 1000~1100JST (except for Monday) (*1)</li>
-							<li>b. 1400~1500JST (*2)</li>
-							<li>(*1) PM/PDM can adapt meeting time flexibly in case of urgent/critical change control</li>
-							<li>(*2) WITH Station can have optional time slot (1600~1700JST) due to daily tight operation</li>
-						</ul>
-					</li>
-				</ul>
-			</li>
-			<li>
-				PSR Meeting guideline revision: Ownership of Meeting Minutes Template Here
-				<ul>
-					<li>
-						Just gentle reminder, it would be better for PM/PDM to follow guideline which requests them to create minutes after meeting. You can refer to attached sample template and send e-mail to the following address.
-						<ul>
-							<li>review@wni.com</li>
-							<li>cic@wni.com</li>
-							<li>cc-corner@wni.com </li>
-						</ul>
-					</li>	
-				</ul>
-			</li>	
-		</ol>
-		<ul>
-			<li>Google Calender Schedule share is available( but with some delay ). Please tell your google account mail address to Osawa(osaw-h), Shibasaki(shibas), Sugita(sugita).</li>
-			<li>Review Schedule Calender(Read Only)</li>
-			<li>
-				Purpose and Contents of Reviews
-				<ul>
-					<li>COMPLETE_REVIEWPROCESS</li>
-					<li>Full-Quality-Commitment-Program_REVIEWPROCESS</li>
-					<li>System Development Lecture from Yamamoto-san</li>
-				</ul>
-			</li>
-			<li>
-				You should make Review Detail Page.
-				<ol>
-					<li>Template is available. Please show below link.</li>
-					<li>How to edit review page?</li>
-				</ol>
-			</li>
-		</ul>
+	<section ng-show="vm.isEnglish">
+		<div class="manual">
+			<h1>
+				<i class="material-icons">&#xE3D0;</i>
+				CheckList for review entry
+			</h1>
+			<ol>
+				<li style="font-weight: 800;">Check <a href="http://ptwiki.wni.co.jp/pukiwiki/index.php?Review#i3cf9cc8"> here </a> to make sure there is no another review <span class="red">on the same time you want to hold</span></li>
+				<li>
+					<p style="font-weight: 800;" >Entry and notice <span class="red">after all members' schedules were set</span>. Please write PM&PDM's name on entry.</p>
+					<ul>
+						<li>'Schedule set' means <span class="red">all concerned members recognize the review time</span>. This should be leaded by Product Manager or Product Developing Manager.'</li>
+					</ul>
+				</li>
+				<li style="font-weight: 800;">You should notice the holding <span class="red">7 days before</span> it is held. You should hand in materials for reviews <span class="red">3 days before</span> it is held. If Emergency Review is needed, Please consult to Reviewer Team( Morishita / Fukuda / Abe / Nishi / Ishizaki / Honda / Akanuma / Nakamura)</li>
+				<li>PSRs which are decided to be held after Monday afternoon, and which will be held in this week should be noticed to CI-commitee. Do not hold the PSR without CI-commitee members.</li>
+				<li>Please write given Development Issue Number in PDR,CDR,PQR,PSR entry or your hold request will be abolished.</li>
+				<li>
+					PSR Meeting guideline revision: Meeting Time Entry
+					<ul>
+						<li>
+							PM/PDM can send entry request in the following fixed time slot
+							<ul>
+								<li>a. 1000~1100JST (except for Monday) (*1)</li>
+								<li>b. 1400~1500JST (*2)</li>
+								<li>(*1) PM/PDM can adapt meeting time flexibly in case of urgent/critical change control</li>
+								<li>(*2) WITH Station can have optional time slot (1600~1700JST) due to daily tight operation</li>
+							</ul>
+						</li>
+					</ul>
+				</li>
+				<li>
+					PSR Meeting guideline revision: Ownership of Meeting Minutes <a href="http://ptwiki.wni.co.jp/pukiwiki/index.php?plugin=attach&pcmd=open&file=PSR%20Minutes%20Template_e_v2.txt&refer=Review%2FStatement_English">Template Here</a> 
+					<ul>
+						<li>
+							Just gentle reminder, it would be better for PM/PDM to follow guideline which requests them to create minutes after meeting. You can refer to attached sample template and send e-mail to the following address.
+							<ul>
+								<li>
+									<a href="mailto:review@wni.com">review@wni.com</a>
+								</li>
+								<li>
+									<a href="mailto:cic@wni.com">cic@wni.com</a>
+								</li>
+								<li>
+									<a href="mailto:cc-corner@wni.com">cc-corner@wni.com</a>
+								</li>
+							</ul>
+						</li>	
+					</ul>
+				</li>	
+			</ol>
+			<ul>
+				<li>Google Calender Schedule share is available( but with some delay ). Please tell your google account mail address to Osawa(osaw-h), Shibasaki(shibas), Sugita(sugita).</li>
+				<li>
+					<a href="https://www.google.com/calendar/embed?src=3e41kv3ds9347had0u0s6drv9s%40group.calendar.google.com&ctz=Asia/Tokyo">Review Schedule Calender(Read Only)</a>
+				</li>
+				<li>
+					Purpose and Contents of Reviews
+					<ul>
+						<li>
+							<a href="http://ptwiki.wni.co.jp/pukiwiki/index.php?plugin=attach&refer=Review&openfile=%E9%96%8B%E7%99%BA%E3%83%97%E3%83%AD%E3%82%BB%E3%82%B9%E5%BE%B9%E5%BA%95%E5%8C%96.pdf">
+								<i class="material-icons">&#xE873;</i>
+								COMPLETE_REVIEWPROCESS
+							</a>
+						</li>
+						<li>
+							<a href="http://ptwiki.wni.co.jp/pukiwiki/index.php?plugin=attach&refer=Review&openfile=FQC-P%E6%A1%88%E4%BB%B6%20%E3%83%AC%E3%83%93%E3%83%A5%E3%83%BC%E3%83%97%E3%83%AD%E3%82%BB%E3%82%B9.ppt">
+								<i class="material-icons">&#xE873;</i>
+								Full-Quality-Commitment-Program_REVIEWPROCESS
+							</a>
+						</li>
+						<li>
+							<a href="http://ptwiki.wni.co.jp/pukiwiki/index.php?Review%2F%E5%B1%B1%E6%9C%AC%E3%81%95%E3%82%93%E3%81%AE%E9%96%8B%E7%99%BA%E8%AC%9B%E5%BA%A72013">
+								System Development Lecture from Yamamoto-san
+							</a>
+						</li>
+					</ul>
+				</li>
+				<li>
+					You should make Review Detail Page.
+					<ol>
+						<li>Template is available. Please show below link.</li>
+						<li>
+							<a href="http://ptwiki.wni.co.jp/pukiwiki/index.php?Review%2FHow_to_edit">How to edit review page?</a>
+						</li>
+					</ol>
+				</li>
+			</ul>
+		</div>
+		<div class="manual">
+			<h1>
+				<i class="material-icons">&#xE3D1;</i>
+				Templates
+			</h1>
+			<ol>
+				<li>Review Detail Template → Please check <b>How to edit review page</b>. Automaticaly Made.</li>
+				<li>Review Schedule Template → Click Day or Months of Calender below to make.</li>
+			</ol>
+		</div>
+		<div class="manual">
+			<h1>
+				<i class="material-icons">&#xE3D2;</i>
+				CI-commitee
+			</h1>
+			<ul>
+				<li>
+					Points to be checked on PSR for modules to be released
+					<ul>
+						<li>
+							<a href="http://ptwiki.wni.co.jp/pukiwiki/index.php?plugin=attach&refer=Review&openfile=%EF%BC%B0%EF%BC%B3%EF%BC%B2%E6%99%82%E3%81%AECI%E5%A7%94%E5%93%A1%E4%BC%9A%E6%99%82%E3%81%AE%E3%83%9D%E3%82%A4%E3%83%B3%E3%83%88.docx">
+								<i class="material-icons">&#xE873;</i>
+								CI-commitee checkpoints at PSR
+							</a>
+						</li>
+					</ul>
+				</li>
+				<li>Please share with CI-commitee if your PSR is decided to be held not before Monday afternoon( We are pleased to be called even holidays or midnight!! )</li>
+				<li>
+					About Full Quality Commitment Program
+					<ul>
+						<li>
+							<a href="http://ptwiki.wni.co.jp/pukiwiki/index.php?plugin=attach&refer=Review&openfile=FQC-P%E6%A1%88%E4%BB%B6%20%E3%83%AC%E3%83%93%E3%83%A5%E3%83%BC%E3%83%97%E3%83%AD%E3%82%BB%E3%82%B9.ppt">
+								<i class="material-icons">&#xE873;</i>
+								Full-Quality-Commitment-Program_REVIEWPROCESS
+							</a>
+						</li>
+					</ul>
+				</li>
+			</ul>
+		</div>
+	</section>
 
-		<h1>Templates</h1>
-		<ol>
-			<li>Review Detail Template → Please check How to edit review page. Automaticaly Made.</li>
-			<li>Review Schedule Template → Click Day or Months of Calender below to make.</li>
-		</ol>
+	<section ng-show="!vm.isEnglish">
+		<div class="manual">
+			<h1>
+				<i class="material-icons">&#xE3D0;</i>
+				レビューに先立って以下の確認をお願いします。
+			</h1>
+			<ol>
+				<li><span class="red">下のカレンダー</span>で、空いている所に入れて下さい。</li>
+				<li><span class="red">PM,PDMと関係者の間で日程を調整</span>してから、開催告知をして下さい。<span class="red">PM、PDMはエントリー時に明記して下さい</span>(仮決め可)
+				</li>
+				<li><span class="red">1週間前告知、3日前資料共有</span>をお願いします。急な時は 安部/西/森下/福田/石崎/本田真/赤沼/中村(恵) のいずれかに相談して下さい。 (金曜日に翌週のレビュアを決めています)</li>
+				<li>月曜昼以降に開催が決まった<span class="red">週内のPSRは必ずCC-cornerに直接連絡</span>下さい。</li>
+				<li>PDR,CDR,PQR,PSR開催時には、付与されている開発番号を記載して下さい。</li>
+				<li>
+					FQC-P,New(新メニュー、ドライバ開発),VUP(バージョンアップ),Mainteを「<span class="red">レビュー種別へ記載</span>」願います。
+					<ul>
+						<li>1人月以下 = Mainte(メンテナンス) , それ以上 = VUP です。</li>
+					</ul>
+				</li>
+				<li>
+					PSR開催改訂ガイドライン: 開催時間帯
+					<ul>
+						<li>
+							1日2時間を基本とする。（※１）
+							<ul>
+								<li>10時～11時　（月曜日は除く）</li>
+								<li>14時～15時　（※２）</li>
+								<li>（※１）障害対応等、理由が明確で突発的な事情に限り、別時間で設定可能。</li>
+								<li>（※２）WITHについては、運営との兼ね合いで、16時～17時をOption変更可。</li>
+							</ul>
+						</li>	
+					</ul>
+				</li>	
+				<li>
+					PSR開催改訂ガイドライン: 議事録 <a href="http://ptwiki.wni.co.jp/pukiwiki/index.php?plugin=attach&pcmd=open&file=PSR%20Minutes%20Template_e_v2.txt&refer=Review%2FStatement_English">Template Here</a> 
+					<ul>
+						<li>
+							PM/PDM担当の方は、添付のTemplateをベースに議事録を作成。
+						</li>
+						<li>当日中に以下のアドレスにメイル送信。</li>
+						<li>
+							Wiki担当者が、WikiサイトにUploadし、完了。
+							<ul>
+								<li>
+									<a href="mailto:review@wni.com">review@wni.com</a>
+								</li>
+								<li>
+									<a href="mailto:cic@wni.com">cic@wni.com</a>
+								</li>
+								<li>
+									<a href="mailto:cc-corner@wni.com">cc-corner@wni.com</a>
+								</li>
+							</ul>
+						</li>	
+					</ul>
+				</li>	
+			</ol>
+		</div>
+		<div class="manual">
+			<h1>
+				<i class="material-icons">&#xE3D1;</i>
+				エントリー
+			</h1>
+			<ol>
+				<li>
+					<a href="https://docs.google.com/a/wni.com/presentation/d/1cBEwZM28_LLnTAgJ_BMmAgIvBMuIn3QgTnUekyBwP3Q/edit?usp=sharing">
+						エントリー方法</a>
+					◀︎エントリー方法が変わりましたのでご確認ください。
 
-		<h1>CI-commitee</h1>
-		<ul>
-			<li>
-				Points to be checked on PSR for modules to be released
-				<ul>
-					<li>CI-commitee checkpoints at PSR</li>
-				</ul>
-			</li>
-				
-		</ul>
+				</li>
+				<li>
+					<a href="https://docs.google.com/a/wni.com/forms/d/1BLWHcqQOEgGAA8PU-4kOBv61dgMd_m9H1ZJTjrh4ob8/viewform">
+						エントリーフォーム</a>
+					<span class="red">◀︎エントリーはこちらから!</span></li>
+			</ol>
+		</div>
+		<div class="manual">
+			<h1>
+				<i class="material-icons">&#xE3D2;</i>
+				レビュー関連資料、データ集
+			</h1>
+			<ul>
+				<li>
+					<a href="https://calendar.google.com/calendar/embed?src=wni.com_f62mg78kp9p6nuu7rnb5bje92k%40group.calendar.google.com&ctz=Asia/Tokyo">
+					Google Calendar版Review予定カレンダー(閲覧専用)</a>
+					<ul>
+						<li>カレンダーID：
+							<a href="mailto:wni.com_f62mg78kp9p6nuu7rnb5bje92k@group.calendar.google.com">
+							wni.com_f62mg78kp9p6nuu7rnb5bje92k@group.calendar.google.com
+							</a>
+						</li>
+						<li>
+							<a href="https://support.google.com/a/answer/1626902?hl=ja">
+							閲覧方法</a>
+						</li>
+					</ul>
+				</li>
+				<li>レビューの目的、内容 
+					<a href="http://ptwiki.wni.co.jp/pukiwiki/index.php?plugin=attach&refer=Review&openfile=%E9%96%8B%E7%99%BA%E3%83%97%E3%83%AD%E3%82%BB%E3%82%B9%E5%BE%B9%E5%BA%95%E5%8C%96.pdf">
+						<i class="material-icons">&#xE873;</i>
+						開発プロセス徹底化.pdf / 
+					</a>
+					<a href="http://ptwiki.wni.co.jp/pukiwiki/index.php?plugin=attach&refer=Review&openfile=FQC-P%E6%A1%88%E4%BB%B6%20%E3%83%AC%E3%83%93%E3%83%A5%E3%83%BC%E3%83%97%E3%83%AD%E3%82%BB%E3%82%B9.ppt">
+						<i class="material-icons">&#xE873;</i>
+						FQC-P案件 レビュープロセス.ppt
+					</a>
+					 / 
+					<a href="http://ptwiki.wni.co.jp/pukiwiki/index.php?Review%2FGDP%2F4type">
+					 	4つの種別の考え方
+					</a>
+					 </li>
+				<li>レビュー詳細ページ(議事録、資料共有用ページ)を必ず作成してください。作り方は
+					<a href="http://ptwiki.wni.co.jp/pukiwiki/index.php?Review%2FHow_to_edit">
+						ここから
+					</a>
+				</li>
+				<li>CI委員会 関連資料 
+					<a href="http://ptwiki.wni.co.jp/pukiwiki/index.php?plugin=attach&refer=Review&openfile=%EF%BC%B0%EF%BC%B3%EF%BC%B2%E6%99%82%E3%81%AECI%E5%A7%94%E5%93%A1%E4%BC%9A%E6%99%82%E3%81%AE%E3%83%9D%E3%82%A4%E3%83%B3%E3%83%88.docx">
+						<i class="material-icons">&#xE873;</i>
+						PSR時のCI委員会の確認ポイントはここからDL 
+					</a>
+					, 
+					<a href="fileFQC-P案件 レビュープロセス.ppt">
+						<i class="material-icons">&#xE873;</i>
+						FQC-P案件 レビュープロセス.ppt
+					</a>
+				</li>
+				<li>
+					<a href="https://docs.google.com/a/wni.com/spreadsheets/d/1dyqCEcnjGT0GM70A9XiKZvsMMcJlQt3pOsLs1JLi-qw/edit?usp=sharing">
+						レビュー記録
+					</a>
+				</li>
+				<li>Mission Critical Service のC/Cレビュー徹底 
+					<a href="https://docs.google.com/a/wni.com/presentation/d/1_kv8eo72sxoj_o45893AkEaT8couZ8bzIMAaypauw5o/edit?usp=sharing">
+						MCSのCCRについて
+					</a>
+				</li>
+			</ul>
+		</div>
+	</section>
 
-	</div>
 </md-content>

@@ -90,7 +90,7 @@ $translateProvider.forceAsyncReload(true);
   $httpProvider.defaults.headers.put = {};
   $httpProvider.defaults.headers.patch = {};
 });
-function MainController($translate,$resource,$scope) {
+function MainController($translate,$resource,$scope,$rootScope) {
     var vm = this;
   
     this.message = "hello";
@@ -104,9 +104,11 @@ function MainController($translate,$resource,$scope) {
   $("header").on("click","#langEN",function(){
     console.log("click")
     $translate.use("en");
+    $scope.$emit("english");
   })
   $("header").on("click","#langJP",function(){
     vm.changeLanguage("jp")
+    $scope.$emit("japanese");
   })
   //vm.changeLanguage("en")
 }

@@ -1,11 +1,12 @@
 <md-content layout-padding>
     <div>
 
-      <form name="userForm">
+      <form name="userForm" class="addReview">
 
-        <div layout-gt-xs="row">
+        <div layout-gt-xs="row" class="saveButton">
           <!--<md-input-container>-->
-              <md-button class="md-raised" style="background-color: antiquewhite;position:fixed;top:70px;right:24px;z-index: 4;" >{{ 'SAVE' | translate }}</md-button>
+              <md-button class="md-raised" >{{ 'SAVE' | translate }}</md-button>
+              <!--<i class="material-icons">&#xE161;</i>-->
           <!--</md-input-container>-->
         </div>
         <div style="margin-top: 20px;">
@@ -43,7 +44,7 @@
             </md-input-container>
           </div>
 
-          <div style="padding:10px;background-color: bisque;margin-top: -20px;margin-bottom: 20px;color:brown;">
+          <div class="projectMember">
             <div layout-gt-xs="row">
               <label>{{ 'PROJECT_MEMBER' | translate}}</label>
             </div>
@@ -70,7 +71,7 @@
             </div>
           </div>
 
-          <div style="padding:10px;background-color:beige;margin-bottom:20px;color:brown;">
+          <div class="reviewMember">
             <div layout-gt-xs="row">
               <label>{{ 'REVIEW_MEMBER' | translate}}</label>
             </div>
