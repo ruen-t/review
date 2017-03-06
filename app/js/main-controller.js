@@ -1,4 +1,4 @@
- angular.module('main', ["ngResource","ngRoute",'sidenav','review','login','pascalprecht.translate','reviewmodify'])
+ angular.module('main', ["ngResource","ngRoute",'sidenav','review','login','pascalprecht.translate','reviewmodify','manual'])
 .controller('MainController', MainController)
 .directive('mainPage',reviewHtml)
 .directive('logo',logoHtml)
@@ -69,6 +69,11 @@ $translateProvider.forceAsyncReload(true);
     .when("/addReview",{
         templateUrl : "app/src/addreview.html",
         controller: "ReviewModifyController",
+        controllerAs:"vm"
+    })
+    .when("/manual",{
+        templateUrl : "app/src/manual.html",
+        controller: "ManualController",
         controllerAs:"vm"
     })
     .otherwise({redirectTo:'/'});
