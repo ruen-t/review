@@ -48,25 +48,26 @@
             <div layout-gt-xs="row">
               <label>{{ 'PROJECT_MEMBER' | translate}}</label>
             </div>
-            <div layout-gt-xs="row">
-              <md-input-container id="project_member" class="md-block" flex-gt-sm onclick="vm.addRow">
+            <div ng-repeat="reviewer in vm.reviewers"  layout-gt-xs="row">
+              <md-input-container id="project_member" class="md-block" flex-gt-sm >
                 <label>{{ 'LEVEL' | translate }}</label>
-                <md-select ng-model="vm.levels">
-                  <md-option ng-repeat="value in vm.levels" value="{{value}}">
+                <md-select ng-model="vm.reviewers">
+                  <md-option ng-repeat="value in reviewers.levels" value="{{value}}">
                     {{value.abbrev}}
                   </md-option>
                 </md-select>
               </md-input-container>
               <md-input-container class="md-block" flex-gt-sm>
                 <label>{{ 'EMPLOYEE' | translate }}</label>
-                <md-select ng-model="vm.shops">
-                  <md-option ng-repeat="value in vm.shops" value="{{value}}">
-                    {{value.abbrev}}
+                <md-select ng-model="vm.reviewers">
+                  <md-option ng-repeat="value in reviewers" value="{{value.name}}">
+                    {{value.name}}
                   </md-option>
                 </md-select>
               </md-input-container>
               <md-input-container>
-                <md-button md-no-ink>+</md-button>
+                <md-button md-no-ink ng-show="$last" ng-click="vm.addProjectMember()">+</md-button>
+                <md-button md-no-ink ng-show="!$last" ng-click="vm.removeProjectMember(reviewer.id)">-</md-button>
               </md-input-container>
             </div>
           </div>

@@ -26,21 +26,41 @@ var levels = ('PM PDM DEV').split(' ').map(function(levels){
   return {abbrev: levels};
 });
 
-var addRow = function(addRow){
-  var row = document.getElementById("project_member");
-  var x = row.insertRow(0);
-  x.innerHTML = "New cell";
-}
+
+var reviewers = [
+  {id:1,name:"test",levels:0 },
+];
 
 var ReviewModifyController =['$resource','$translate', function ($resource,$translate) {
-    var vm = this;
-    vm.message = "hello this is a add page";
-    vm.user = user;
-    vm.states = states;
-    vm.types = types;
-    vm.shops = shops;
-    vm.levels = levels;
-    vm.addrow = addRow;
+  var vm = this;
+  vm.message = "hello this is a add page";
+  vm.user = user;
+  vm.states = states;
+  vm.types = types;
+  vm.shops = shops;
+  vm.levels = levels;
+  vm.reviewers = reviewers;
+  vm.addProjectMember = addProjectMember;
+
+  function addProjectMember (){
+   vm.reviewers.push({id:-1,name:"angela",levels:0 });
+  }
+
+  function removeProjectMember (id){
+    var index = -1;   
+    var comArr = eval( vm.reviewers );
+    for( var i = 0; i < comArr.length; i++ ) {
+      if( comArr[i].id=== id ) {
+        index = i;
+        break;
+      }
+    }
+    if( index === -1 ) {
+      alert( "Something gone wrong" );
+    }
+    vm.reviewers.splice( index, 1 );  
+  }
+
   }]
 
  angular.module('reviewmodify', ['datatables', 'ngResource'])
@@ -54,7 +74,6 @@ var ReviewModifyController =['$resource','$translate', function ($resource,$tran
       .dark();
 
   });
-
 
 
 
