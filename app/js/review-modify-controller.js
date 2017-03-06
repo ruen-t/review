@@ -26,6 +26,12 @@ var levels = ('PM PDM DEV').split(' ').map(function(levels){
   return {abbrev: levels};
 });
 
+var addRow = function(addRow){
+  var row = document.getElementById("project_member");
+  var x = row.insertRow(0);
+  x.innerHTML = "New cell";
+}
+
 var ReviewModifyController =['$resource','$translate', function ($resource,$translate) {
     var vm = this;
     vm.message = "hello this is a add page";
@@ -34,6 +40,7 @@ var ReviewModifyController =['$resource','$translate', function ($resource,$tran
     vm.types = types;
     vm.shops = shops;
     vm.levels = levels;
+    vm.addrow = addRow;
   }]
 
  angular.module('reviewmodify', ['datatables', 'ngResource'])

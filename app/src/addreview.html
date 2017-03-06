@@ -5,121 +5,121 @@
 
         <div layout-gt-xs="row">
           <!--<md-input-container>-->
-              <md-button class="md-raised" style="background-color: antiquewhite;">{{ 'SAVE' | translate }}</md-button>
+              <md-button class="md-raised" style="background-color: antiquewhite;position:fixed;top:70px;right:24px;z-index: 4;" >{{ 'SAVE' | translate }}</md-button>
           <!--</md-input-container>-->
         </div>
-
-        <div layout-gt-xs="row">
-          <md-input-container>
-            <label>{{ 'DEV_NUMBER' | translate }}</label>
-            <input value="test" disabled>
-          </md-input-container>
-
-          <md-input-container class="md-block" flex-gt-sm>
-            <label>{{ 'REVIEW_TYPE' | translate }}</label>
-            <md-select ng-model="vm.types">
-              <md-option ng-repeat="value in vm.types" value="{{value}}">
-                {{value.abbrev}}
-              </md-option>
-            </md-select>
-          </md-input-container>
-
-          <md-input-container class="md-block" flex-gt-sm>
-            <label>{{ 'LOCATION' | translate }}</label>
-            <md-select ng-model="vm.types">
-              <md-option ng-repeat="value in vm.types" value="{{value}}">
-                {{value.abbrev}}
-              </md-option>
-            </md-select>
-          </md-input-container>
-
-          <md-input-container class="md-block" flex-gt-sm>
-            <label>{{ 'SHOP' | translate }}</label>
-            <md-select ng-model="vm.shops">
-              <md-option ng-repeat="value in vm.shops" value="{{value}}">
-                {{value.abbrev}}
-              </md-option>
-            </md-select>
-          </md-input-container>
-        </div>
-
-        <div style="padding:10px;background-color: bisque;margin-top: -20px;margin-bottom: 20px;color:brown;">
+        <div style="margin-top: 20px;">
           <div layout-gt-xs="row">
-            <label>{{ 'PROJECT_MEMBER' | translate}}</label>
-          </div>
-          <div layout-gt-xs="row">
+            <md-input-container>
+              <label>{{ 'DEV_NUMBER' | translate }}</label>
+              <input value="test" disabled>
+            </md-input-container>
+
             <md-input-container class="md-block" flex-gt-sm>
-              <label>{{ 'LEVEL' | translate }}</label>
-              <md-select ng-model="vm.levels">
-                <md-option ng-repeat="value in vm.levels" value="{{value}}">
+              <label>{{ 'REVIEW_TYPE' | translate }}</label>
+              <md-select ng-model="vm.types">
+                <md-option ng-repeat="value in vm.types" value="{{value}}">
                   {{value.abbrev}}
                 </md-option>
               </md-select>
             </md-input-container>
+
             <md-input-container class="md-block" flex-gt-sm>
-              <label>{{ 'EMPLOYEE' | translate }}</label>
+              <label>{{ 'LOCATION' | translate }}</label>
+              <md-select ng-model="vm.types">
+                <md-option ng-repeat="value in vm.types" value="{{value}}">
+                  {{value.abbrev}}
+                </md-option>
+              </md-select>
+            </md-input-container>
+
+            <md-input-container class="md-block" flex-gt-sm>
+              <label>{{ 'SHOP' | translate }}</label>
               <md-select ng-model="vm.shops">
                 <md-option ng-repeat="value in vm.shops" value="{{value}}">
                   {{value.abbrev}}
                 </md-option>
               </md-select>
             </md-input-container>
-            <md-input-container>
-              <md-button md-no-ink>+</md-button>
-            </md-input-container>
           </div>
-        </div>
 
-        <div style="padding:10px;background-color:beige;margin-bottom:20px;color:brown;">
+          <div style="padding:10px;background-color: bisque;margin-top: -20px;margin-bottom: 20px;color:brown;">
+            <div layout-gt-xs="row">
+              <label>{{ 'PROJECT_MEMBER' | translate}}</label>
+            </div>
+            <div layout-gt-xs="row">
+              <md-input-container id="project_member" class="md-block" flex-gt-sm onclick="vm.addRow">
+                <label>{{ 'LEVEL' | translate }}</label>
+                <md-select ng-model="vm.levels">
+                  <md-option ng-repeat="value in vm.levels" value="{{value}}">
+                    {{value.abbrev}}
+                  </md-option>
+                </md-select>
+              </md-input-container>
+              <md-input-container class="md-block" flex-gt-sm>
+                <label>{{ 'EMPLOYEE' | translate }}</label>
+                <md-select ng-model="vm.shops">
+                  <md-option ng-repeat="value in vm.shops" value="{{value}}">
+                    {{value.abbrev}}
+                  </md-option>
+                </md-select>
+              </md-input-container>
+              <md-input-container>
+                <md-button md-no-ink>+</md-button>
+              </md-input-container>
+            </div>
+          </div>
+
+          <div style="padding:10px;background-color:beige;margin-bottom:20px;color:brown;">
+            <div layout-gt-xs="row">
+              <label>{{ 'REVIEW_MEMBER' | translate}}</label>
+            </div>
+            <div layout-gt-xs="row">
+              <md-input-container class="md-block" flex-gt-sm>
+                <label>{{ 'LEVEL' | translate }}</label>
+                <md-select ng-model="vm.levels">
+                  <md-option ng-repeat="value in vm.levels" value="{{value}}">
+                    {{value.abbrev}}
+                  </md-option>
+                </md-select>
+              </md-input-container>
+              <md-input-container class="md-block" flex-gt-sm>
+                <label>{{ 'EMPLOYEE' | translate }}</label>
+                <md-select ng-model="vm.shops">
+                  <md-option ng-repeat="value in vm.shops" value="{{value}}">
+                    {{value.abbrev}}
+                  </md-option>
+                </md-select>
+              </md-input-container>
+              <md-input-container>
+                <md-button md-no-ink>+</md-button>
+              </md-input-container>
+            </div>
+          </div>
+
           <div layout-gt-xs="row">
-            <label>{{ 'REVIEW_MEMBER' | translate}}</label>
-          </div>
-          <div layout-gt-xs="row">
-            <md-input-container class="md-block" flex-gt-sm>
-              <label>{{ 'LEVEL' | translate }}</label>
-              <md-select ng-model="vm.levels">
-                <md-option ng-repeat="value in vm.levels" value="{{value}}">
-                  {{value.abbrev}}
-                </md-option>
-              </md-select>
+            <md-input-container class="md-block" flex-gt-xs>
+              <label>{{ 'PROJECT_TITLE' | translate }}</label>
+              <input ng-model="vm.user.company" >
             </md-input-container>
-            <md-input-container class="md-block" flex-gt-sm>
-              <label>{{ 'EMPLOYEE' | translate }}</label>
-              <md-select ng-model="vm.shops">
-                <md-option ng-repeat="value in vm.shops" value="{{value}}">
-                  {{value.abbrev}}
-                </md-option>
-              </md-select>
+
+            <md-input-container>
+              <label>{{ 'START' | translate }}</label>
+              <md-datepicker ng-model="vm.user.submissionDate"></md-datepicker>
             </md-input-container>
             <md-input-container>
-              <md-button md-no-ink>+</md-button>
+              <label>{{ 'END' | translate }}</label>
+              <md-datepicker ng-model="vm.user.submissionDate"></md-datepicker>
+            </md-input-container>
+          </div>
+
+          <div layout-gt-xs="row">
+            <md-input-container class="md-block" flex-gt-xs>
+              <label>{{ 'MINUTES' | translate }}</label>
+              <textarea rows="5" md-select-on-focus >test</textarea>
             </md-input-container>
           </div>
         </div>
-
-        <div layout-gt-xs="row">
-          <md-input-container class="md-block" flex-gt-xs>
-            <label>{{ 'PROJECT_TITLE' | translate }}</label>
-            <input ng-model="vm.user.company" >
-          </md-input-container>
-
-          <md-input-container>
-            <label>{{ 'START' | translate }}</label>
-            <md-datepicker ng-model="vm.user.submissionDate"></md-datepicker>
-          </md-input-container>
-          <md-input-container>
-            <label>{{ 'END' | translate }}</label>
-            <md-datepicker ng-model="vm.user.submissionDate"></md-datepicker>
-          </md-input-container>
-        </div>
-
-        <div layout-gt-xs="row">
-          <md-input-container class="md-block" flex-gt-xs>
-            <label>{{ 'MINUTES' | translate }}</label>
-            <textarea rows="5" md-select-on-focus >test</textarea>
-          </md-input-container>
-        </div>
-
         
 
         <!--<div layout-gt-sm="row">
