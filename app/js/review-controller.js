@@ -166,11 +166,11 @@ function ReviewController($timeout,$scope, $resource,$mdDialog,$mdMenu,$http) {
                 //console.log(response);
                 
                 if(response.data){
-                    
+                    console.log(response.data)
                     var data = response.data;
                      for (i in data){
                       var managerArray=data[i].pm.concat(data[i].pdm)
-                       vm.review.push({select:false,id:data[i].id,manager:managerArray,date:data[i].review_date,location:data[i].review_location,development:data[i].development,type:data[i].review_type,reviewer:data[i].reviewer})
+                       vm.review.push({select:false,id:i,manager:managerArray,date:data[i].review_date_start,location:data[i].review_location,development:{development:data[i].development,shop:data[i].shop,title:data[i].review_title},type:data[i].review_type,reviewer:data[i].reviewer})
                     }
 
                     //console.log(vm.review)
