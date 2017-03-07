@@ -229,5 +229,8 @@ button .save:hover{
 	color: #0B4199; background-color: white;
 }
 .forget{
-	font-size: 11px;
+	font-size: 11px; margin-left: 90px; font-weight: 800;
+}
+.login{
+	margin-left: 10px; font-weight: 800;
 }
