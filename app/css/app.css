@@ -225,3 +225,6 @@ li{
 .red{
 	color: red;
 }
+button .save:hover{
+	color: #0B4199; background-color: white;
+}
