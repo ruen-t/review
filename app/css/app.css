@@ -228,3 +228,6 @@ li{
 button .save:hover{
 	color: #0B4199; background-color: white;
 }
+.forget{
+	font-size: 11px;
+}
