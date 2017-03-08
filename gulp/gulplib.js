@@ -11,15 +11,18 @@ var concat = require('gulp-concat')
 var browserify = require('gulp-browserify')
 var gulpFilter = require('gulp-filter')
 var watch = require('gulp-watch')
+var jsonminify = require('gulp-jsonminify');
 var rename = require('gulp-rename')
 var mainBowerFiles = require('main-bower-files');
 var htmlmin = require('gulp-htmlmin');
+var inject = require('gulp-inject');
+var shell = require('gulp-shell')
 var src = {
   styl: ['app/**/*.styl'],
   css: ['app/**/*.css'],
   coffee: ['app/**/*.coffee'],
   js: ['app/**/*.js'],
-  html: ['app/src/*.html'],
+  html: ['app/src/*.html','!app/src/index.html'],
   bower: ['bower.json', '.bowerrc']
 }
 src.styles = src.styl.concat(src.css)
@@ -35,9 +38,9 @@ gulp.task("bowerfiles", function(){
 var publishdir = 'dist'
 var dist = {
   all: [publishdir + '/**/*'],
-  css: publishdir + '/static/',
-  js: publishdir + '/static/',
-  vendor: publishdir + '/static/',
+  css: publishdir + '/lib/',
+  js: publishdir + '/lib/',
+  vendor: publishdir + '/lib/',
   html: publishdir + '/app/src/'
 }
 
@@ -116,11 +119,31 @@ gulp.task('livereload', ['bower', 'css', 'js', 'watch'], function() {
   })
 })*/
 
+gulp.task('scp', shell.task([
+  
+  'scp -r dist/* ruen-t@172.16.252.110:/usr/local/www/apache24/data'
+]))
+gulp.task('injectbuild', function () {
+  
+   var target = gulp.src('app/src/index.html');
+  // It's not necessary to read the files (will speed up things), we're only after their paths: 
+  var sources = gulp.src(['./dist/lib/vendor.js','./dist/lib/app.js','./dist/lib/vendor.css','./dist/lib/app.css'], {read: false});
+   target
+   .pipe(inject(sources, {relative: false, addRootSlash: false,ignorePath: 'dist',name:"build"}))
+   .pipe(htmlmin({collapseWhitespace: true}))
+   .pipe(gulp.dest(publishdir));
+  
+});
 
 gulp.task('minifyhtml', function() {
   return gulp.src(src.html)
     .pipe(htmlmin({collapseWhitespace: true}))
     .pipe(gulp.dest(dist.html));
+});
+gulp.task('minifyJSON', function () {
+    return gulp.src(['./assets/*.json'])
+        .pipe(jsonminify())
+        .pipe(gulp.dest('dist/assets'));
 });
 gulp.task('compress-css', ['css'], function() {
   /*return gulp.src(dist.css+"app.css")
@@ -135,4 +158,8 @@ gulp.task('compress-js', ['js'], function() {
 gulp.task('compress', ['compress-css', 'compress-js'])
 
 gulp.task('default', ['bower', 'css', 'js', 'livereload']) // development
-gulp.task('build', ['bower', 'compress','minifyhtml']) // build for production
+gulp.task('build', ['bower', 'compress','minifyhtml','minifyJSON','injectbuild']) // build for production
+gulp.task('deploy', ['build'], shell.task([
+  
+  'scp -r dist/* ruen-t@172.16.252.110:/usr/local/www/apache24/data'
+]))

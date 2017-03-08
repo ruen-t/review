@@ -166,11 +166,13 @@ function ReviewController($timeout,$scope, $resource,$mdDialog,$mdMenu,$http) {
                 //console.log(response);
                 
                 if(response.data){
-                    console.log(response.data)
+                   // console.log(response.data)
                     var data = response.data;
+                    vm.review=[];
                      for (i in data){
+
                       var managerArray=data[i].pm.concat(data[i].pdm)
-                       vm.review.push({select:false,id:i,manager:managerArray,date:data[i].review_date_start,location:data[i].review_location,development:{development:data[i].development,shop:data[i].shop,title:data[i].review_title},type:data[i].review_type,reviewer:data[i].reviewer})
+                       vm.review.push({select:false,id:data[i].id,manager:managerArray,date:data[i].review_date_start,location:data[i].review_location,development:{development:data[i].development,shop:data[i].shop,title:data[i].review_title},type:data[i].review_type,reviewer:data[i].reviewer})
                     }
 
                     //console.log(vm.review)
@@ -258,8 +260,8 @@ function deleteReview(){///reviewtoolapi/review/{id}/delete/
       confirmButtonText: 'Yes, delete it!'
   }).then(function () {
     $.ajax({
-    url: "http://172.16.252.110/reviewtoolapi/review/"+id+"/edit",
-    type: 'GET',
+    url: deleteAPI+id,
+    type: 'DELETE',
     success: function(result) {
         // Do something with the result
         vm.fetchData();
@@ -271,9 +273,9 @@ function deleteReview(){///reviewtoolapi/review/{id}/delete/
       }
     });
 
-    /*$http({
+  /*  $http({
               method: 'DELETE',
-              url: deleteAPI+id+"/delete",
+              url: deleteAPI+id,
               //data:$.param({control_op:0}),
               
             }).then(function successCallback(response) {

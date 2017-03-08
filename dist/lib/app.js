@@ -1,0 +1,586 @@
+$(function(){
+    var headHeight = $('header').outerHeight();
+
+    $('body').css('padding-top', headHeight + 40);
+});
+var hostName= "http://172.16.252.110/"
+var deleteAPI = hostName+"reviewtoolapi/review/edit/"
+
+
+
+angular.module('login', ['datatables', 'ngResource'])
+.controller('LoginController', LoginController);
+
+
+function LoginController ($resource,$translate) {
+	
+}
+
+
+
+ angular.module('main', ["ngResource","ngRoute",'sidenav','review','login','pascalprecht.translate','reviewmodify'])
+.controller('MainController', MainController)
+.directive('mainPage',reviewHtml)
+.directive('logo',logoHtml)
+/*var translationsEN = {
+  DATE: 'Date',
+  REVIEWER: 'Reviewer',
+  SHOP: 'Shop',
+  PROJECT: 'Project',
+  DEVELOPMENT: 'Development',
+  TYPE: 'Type',
+  LOCATION: 'Location',
+  COMMENT: 'Comment',
+  BUTTON_LANG_JP: 'Japanese',
+  BUTTON_LANG_EN: 'English'
+};
+ var translationsJP = {
+  DATE: '日付',
+  REVIEWER: 'レビューア',
+  SHOP: 'ショップ',
+  PROJECT: 'プロジェクト',
+  DEVELOPMENT: '開発',
+  TYPE: '種類',
+  LOCATION: '場所',
+  COMMENT: 'コメント',
+  BUTTON_LANG_JP: '日本語',
+  BUTTON_LANG_EN: '英語'
+};
+
+app.config(['$translateProvider', function ($translateProvider) {
+  // add translation tables
+
+      $translateProvider.translations('en', translationsEN);
+      $translateProvider.translations('jp', translationsJP);
+      $translateProvider.preferredLanguage('jp');
+      $translateProvider.fallbackLanguage('en');
+
+  
+  
+}]);*/
+.config(['$translateProvider', function ($translateProvider) {
+  // add translation tables
+
+$translateProvider.useStaticFilesLoader({
+    'prefix': 'assets/lang-',
+    'suffix': '.json'
+});
+$translateProvider.preferredLanguage('jp');
+$translateProvider.forceAsyncReload(true);
+  
+}])
+.config(function($routeProvider,$locationProvider) {
+    $routeProvider
+    .when("/", {
+        templateUrl : "app/src/review.html",
+        controller: "ReviewController",
+        controllerAs:"vm"
+    })
+    .when("/review",{
+        templateUrl : "app/src/review.html",
+        controller: "ReviewController",
+        controllerAs:"vm"
+    })
+    .when("/login",{
+        templateUrl : "app/src/login.html",
+        controller: "LoginController",
+        controllerAs:"vm"
+    })
+    .when("/addReview",{
+        templateUrl : "app/src/addreview.html",
+        controller: "ReviewModifyController",
+        controllerAs:"vm"
+    })
+    .otherwise({redirectTo:'/'});
+   //$locationProvider.html5Mode(true);
+})
+.config(function($mdDateLocaleProvider) {
+    $mdDateLocaleProvider.formatDate = function(date) {
+       return moment(date).format('YYYY-MM-DD');
+    };
+})
+
+function MainController($translate,$resource,$scope) {
+    var vm = this;
+  
+    this.message = "hello";
+    var headHeight = $('header').outerHeight();
+
+
+    $('body').css('padding-top', headHeight + 30);
+  vm.changeLanguage = function (langKey) {
+    $translate.use(langKey);
+  };
+  $("header").on("click","#langEN",function(){
+    console.log("click")
+    $translate.use("en");
+  })
+  $("header").on("click","#langJP",function(){
+    vm.changeLanguage("jp")
+  })
+  //vm.changeLanguage("en")
+}
+
+function reviewHtml(){
+	return {
+			restrict: 'E',
+			templateUrl: 'app/src/review.html'
+		};
+}
+function logoHtml(){
+	return {
+			restrict: 'E',
+			templateUrl: 'app/src/logo.html'
+		};
+}
+
+var review =[
+//{id:1,date:"2017-01-11T05:18:27",selected:true,shop:"BRAND",project:"CharaTV",development:"Check for bugs",type:"CDR",location:"AA3I",comment:"hello"},
+];
+angular.module('review', ['datatables', 'ngResource','ngMaterial','datatables.scroller'])
+.controller('ReviewController', ReviewController)
+.config(function($mdIconProvider) {
+    $mdIconProvider
+      .defaultIconSet('img/icons/sets/core-icons.svg', 24);
+  })
+.config(function ($httpProvider) {
+  $httpProvider.defaults.headers.common = {};
+  $httpProvider.defaults.headers.post = {};
+  $httpProvider.defaults.headers.put = {};
+  $httpProvider.defaults.headers.delete = {};
+  $httpProvider.defaults.headers.patch = {};
+})
+  .filter('keyboardShortcut', function($window) {
+    return function(str) {
+      if (!str) return;
+      var keys = str.split('-');
+      var isOSX = /Mac OS X/.test($window.navigator.userAgent);
+
+      var seperator = (!isOSX || keys.length > 2) ? '+' : '';
+
+      var abbreviations = {
+        M: isOSX ? '⌘' : 'Ctrl',
+        A: isOSX ? 'Option' : 'Alt',
+        S: 'Shift'
+      };
+
+      return keys.map(function(key, index) {
+        var last = index == keys.length - 1;
+        return last ? key : abbreviations[key];
+      }).join(seperator);
+    };
+  })
+
+var hasSelected=false;
+function ReviewController($timeout,$scope, $resource,$mdDialog,$mdMenu,$http) {
+    var vm = this;
+    vm.hasSelected = hasSelected;
+    vm.reviewSelect = reviewSelect;
+    vm.checkSelected = checkSelected;
+    vm.deleteReview = deleteReview;
+    vm.fetchData = fetchData;
+    vm.changeday = changeday;
+    vm.sameDate = sameDate;
+    vm.toggleDateFilter=toggleDateFilter;
+    vm.datatableSearch  = datatableSearch;
+    vm.dtInstance = {};
+    vm.dateFilter = false;
+
+    vm.refreshFlag = false;
+    vm.countRender = 0;
+    vm.reviewDate;
+
+        vm.dtOptions = {
+            dom         : 'rt<"bottom"<"left"<"length"l>><"right"<"info"i><"pagination"p>>>',
+            columnDefs  : [
+                {
+                    // Target the id column
+                    targets: 0,
+                    width  : '50px'
+                },
+                {
+                    // Target the id column
+                    targets: 1,
+                    width  : '200px'
+                },
+                {
+                    // Target the id column
+                    targets: 2,
+                    width  : '200px'
+                },
+                {
+                    // Target the id column
+                    targets: 3,
+                    width  : '400px'
+                },
+                {
+                    // Target the id column
+                    targets: 4,
+                    width  : '130px'
+                },
+                {
+                    // Target the id column
+                    targets: 5,
+                    width  : '200px'
+                },
+                {
+                    // Target the id column
+                    targets: 6,
+                    width  : '200px'
+                },
+                {
+                    // Target the id column
+                    targets: 7,
+                    width  : '50px'
+                },
+                
+            ],
+             initComplete:function(){ 
+             //init complete will be called twice after table is created and after table is fully loaded
+
+                if(vm.countRender==0){
+                    vm.fetchData();
+                }
+
+                vm.countRender++;
+               // console.log(this)
+                var api = this.api(),
+
+                    searchBox = angular.element('body').find('#review_search');
+
+                   // console.log(searchBox)
+
+                // Bind an external input as a table wide search box
+                if ( searchBox.length > 0 )
+                {
+                    console.log("trigger event")
+                    searchBox.on('keyup', function (event)
+                    { 
+                        
+                       api.search(event.target.value).draw();
+                        //console.log(event.target.value);
+                    });
+                }
+                vm.changeday(0)
+                
+           },
+           //serverSide :true,
+           //destroy:true,
+            pagingType  : 'full_numbers',
+            lengthMenu  : [[10, 30, 50, 100,-1],[10, 30, 50, 100,"All"]],
+            pageLength  : -1,
+            scrollY     : '550',
+            responsive  : true,
+           // rowCallback : rowCallback,
+           // processing : true,
+
+        };
+        vm.review=[];
+        
+
+   
+   vm.openMenu= function () {
+     
+      $mdMenu.open();
+
+    };
+  
+
+ function fetchData(){
+  //console.log("fetch")
+  var today = new Date();
+  
+
+  $http({
+              method: 'GET',
+              url:  "http://172.16.252.110/reviewtoolapi/review/",
+              //data:$.param({control_op:0}),
+              headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+            }).then(function successCallback(response) {
+                // this callback will be called asynchronously
+                // when the response is available
+                //console.log(response);
+                
+                if(response.data){
+                   // console.log(response.data)
+                    var data = response.data;
+                    vm.review=[];
+                     for (i in data){
+
+                      var managerArray=data[i].pm.concat(data[i].pdm)
+                       vm.review.push({select:false,id:data[i].id,manager:managerArray,date:data[i].review_date_start,location:data[i].review_location,development:{development:data[i].development,shop:data[i].shop,title:data[i].review_title},type:data[i].review_type,reviewer:data[i].reviewer})
+                    }
+
+                    //console.log(vm.review)
+                  //  vm.dtInstance.rerender();
+                   // vm.changeday(0)
+                }
+                 //console.log("data is loaded")
+                
+               // $scope.$apply();
+              }, function errorCallback(data, status, headers, config) {
+                // called asynchronously if an error occurs
+                // or server returns response with an error status.
+              });
+} 
+function toggleDateFilter(){
+  vm.dateFilter = !vm.dateFilter
+  if(!vm.dateFilter){
+   $("#reviewTable").DataTable().search("",true,true).draw();
+  }else{
+     
+    vm.changeday(0)
+  }
+  console.log(vm.dateFilter)
+}
+function changeday(day){
+ if(!vm.dateFilter)return;
+  var currentDate;
+//console.log(tomorrow.toLocaleDateString())
+  if(vm.reviewDate){
+    var currentDate = new Date(vm.reviewDate)
+   // console.log(currentDate.toLocaleDateString())
+   // dateObj.setDate((new Date(vm.reviewDate)) + 1000*3600*24)
+    currentDate.setDate(currentDate.getDate()+day);
+    //console.log(currentDate.toLocaleDateString())
+  
+  }else{
+    currentDate=new Date();
+  }
+  
+  vm.reviewDate=currentDate;
+  datatableSearch(currentDate)
+}
+function sameDate(date1,date2){
+  var d1 = new Date(date1);
+  var d2 = new Date(date2);
+  console.log(d1.getTime() === d2.getTime())
+  return d1.getTime() === d2.getTime();
+}
+function datatableSearch(val){
+ // console.log("SearchDate")
+  //console.log(val)
+  var dateObj = new Date(val);
+  var month = dateObj.getUTCMonth() + 1; //months from 1-12
+var day = dateObj.getDate();
+var year = dateObj.getFullYear();
+var monthStr = ""
+var dayStr = ""
+if(month<10){
+  monthStr = "0"+month
+}else{
+  monthStr = month;
+}
+if(day<10){
+dayStr = "0"+day;
+}else{
+  dayStr=day;
+}
+var newdate = year + "-" + monthStr + "-" + dayStr;
+ // console.log("searchDate:"+newdate)
+  $("#reviewTable").DataTable().search(newdate,true,true).draw();
+ // console.log($("#reviewTable"))
+
+}
+function deleteReview(){///reviewtoolapi/review/{id}/delete/
+  var id = getselectedReview();
+  console.log(id);
+  console.log(deleteAPI)
+    swal({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      type: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!'
+  }).then(function () {
+    $.ajax({
+    url: deleteAPI+id,
+    type: 'DELETE',
+    success: function(result) {
+        // Do something with the result
+        vm.fetchData();
+                swal(
+                  'Deleted!',
+                  'Your file has been deleted.',
+                  'success'
+                )
+      }
+    });
+
+  /*  $http({
+              method: 'DELETE',
+              url: deleteAPI+id,
+              //data:$.param({control_op:0}),
+              
+            }).then(function successCallback(response) {
+                vm.fetchData();
+                swal(
+                  'Deleted!',
+                  'Your file has been deleted.',
+                  'success'
+                )
+              }, function errorCallback(data, status, headers, config) {
+                // called asynchronously if an error occurs
+                // or server returns response with an error status.
+        });*/
+   } 
+    
+  )
+  
+  
+
+}
+function checkSelected(){
+  return vm.hasSelected;
+}
+function getselectedReview(){
+  for(var i =0;i<vm.review.length;i++){
+    
+   if(vm.review[i].selected)return vm.review[i].id;
+  }
+  return -1
+}
+function reviewSelect(id){
+  //console.log(id)
+  var selected_review = getReview(id);
+  if(!selected_review){
+    //console.log("no")
+    vm.hasSelected = false;
+  }else{
+    //console.log(selected_review.id)
+    var check =!selected_review.selected;
+    clearSelectReview();
+    selected_review.selected = check;
+    vm.hasSelected = check;
+    //console.log(hasSelected)
+
+  }
+
+}
+function clearSelectReview(){
+  for(var i =0;i<vm.review.length;i++){
+   vm.review[i].selected=false;
+  }
+}
+function getReview(id){
+  
+  for(var i =0;i<vm.review.length;i++){
+    if(vm.review[i].id==id)return vm.review[i];
+  }
+  return null;
+}  
+   
+}
+
+
+
+var ReviewModifyController =['$resource','$translate', function ($resource,$translate) {
+    var vm = this;
+    vm.message = "hello this is a add page"
+   
+   
+}]
+angular.module('reviewmodify', ['datatables', 'ngResource'])
+.controller('ReviewModifyController', ReviewModifyController);
+
+
+
+
+
+
+angular
+  .module('sidenav', ['ngMaterial'])
+  .controller('AppCtrl',['$scope', '$timeout', '$mdSidenav', '$log', function ($scope, $timeout, $mdSidenav, $log) {
+    var vm = this;
+    vm.toggleLeft = buildDelayedToggler('left');
+    $scope.toggleLeft = buildDelayedToggler('left');
+    $scope.toggleRight = buildToggler('right');
+    $scope.isOpenRight = function(){
+      return $mdSidenav('right').isOpen();
+    };
+    $("header").on("click","#wni-header #menu",function(){
+      console.log("hello")
+      vm.toggleLeft();
+    })
+    $scope.closeLeft = function () {
+     
+      $mdSidenav('left').close()
+        .then(function () {
+          $log.debug("close LEFT is done");
+        });
+
+    };
+   
+    vm.data = [
+    {name:"Login",href:"#/login",icon:"lock"},
+     {name:"Review",href:"#/review",icon:"description"},
+
+      {name:"Manual",href:"#/manual",icon:"grade"},
+      {name:"Print",href:"#/new",icon:"print"},
+    ];
+    /**
+     * Supplies a function that will continue to operate until the
+     * time is up.
+     */
+    
+    function debounce(func, wait, context) {
+      var timer;
+
+      return function debounced() {
+        var context = $scope,
+            args = Array.prototype.slice.call(arguments);
+        $timeout.cancel(timer);
+        timer = $timeout(function() {
+          timer = undefined;
+          func.apply(context, args);
+        }, wait || 10);
+      };
+    }
+
+    /**
+     * Build handler to open/close a SideNav; when animation finishes
+     * report completion in console
+     */
+    function buildDelayedToggler(navID) {
+      return debounce(function() {
+        // Component lookup should always be available since we are not using `ng-if`
+        $mdSidenav(navID)
+          .toggle()
+          .then(function () {
+            $log.debug("toggle " + navID + " is done");
+          });
+      }, 200);
+    }
+
+    function buildToggler(navID) {
+      return function() {
+        // Component lookup should always be available since we are not using `ng-if`
+        $mdSidenav(navID)
+          .toggle()
+          .then(function () {
+            $log.debug("toggle " + navID + " is done");
+          });
+      };
+    }
+  }])
+  .controller('LeftCtrl',['$scope', '$timeout', '$mdSidenav', '$log', function ($scope, $timeout, $mdSidenav, $log) {
+    $scope.close = function () {
+      // Component lookup should always be available since we are not using `ng-if`
+      $mdSidenav('left').close()
+        .then(function () {
+          $log.debug("close LEFT is done");
+        });
+
+    };
+  }])
+  .controller('RightCtrl',['$scope', '$timeout', '$mdSidenav', '$log', function ($scope, $timeout, $mdSidenav, $log) {
+    $scope.close = function () {
+      // Component lookup should always be available since we are not using `ng-if`
+      $mdSidenav('right').close()
+        .then(function () {
+          $log.debug("close RIGHT is done");
+        });
+    };
+  }]);
