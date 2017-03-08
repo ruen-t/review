@@ -1,2 +1,9 @@
-var hostName= "http://172.16.252.110/"
-var deleteAPI = hostName+"reviewtoolapi/review/edit/"
+var hostName= "http://172.16.252.110/";
+var deleteAPI = hostName+"reviewtoolapi/review/edit/";
+var getEmployeeAPI = hostName+"reviewtoolapi/employee/";
+var getShopAPI = hostName+"reviewtoolapi/master/Shop/";
+var getMeetingSpaceAPI =hostName+"reviewtoolapi/master/MeetSpace/";
+var getProjectListAPI = hostName+"reviewtoolapi/project/";
+var getProjectMemberAPI = hostName+"reviewtoolapi/project/members/?project=";
+var getReviewTypeAPI =  hostName+"reviewtoolapi/master/RevType/";
+var getRoleAPI = hostName+"reviewtoolapi/master/Role/";

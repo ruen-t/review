@@ -1,4 +1,4 @@
- angular.module('main', ["ngResource","ngRoute",'sidenav','review','login','pascalprecht.translate','reviewmodify'])
+ angular.module('main', ["ngResource","ngRoute",'sidenav','review','login','pascalprecht.translate','reviewmodify','manual'])
 .controller('MainController', MainController)
 .directive('mainPage',reviewHtml)
 .directive('logo',logoHtml)
@@ -71,6 +71,11 @@ $translateProvider.forceAsyncReload(true);
         controller: "ReviewModifyController",
         controllerAs:"vm"
     })
+    .when("/manual",{
+        templateUrl : "app/src/manual.html",
+        controller: "ManualController",
+        controllerAs:"vm"
+    })
     .otherwise({redirectTo:'/'});
    //$locationProvider.html5Mode(true);
 })
@@ -79,8 +84,17 @@ $translateProvider.forceAsyncReload(true);
        return moment(date).format('YYYY-MM-DD');
     };
 })
+.config(function ($httpProvider) {
+  $httpProvider.defaults.headers.common = {};
+  $httpProvider.defaults.headers.post = {};
+  $httpProvider.defaults.headers.put = {};
+  $httpProvider.defaults.headers.patch = {};
+})
 
-function MainController($translate,$resource,$scope) {
+
+
+function MainController($translate,$resource,$scope,$rootScope) {
+
     var vm = this;
   
     this.message = "hello";
@@ -94,9 +108,11 @@ function MainController($translate,$resource,$scope) {
   $("header").on("click","#langEN",function(){
     console.log("click")
     $translate.use("en");
+    $scope.$emit("english");
   })
   $("header").on("click","#langJP",function(){
     vm.changeLanguage("jp")
+    $scope.$emit("japanese");
   })
   //vm.changeLanguage("en")
 }
