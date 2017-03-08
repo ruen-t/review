@@ -33,6 +33,10 @@ var reviewers = [
   {id:1,name:"test1",levels:0 },
   {id:2,name:"test2",levels:0 },
 ];
+var documents = [
+  {title:"",type:1,url:"" },
+  {title:"",type:2,url:"" },
+];
 
 var members = [
   {id:1,name:"test",levels:0 },
@@ -44,6 +48,7 @@ var places = [
 var selectedProject ={
   id:-1,project_name:"-------",shop:{id:17,shop_code:"NOCODE",shop_name_en:"---------",shop_name_jp:"---------"}
 }
+
 var ReviewModifyController =['$scope','$resource','$translate',"$http", function ($scope,$resource,$translate,$http) {
   var vm = this;
   vm.message = "hello this is a add page";
@@ -53,7 +58,12 @@ var ReviewModifyController =['$scope','$resource','$translate',"$http", function
   vm.members = members;
   vm.places = places;
   vm.selectedProject = selectedProject;
-  
+  vm.projectSelected = false;
+  vm.developments = [];
+  vm.selectedDevelopmentID =-1;
+  vm.documentTypes =[];
+  vm.documents = documents;
+
   vm.addReviewMember = addReviewMember;
   vm.projects =[];
   vm.projectManager=[];
@@ -62,14 +72,22 @@ var ReviewModifyController =['$scope','$resource','$translate',"$http", function
   vm.places = places;
   vm.revTypes = revTypes;
   vm.fetchMember = fetchMember;
-  vm.projectSelected = false;
-  
+  vm.removeReviewerMember = removeReviewerMember;
   vm.fetchProject = fetchProject;
   vm.saveButtonClick = saveButtonClick;
+  vm.addDocument = addDocument;
+  vm.removeDocument = removeDocument;
+  
 
  $scope.$watch("vm.selectedProject.id",function(newValue,oldValue){
+   if(vm.selectedProject.id>0){
+    vm.projectSelected = true;
+    vm.selectedDevelopmentID=-1;
    changeShop();
-   fetchProjectMember();
+   //fetchProjectMember();
+   fetchDevelopment();
+ }
+  
  })
  
   
@@ -83,8 +101,52 @@ var ReviewModifyController =['$scope','$resource','$translate',"$http", function
    fetchReviewType();
    fetchRole();
   //vm.fetchProject();
+  fetchDocumentType();
   function saveButtonClick(){
+    /*
+    {
+    "review_location": "1",
+    "review_date": "2017-8-20T3:1",
+    "development": "1",
+    "review_type": "2",
+    "review_comment": "This is API test.",
+    "reviewmember_set": [
+         {
+            "employee": "3",
+              "role": "1"
+          }
+      ]
+    }
+    */
     //console.log(vm.projectID);
+    console.log(vm.selectedPlace);
+    vm.selectedType
+    vm.selectedDate
+
+  }
+  function addDocument(){
+    console.log("add documents")
+    vm.documents.reverse();
+   vm.documents.push({title:"",type:-1,url:"" });
+   vm.documents.reverse();
+
+  }
+  function removeDocument(index){
+    vm.documents.splice(index,1)
+  }
+  function fetchDocumentType(){
+    fetchData(getDocumentTypeAPI,"documentTypes")
+  }
+  function fetchDevelopment(){
+    var projectID = vm.selectedProject.id;
+    fetchData(getDevelopmentAPI+projectID,"developments")
+    
+  }
+  function removeReviewerMember(id){
+    console.log(id);
+    for (var i =0;i<vm.reviewers.length;i++){
+      if(vm.reviewers[i].id==id)vm.reviewers.splice(i,1);
+    }
   }
   function fetchProjectMember (){
     $http({
@@ -98,6 +160,7 @@ var ReviewModifyController =['$scope','$resource','$translate',"$http", function
       if(response.data){
 
         var data = response.data;
+
         if(data.length>0){
            vm.projectManager = data;
          // console.log(data)
@@ -128,7 +191,9 @@ var ReviewModifyController =['$scope','$resource','$translate',"$http", function
   }
   function addReviewMember (){
     console.log("add reviewers")
+    vm.reviewers.reverse();
    vm.reviewers.push({id:-1,name:"",levels:-1 });
+   vm.reviewers.reverse();
   }
 
   function fetchMember(){
@@ -148,6 +213,7 @@ var ReviewModifyController =['$scope','$resource','$translate',"$http", function
         array =[]
         var data = response.data;
         vm[arrayname]= data;
+       // console.log(data)
 
       }
     }, function errorCallback(data, status, headers, config) {

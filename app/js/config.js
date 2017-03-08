@@ -7,3 +7,6 @@ var getProjectListAPI = hostName+"reviewtoolapi/project/";
 var getProjectMemberAPI = hostName+"reviewtoolapi/project/members/?project=";
 var getReviewTypeAPI =  hostName+"reviewtoolapi/master/RevType/";
 var getRoleAPI = hostName+"reviewtoolapi/master/Role/";
+var getDevelopmentAPI = hostName+"reviewtoolapi/project/developments/?project=";
+var getDocumentTypeAPI = hostName+ "reviewtoolapi/master/DocType/";
+
