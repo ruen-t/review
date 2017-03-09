@@ -9,4 +9,5 @@ var getReviewTypeAPI =  hostName+"reviewtoolapi/master/RevType/";
 var getRoleAPI = hostName+"reviewtoolapi/master/Role/";
 var getDevelopmentAPI = hostName+"reviewtoolapi/project/developments/?project=";
 var getDocumentTypeAPI = hostName+ "reviewtoolapi/master/DocType/";
-
+var addReviewAPI = hostName+"reviewtoolapi/review/add/";
+var addDocumentAPI = hostName+"/reviewtoolapi/review/document/add/";

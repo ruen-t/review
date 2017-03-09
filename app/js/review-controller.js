@@ -36,7 +36,7 @@ angular.module('review', ['datatables', 'ngResource','ngMaterial','datatables.sc
   })
 
 var hasSelected=false;
-function ReviewController($timeout,$scope, $resource,$mdDialog,$mdMenu,$http) {
+function ReviewController($location,$timeout,$scope, $resource,$mdDialog,$mdMenu,$http) {
     var vm = this;
     vm.hasSelected = hasSelected;
     vm.reviewSelect = reviewSelect;
@@ -47,6 +47,7 @@ function ReviewController($timeout,$scope, $resource,$mdDialog,$mdMenu,$http) {
     vm.sameDate = sameDate;
     vm.toggleDateFilter=toggleDateFilter;
     vm.datatableSearch  = datatableSearch;
+    vm.gotoAddPage = gotoAddPage;
     vm.dtInstance = {};
     vm.dateFilter = false;
 
@@ -148,7 +149,10 @@ function ReviewController($timeout,$scope, $resource,$mdDialog,$mdMenu,$http) {
       $mdMenu.open();
 
     };
-  
+ function gotoAddPage(){
+  //console.log("go")
+   $location.path( "/addReview" );
+ }
 
  function fetchData(){
   //console.log("fetch")
