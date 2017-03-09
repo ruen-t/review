@@ -48,6 +48,7 @@ function ReviewController($location,$timeout,$scope, $resource,$mdDialog,$mdMenu
     vm.toggleDateFilter=toggleDateFilter;
     vm.datatableSearch  = datatableSearch;
     vm.gotoAddPage = gotoAddPage;
+    vm.gotoEditPage = gotoEditPage;
     vm.dtInstance = {};
     vm.dateFilter = false;
 
@@ -61,7 +62,8 @@ function ReviewController($location,$timeout,$scope, $resource,$mdDialog,$mdMenu
                 {
                     // Target the id column
                     targets: 0,
-                    width  : '50px'
+                    width  : '50px',
+                    sortable:false,
                 },
                 {
                     // Target the id column
@@ -135,7 +137,7 @@ function ReviewController($location,$timeout,$scope, $resource,$mdDialog,$mdMenu
             lengthMenu  : [[10, 30, 50, 100,-1],[10, 30, 50, 100,"All"]],
             pageLength  : -1,
             scrollY     : '550',
-            responsive  : true,
+            //responsive  : true,
            // rowCallback : rowCallback,
            // processing : true,
 
@@ -150,8 +152,15 @@ function ReviewController($location,$timeout,$scope, $resource,$mdDialog,$mdMenu
 
     };
  function gotoAddPage(){
-  console.log("go")
+  console.log("go add")
    $location.path( "/addReview" );
+ }
+ function gotoEditPage(){
+  console.log("go edit")
+  var selectedID = getselectedReview();
+  $location.path( "/editReview/"+selectedID );
+
+
  }
 
  function fetchData(){
@@ -161,7 +170,7 @@ function ReviewController($location,$timeout,$scope, $resource,$mdDialog,$mdMenu
 
   $http({
               method: 'GET',
-              url:  "http://172.16.252.110/reviewtoolapi/review/",
+              url:  getReviewAPI,
               //data:$.param({control_op:0}),
               headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
             }).then(function successCallback(response) {
@@ -252,8 +261,8 @@ var newdate = year + "-" + monthStr + "-" + dayStr;
 }
 function deleteReview(){///reviewtoolapi/review/{id}/delete/
   var id = getselectedReview();
-  console.log(id);
-  console.log(deleteAPI)
+  //console.log(id);
+  //console.log(deleteAPI)
     swal({
       title: 'Are you sure?',
       text: "You won't be able to revert this!",

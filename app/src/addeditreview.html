@@ -4,7 +4,8 @@
       <form name="userForm" class="addReview">
 
         <div layout-gt-xs="row" class="saveButton">
-          <md-button class="save" ng-click="vm.saveButtonClick()">{{ 'ADD' | translate }}</md-button>
+          <md-button class="add" ng-click="vm.saveButtonClick()" ng-show="vm.state==0">{{ 'ADD' | translate }}</md-button>
+          <md-button class="edit" ng-click="vm.editButtonClick()" ng-show="vm.state==1">{{ 'EDIT' | translate }}</md-button>
         </div>
         <div style="width: 230px;margin-left: -23px;margin-top:-3px;padding: 20px;background-color: #0B4199;color: white;font-weight: 800;display: -webkit-box;display: -webkit-flex;display: flex;border-radius: 3px;">
         <i class="material-icons">&#xE02E;</i><h3>  {{'ADD_REVIEW_PAGE'|translate}}</h3>

@@ -69,7 +69,12 @@ $translateProvider.useSanitizeValueStrategy('escape');
         controllerAs:"vm"
     })
     .when("/addReview",{
-        templateUrl : "app/src/addreview.html",
+        templateUrl : "app/src/addeditreview.html",
+        controller: "ReviewModifyController",
+        controllerAs:"vm"
+    })
+    .when("/editReview/:id",{
+        templateUrl : "app/src/addeditreview.html",
         controller: "ReviewModifyController",
         controllerAs:"vm"
     })

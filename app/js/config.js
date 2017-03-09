@@ -1,4 +1,6 @@
 var hostName= "http://172.16.252.110/";
+var getReviewAPI = hostName+"reviewtoolapi/review/";
+var getSpecificReviewAPI = getReviewAPI+"?id=";
 var deleteAPI = hostName+"reviewtoolapi/review/edit/";
 var getEmployeeAPI = hostName+"reviewtoolapi/employee/";
 var getShopAPI = hostName+"reviewtoolapi/master/Shop/";
@@ -10,4 +12,6 @@ var getRoleAPI = hostName+"reviewtoolapi/master/Role/";
 var getDevelopmentAPI = hostName+"reviewtoolapi/project/developments/?project=";
 var getDocumentTypeAPI = hostName+ "reviewtoolapi/master/DocType/";
 var addReviewAPI = hostName+"reviewtoolapi/review/add/";
-var addDocumentAPI = hostName+"/reviewtoolapi/review/document/add/";
+var addDocumentAPI = hostName+"reviewtoolapi/review/document/add/";
+var editReviewAPI = hostName+"reviewtoolapi/review/edit/";
+var getReviewDocumentAPI = hostName+"reviewtoolapi/review/documents/?review=";

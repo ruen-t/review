@@ -49,22 +49,79 @@ var selectedProject ={
   id:-1,project_name:"-------",shop:{id:17,shop_code:"NOCODE",shop_name_en:"---------",shop_name_jp:"---------"}
 }
 
-var ReviewModifyController =['$location','$scope','$resource','$translate',"$http", function ($location,$scope,$resource,$translate,$http) {
+var ReviewModifyController =['$routeParams','$location','$scope','$resource','$translate',"$http", function ($routeParams,$location,$scope,$resource,$translate,$http) {
   var vm = this;
-  vm.message = "hello this is a add page";
+   vm.state =0; //0 -> add, 1-> edit
+  vm.editId = $routeParams.id;
+  console.log(vm.editId)
+
+    vm.reviewers =reviewers;
+    vm.members = members;
+    vm.places = places;
+    vm.selectedProject = selectedProject;
+    vm.projectSelected = false;
+    vm.developments = [];
+    vm.selectedDevelopmentID =-1;
+    vm.documentTypes =[];
+    vm.documents = documents;
+    vm.startDate = new Date();
+    vm.endDate = new Date();
+    vm.editReview ={};
+  if(!vm.editId){
+    vm.state=0;
+
+  }else{
+    vm.state=1;
+    $http({
+      method: 'GET',
+      url:  getSpecificReviewAPI+vm.editId,
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+    }).then(function successCallback(response) {
+ 
+      if(response.data){
+        var data = response.data[0];
+        console.log(data)
+        vm.projectSelected = true;
+        vm.reviewTitle =data.review_title;
+        vm.selectedPlace = data.review_location.id;
+        vm.startDate = new Date(data.review_date_start);
+        vm.endDate = new Date(data.review_date_end);
+        vm.selectedDevelopmentID=data.development.id;
+        vm.selectedProject = data.project;
+        vm.selectedType = data.review_type.id;
+        vm.comment = data.review_comment;
+        vm.reviewers =[];
+        for(i in data.reviewmember_set){
+          var reviewer = data.reviewmember_set[i];
+          vm.reviewers.push({employee:reviewer.employee.id,role:reviewer.role.id});
+        }
+      }
+    }, function errorCallback(data, status, headers, config) {
+      // called asynchronously if an error occurs
+      // or server returns response with an error status.
+    });
+    $http({
+      method: 'GET',
+      url:  getReviewDocumentAPI+vm.editId,
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+    }).then(function successCallback(response) {
+ 
+      if(response.data){
+       console.log(response.data);
+       var data = response.data;
+       for(i in data){
+        vm.documents.push({url:data[i].document_url,title:data[i].document_title,type:data[i].document_type});
+       }
+
+      }
+    }, function errorCallback(data, status, headers, config) {
+      // called asynchronously if an error occurs
+      // or server returns response with an error status.
+    });
+
+  }
 
 
-  vm.reviewers = reviewers;
-  vm.members = members;
-  vm.places = places;
-  vm.selectedProject = selectedProject;
-  vm.projectSelected = false;
-  vm.developments = [];
-  vm.selectedDevelopmentID =-1;
-  vm.documentTypes =[];
-  vm.documents = documents;
-  vm.startDate = new Date();
-  vm.endDate = new Date();
 
 
   vm.addReviewMember = addReviewMember;
@@ -80,16 +137,17 @@ var ReviewModifyController =['$location','$scope','$resource','$translate',"$htt
   vm.saveButtonClick = saveButtonClick;
   vm.addDocument = addDocument;
   vm.removeDocument = removeDocument;
+  vm.editButtonClick = editButtonClick;
   
 
  $scope.$watch("vm.selectedProject.id",function(newValue,oldValue){
    if(vm.selectedProject.id>0){
     vm.projectSelected = true;
-    vm.selectedDevelopmentID=-1;
-   changeShop();
+   if(vm.state==0) vm.selectedDevelopmentID=-1;
+    changeShop();
    //fetchProjectMember();
    fetchDevelopment();
- }
+   }
   
  })
  
@@ -105,41 +163,29 @@ var ReviewModifyController =['$location','$scope','$resource','$translate',"$htt
    fetchRole();
   //vm.fetchProject();
   fetchDocumentType();
+  function editButtonClick(){
+    vm.reviewers.forEach(function(v){ delete v.$$hashKey; delete v.object });
+    var start_date = new Date(vm.startDate).toJSON();
+    var end_date = new Date(vm.endDate).toJSON();
+    var json = {review_title:vm.reviewTitle,review_location:vm.selectedPlace,review_date_start: start_date,review_date_end: end_date,development:vm.selectedDevelopmentID,review_type:vm.selectedType,review_comment:vm.comment,reviewmember_set:vm.reviewers}
+    var json_str =JSON.stringify(json);
+    console.log(json_str)
+    $http({
+      method: 'POST',
+      url:  editReviewAPI+vm.editId,
+      data:json_str,
+      headers: { 'Content-Type': 'application/json' }
+    }).then(function successCallback(response) {
+ 
+       if(response.data){
+          console.log(response.data)
+         }
+         
+
+       });
+
+  }
   function saveButtonClick(){
-    /*
-    {
-  "development": "string", (Development Code) -> I guess we don’t need to ask for “shop” because it will be derived from the Development Code, such that Development Code -> development(id) -> shop(id) -> shop name en
-  "review_comment": "string",  (Comment)
-  "reviewmember_set": [ (Name?, Email, Role)
-    "string" 
-  ],
-  "review_date_end": "string", (End)
-  "review_type": "string", (PSR, CDR, RR, etc)
-  "review_date_start": "string", (Start)
-  "review_location": "string", (Place)
-  "review_title": "string" (user given title)
-}
-    
-{
-  
-  "document_url": "string",
-  "active": true,
-  "document_type": "string",
-  "review": "string",
-  "document_title": "string"
-
-}
-
-    */ swal(
-            'New Review Added',
-            '',
-            'success'
-          ).then(function(){
-
-              $location.path( "/review" );
-              console.log("reload")
-          });
-       return;
    
     //console.log(vm.projectID);
     vm.reviewers.forEach(function(v){ delete v.$$hashKey; delete v.object });
@@ -158,18 +204,19 @@ var ReviewModifyController =['$location','$scope','$resource','$translate',"$htt
        if(response.data){
          var createdID = response.data.id;
          for(var i = 0;i<vm.documents.length;i++){
-          var doc = {document_url:documents[i].url,document_type:documents[i].type,document_title:documents[i].title,review:createdID};
+          var doc = {document_url:vm.documents[i].url,document_type:vm.documents[i].type,document_title:vm.documents[i].title,review:createdID};
           var json_doc = JSON.stringify(doc);
           console.log(json_doc)
           submitDucument(json_doc);
          
          }
+          $location.path( "/review" );
           swal(
             'New Review Added',
             '',
             'success'
           ).then(function(){
-              $location.path( "/" );
+              //$location.path( "/" );
           });
        
 
@@ -184,6 +231,7 @@ var ReviewModifyController =['$location','$scope','$resource','$translate',"$htt
    
 
   }
+
   function submitDucument(data){
     $http({
       method: 'POST',
