@@ -1,4 +1,4 @@
- angular.module('main', ["ngResource","ngRoute",'sidenav','review','login','pascalprecht.translate','reviewmodify','manual'])
+ angular.module('main', ['angular-loading-bar',"ngResource","ngRoute",'sidenav','review','login','pascalprecht.translate','reviewmodify','manual'])
 .controller('MainController', MainController)
 .directive('mainPage',reviewHtml)
 .directive('logo',logoHtml)
@@ -48,7 +48,7 @@ $translateProvider.useStaticFilesLoader({
 $translateProvider.preferredLanguage('jp');
 
 $translateProvider.forceAsyncReload(true);
-$translateProvider.useSanitizeValueStrategy('escape');
+//$translateProvider.useSanitizeValueStrategy('escape');
   
 }])
 .config(function($routeProvider,$locationProvider) {

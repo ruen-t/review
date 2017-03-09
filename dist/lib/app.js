@@ -17,8 +17,9 @@ var getRoleAPI = hostName+"reviewtoolapi/master/Role/";
 var getDevelopmentAPI = hostName+"reviewtoolapi/project/developments/?project=";
 var getDocumentTypeAPI = hostName+ "reviewtoolapi/master/DocType/";
 var addReviewAPI = hostName+"reviewtoolapi/review/add/";
-var addDocumentAPI = hostName+"/reviewtoolapi/review/document/add/";
+var addDocumentAPI = hostName+"reviewtoolapi/review/document/add/";
 var editReviewAPI = hostName+"reviewtoolapi/review/edit/";
+var getReviewDocumentAPI = hostName+"reviewtoolapi/review/documents/?review=";
 
 
 
@@ -32,7 +33,7 @@ function LoginController ($resource,$translate) {
 
 
 
- angular.module('main', ["ngResource","ngRoute",'sidenav','review','login','pascalprecht.translate','reviewmodify','manual'])
+ angular.module('main', ['angular-loading-bar',"ngResource","ngRoute",'sidenav','review','login','pascalprecht.translate','reviewmodify','manual'])
 .controller('MainController', MainController)
 .directive('mainPage',reviewHtml)
 .directive('logo',logoHtml)
@@ -82,7 +83,7 @@ $translateProvider.useStaticFilesLoader({
 $translateProvider.preferredLanguage('jp');
 
 $translateProvider.forceAsyncReload(true);
-$translateProvider.useSanitizeValueStrategy('escape');
+//$translateProvider.useSanitizeValueStrategy('escape');
   
 }])
 .config(function($routeProvider,$locationProvider) {
@@ -617,7 +618,6 @@ var ReviewModifyController =['$routeParams','$location','$scope','$resource','$t
     $http({
       method: 'GET',
       url:  getSpecificReviewAPI+vm.editId,
-      //data:$.param({control_op:0}),
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
     }).then(function successCallback(response) {
  
@@ -636,18 +636,31 @@ var ReviewModifyController =['$routeParams','$location','$scope','$resource','$t
         vm.reviewers =[];
         for(i in data.reviewmember_set){
           var reviewer = data.reviewmember_set[i];
-          vm.reviewers.push({employee:reviewer.employee.id,role:reviewer.role.id})
-
+          vm.reviewers.push({employee:reviewer.employee.id,role:reviewer.role.id});
         }
-
-
+      }
+    }, function errorCallback(data, status, headers, config) {
+      // called asynchronously if an error occurs
+      // or server returns response with an error status.
+    });
+    $http({
+      method: 'GET',
+      url:  getReviewDocumentAPI+vm.editId,
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+    }).then(function successCallback(response) {
+ 
+      if(response.data){
+       console.log(response.data);
+       var data = response.data;
+       for(i in data){
+        vm.documents.push({url:data[i].document_url,title:data[i].document_title,type:data[i].document_type});
+       }
 
       }
     }, function errorCallback(data, status, headers, config) {
       // called asynchronously if an error occurs
       // or server returns response with an error status.
     });
-
 
   }
 
@@ -702,7 +715,7 @@ var ReviewModifyController =['$routeParams','$location','$scope','$resource','$t
     console.log(json_str)
     $http({
       method: 'PUT',
-      url:  editReviewAPI+vm.editId,
+      url:  editReviewAPI+vm.editId+"/",
       data:json_str,
       headers: { 'Content-Type': 'application/json' }
     }).then(function successCallback(response) {
@@ -734,7 +747,7 @@ var ReviewModifyController =['$routeParams','$location','$scope','$resource','$t
        if(response.data){
          var createdID = response.data.id;
          for(var i = 0;i<vm.documents.length;i++){
-          var doc = {document_url:documents[i].url,document_type:documents[i].type,document_title:documents[i].title,review:createdID};
+          var doc = {document_url:vm.documents[i].url,document_type:vm.documents[i].type,document_title:vm.documents[i].title,review:createdID};
           var json_doc = JSON.stringify(doc);
           console.log(json_doc)
           submitDucument(json_doc);

@@ -171,8 +171,8 @@ var ReviewModifyController =['$routeParams','$location','$scope','$resource','$t
     var json_str =JSON.stringify(json);
     console.log(json_str)
     $http({
-      method: 'POST',
-      url:  editReviewAPI+vm.editId,
+      method: 'PUT',
+      url:  editReviewAPI+vm.editId+"/",
       data:json_str,
       headers: { 'Content-Type': 'application/json' }
     }).then(function successCallback(response) {

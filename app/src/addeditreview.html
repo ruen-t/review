@@ -36,7 +36,7 @@
           
             <md-input-container class="md-block" flex-gt-sm >
               <label>{{ 'PROJECT_NAME' | translate }}</label>
-              <md-select ng-model="vm.selectedProject.id"　required>
+              <md-select ng-model="vm.selectedProject.id" placeholder="{{ 'PROJECT_NAME' | translate }}" required>
                 <md-option ng-repeat="project in vm.projects" value="{{project.id}}">
                   {{project.project_name}}
                 </md-option>
@@ -44,7 +44,7 @@
             </md-input-container>
              <md-input-container class="md-block" flex-gt-sm  ng-show="vm.projectSelected">
               <label>{{ 'DEVELOPMENT_CODE' | translate }}</label>
-              <md-select ng-model="vm.selectedDevelopmentID"　required>
+              <md-select ng-model="vm.selectedDevelopmentID" placeholder="{{ 'DEVELOPMENT_CODE' | translate }}"　required>
                 <md-option ng-repeat="dev in vm.developments" value="{{dev.id}}">
                   {{dev.development_code}}
                 </md-option>
@@ -77,7 +77,7 @@
 
             <md-input-container class="md-block" flex-gt-sm>
               <label>{{ 'REVIEW_TYPE' | translate }}</label>
-              <md-select ng-model="vm.selectedType" 　required>
+              <md-select ng-model="vm.selectedType" placeholder="{{ 'REVIEW_TYPE' | translate }}"　required>
                 <md-option ng-repeat="value in vm.revTypes" value="{{value.id}}">
                   {{value.revtype_name_en}}
                 </md-option>
@@ -86,7 +86,7 @@
 
             <md-input-container class="md-block" flex-gt-sm>
               <label>{{ 'LOCATION' | translate }}</label>
-              <md-select ng-model="vm.selectedPlace" 　required>
+              <md-select ng-model="vm.selectedPlace" placeholder="{{ 'LOCATION' | translate }}"　required>
                 <md-option ng-repeat="value in vm.places" value="{{value.id}}">
                   {{value.meetspace_name_en}}
                 </md-option>
@@ -107,7 +107,7 @@
             <div layout-gt-xs="row" ng-repeat="reviewer in vm.reviewers" >
               <md-input-container class="md-block" flex-gt-sm>
                 <label>{{ 'ROLE' | translate }}</label>
-                <md-select ng-model="reviewer.role" 　required>
+                <md-select ng-model="reviewer.role" placeholder="{{ 'ROLE' | translate }}"　required>
                   <md-option ng-repeat="value in vm.roles" value="{{value.id}}">
                     {{value.role_name_en}}
                   </md-option>
@@ -115,7 +115,7 @@
               </md-input-container>
               <md-input-container class="md-block" flex-gt-sm>
                 <label>{{ 'EMPLOYEE' | translate }}</label>
-                <md-select ng-model="reviewer.employee" 　required>
+                <md-select ng-model="reviewer.employee" placeholder="{{ 'EMPLOYEE' | translate }}"　required>
                   <md-option ng-repeat="employee in vm.employees" value="{{employee.id}}">
                     {{employee.employee_name}}
                   </md-option>
@@ -145,7 +145,7 @@
             <div layout-gt-xs="row" ng-repeat="document in vm.documents" >
            <md-input-container class="md-block"  flex-gt-sm >
               <label>{{ 'DOCUMENT_TYPE' | translate }}</label>
-              <md-select ng-model="document.type"　required>
+              <md-select ng-model="document.type" placeholder="{{ 'DOCUMENT_TYPE' | translate }}">
                 <md-option ng-repeat="type in vm.documentTypes" value="{{type.id}}">
                   {{type.doctype_name_en}}
                 </md-option>
