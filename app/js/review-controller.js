@@ -150,7 +150,7 @@ function ReviewController($location,$timeout,$scope, $resource,$mdDialog,$mdMenu
 
     };
  function gotoAddPage(){
-  //console.log("go")
+  console.log("go")
    $location.path( "/addReview" );
  }
 

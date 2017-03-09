@@ -34,8 +34,8 @@ var reviewers = [
  /* {id:2,role:2 },*/
 ];
 var documents = [
-  {title:"",type:1,url:"" },
-  {title:"",type:2,url:"" },
+  {title:"",type:-1,url:"" },
+  
 ];
 
 var members = [
@@ -49,7 +49,7 @@ var selectedProject ={
   id:-1,project_name:"-------",shop:{id:17,shop_code:"NOCODE",shop_name_en:"---------",shop_name_jp:"---------"}
 }
 
-var ReviewModifyController =['$scope','$resource','$translate',"$http", function ($scope,$resource,$translate,$http) {
+var ReviewModifyController =['$location','$scope','$resource','$translate',"$http", function ($location,$scope,$resource,$translate,$http) {
   var vm = this;
   vm.message = "hello this is a add page";
 
@@ -63,7 +63,8 @@ var ReviewModifyController =['$scope','$resource','$translate',"$http", function
   vm.selectedDevelopmentID =-1;
   vm.documentTypes =[];
   vm.documents = documents;
-  vm.selectedDate = new Date();
+  vm.startDate = new Date();
+  vm.endDate = new Date();
 
 
   vm.addReviewMember = addReviewMember;
@@ -129,13 +130,23 @@ var ReviewModifyController =['$scope','$resource','$translate',"$http", function
 
 }
 
-    */
+    */ swal(
+            'New Review Added',
+            '',
+            'success'
+          ).then(function(){
+
+              $location.path( "/review" );
+              console.log("reload")
+          });
+       return;
+   
     //console.log(vm.projectID);
     vm.reviewers.forEach(function(v){ delete v.$$hashKey; delete v.object });
     var start_date = new Date(vm.startDate).toJSON();
     var end_date = new Date(vm.endDate).toJSON();
     var json = {review_title:vm.reviewTitle,review_location:vm.selectedPlace,review_date_start: start_date,review_date_end: end_date,development:vm.selectedDevelopmentID,review_type:vm.selectedType,review_comment:vm.comment,reviewmember_set:vm.reviewers}
-    var json_str = JSON.stringify(json);
+    var json_str =JSON.stringify(json);
     console.log(json_str)
     $http({
       method: 'POST',
@@ -145,12 +156,21 @@ var ReviewModifyController =['$scope','$resource','$translate',"$http", function
     }).then(function successCallback(response) {
  
        if(response.data){
-         var createdID = response.data.id();
+         var createdID = response.data.id;
          for(var i = 0;i<vm.documents.length;i++){
           var doc = {document_url:documents[i].url,document_type:documents[i].type,document_title:documents[i].title,review:createdID};
-          submitDucument(doc);
+          var json_doc = JSON.stringify(doc);
+          console.log(json_doc)
+          submitDucument(json_doc);
          
          }
+          swal(
+            'New Review Added',
+            '',
+            'success'
+          ).then(function(){
+              $location.path( "/" );
+          });
        
 
        }
@@ -166,7 +186,7 @@ var ReviewModifyController =['$scope','$resource','$translate',"$http", function
   }
   function submitDucument(data){
     $http({
-      method: 'GET',
+      method: 'POST',
       url:  addDocumentAPI,
       data:data,
       headers: { 'Content-Type': 'application/json' }
@@ -285,7 +305,10 @@ var ReviewModifyController =['$scope','$resource','$translate',"$http", function
       .primaryPalette('yellow')
       .dark();
 
-  });
+  })
+.config(['$httpProvider', function ($httpProvider) {
+    $httpProvider.defaults.headers.post['token'] = 'hh1hs6ZsUxllaxk16gaptrcAFRlDEKf8qrWenyiYVpPugdE7gOwUhJ6apnaRebnT';
+}]);
 
 
 

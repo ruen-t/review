@@ -14,7 +14,8 @@ var getReviewTypeAPI =  hostName+"reviewtoolapi/master/RevType/";
 var getRoleAPI = hostName+"reviewtoolapi/master/Role/";
 var getDevelopmentAPI = hostName+"reviewtoolapi/project/developments/?project=";
 var getDocumentTypeAPI = hostName+ "reviewtoolapi/master/DocType/";
-
+var addReviewAPI = hostName+"reviewtoolapi/review/add/";
+var addDocumentAPI = hostName+"/reviewtoolapi/review/document/add/";
 
 
 
@@ -76,7 +77,9 @@ $translateProvider.useStaticFilesLoader({
     'suffix': '.json'
 });
 $translateProvider.preferredLanguage('jp');
+
 $translateProvider.forceAsyncReload(true);
+$translateProvider.useSanitizeValueStrategy('escape');
   
 }])
 .config(function($routeProvider,$locationProvider) {
@@ -167,11 +170,11 @@ function ManualController ($resource,$translate,$rootScope) {
 	var vm = this;
 	vm.isEnglish = false;
    $rootScope.$on("english",function(){
-   		console.log("hello english")
+   		//console.log("hello english")
    		vm.isEnglish=true;
    });
 	$rootScope.$on("japanese",function(){
-   		console.log("hello japanese");
+   		//console.log("hello japanese");
    		vm.isEnglish = false;
    });
 }
@@ -213,7 +216,7 @@ angular.module('review', ['datatables', 'ngResource','ngMaterial','datatables.sc
   })
 
 var hasSelected=false;
-function ReviewController($timeout,$scope, $resource,$mdDialog,$mdMenu,$http) {
+function ReviewController($location,$timeout,$scope, $resource,$mdDialog,$mdMenu,$http) {
     var vm = this;
     vm.hasSelected = hasSelected;
     vm.reviewSelect = reviewSelect;
@@ -224,6 +227,7 @@ function ReviewController($timeout,$scope, $resource,$mdDialog,$mdMenu,$http) {
     vm.sameDate = sameDate;
     vm.toggleDateFilter=toggleDateFilter;
     vm.datatableSearch  = datatableSearch;
+    vm.gotoAddPage = gotoAddPage;
     vm.dtInstance = {};
     vm.dateFilter = false;
 
@@ -325,7 +329,10 @@ function ReviewController($timeout,$scope, $resource,$mdDialog,$mdMenu,$http) {
       $mdMenu.open();
 
     };
-  
+ function gotoAddPage(){
+  console.log("go")
+   $location.path( "/addReview" );
+ }
 
  function fetchData(){
   //console.log("fetch")
@@ -548,12 +555,12 @@ var roles = [
 ];
 
 var reviewers = [
-  {id:1,name:"test1",levels:0 },
-  {id:2,name:"test2",levels:0 },
+  {employee:-1,role:-1 },
+ /* {id:2,role:2 },*/
 ];
 var documents = [
-  {title:"",type:1,url:"" },
-  {title:"",type:2,url:"" },
+  {title:"",type:-1,url:"" },
+  
 ];
 
 var members = [
@@ -567,7 +574,7 @@ var selectedProject ={
   id:-1,project_name:"-------",shop:{id:17,shop_code:"NOCODE",shop_name_en:"---------",shop_name_jp:"---------"}
 }
 
-var ReviewModifyController =['$scope','$resource','$translate',"$http", function ($scope,$resource,$translate,$http) {
+var ReviewModifyController =['$location','$scope','$resource','$translate',"$http", function ($location,$scope,$resource,$translate,$http) {
   var vm = this;
   vm.message = "hello this is a add page";
 
@@ -581,6 +588,9 @@ var ReviewModifyController =['$scope','$resource','$translate',"$http", function
   vm.selectedDevelopmentID =-1;
   vm.documentTypes =[];
   vm.documents = documents;
+  vm.startDate = new Date();
+  vm.endDate = new Date();
+
 
   vm.addReviewMember = addReviewMember;
   vm.projects =[];
@@ -623,24 +633,86 @@ var ReviewModifyController =['$scope','$resource','$translate',"$http", function
   function saveButtonClick(){
     /*
     {
-    "review_location": "1",
-    "review_date": "2017-8-20T3:1",
-    "development": "1",
-    "review_type": "2",
-    "review_comment": "This is API test.",
-    "reviewmember_set": [
-         {
-            "employee": "3",
-              "role": "1"
-          }
-      ]
-    }
-    */
-    //console.log(vm.projectID);
-    console.log(vm.selectedPlace);
-    vm.selectedType
-    vm.selectedDate
+  "development": "string", (Development Code) -> I guess we don’t need to ask for “shop” because it will be derived from the Development Code, such that Development Code -> development(id) -> shop(id) -> shop name en
+  "review_comment": "string",  (Comment)
+  "reviewmember_set": [ (Name?, Email, Role)
+    "string" 
+  ],
+  "review_date_end": "string", (End)
+  "review_type": "string", (PSR, CDR, RR, etc)
+  "review_date_start": "string", (Start)
+  "review_location": "string", (Place)
+  "review_title": "string" (user given title)
+}
+    
+{
+  
+  "document_url": "string",
+  "active": true,
+  "document_type": "string",
+  "review": "string",
+  "document_title": "string"
 
+}
+
+    */
+   
+    //console.log(vm.projectID);
+    vm.reviewers.forEach(function(v){ delete v.$$hashKey; delete v.object });
+    var start_date = new Date(vm.startDate).toJSON();
+    var end_date = new Date(vm.endDate).toJSON();
+    var json = {review_title:vm.reviewTitle,review_location:vm.selectedPlace,review_date_start: start_date,review_date_end: end_date,development:vm.selectedDevelopmentID,review_type:vm.selectedType,review_comment:vm.comment,reviewmember_set:vm.reviewers}
+    var json_str =JSON.stringify(json);
+    console.log(json_str)
+    $http({
+      method: 'POST',
+      url:  addReviewAPI,
+      data:json_str,
+      headers: { 'Content-Type': 'application/json' }
+    }).then(function successCallback(response) {
+ 
+       if(response.data){
+         var createdID = response.data.id;
+         for(var i = 0;i<vm.documents.length;i++){
+          var doc = {document_url:documents[i].url,document_type:documents[i].type,document_title:documents[i].title,review:createdID};
+          var json_doc = JSON.stringify(doc);
+          console.log(json_doc)
+          submitDucument(json_doc);
+         
+         }
+          swal(
+            'New Review Added',
+            '',
+            'success'
+          ).then(function(){
+              $location.path( "/" );
+          });
+       
+
+       }
+
+      
+    }, function errorCallback(data, status, headers, config) {
+      // called asynchronously if an error occurs
+      // or server returns response with an error status.
+    });
+    console.log(vm.documents)
+   
+
+  }
+  function submitDucument(data){
+    $http({
+      method: 'POST',
+      url:  addDocumentAPI,
+      data:data,
+      headers: { 'Content-Type': 'application/json' }
+    }).then(function successCallback(response) {
+        console.log(response)
+      
+    }, function errorCallback(data, status, headers, config) {
+      // called asynchronously if an error occurs
+      // or server returns response with an error status.
+    });
   }
   function addDocument(){
     console.log("add documents")
@@ -660,40 +732,14 @@ var ReviewModifyController =['$scope','$resource','$translate',"$http", function
     fetchData(getDevelopmentAPI+projectID,"developments")
     
   }
-  function removeReviewerMember(id){
-    console.log(id);
-    for (var i =0;i<vm.reviewers.length;i++){
+  function removeReviewerMember(index){
+   /* for (var i =0;i<vm.reviewers.length;i++){
       if(vm.reviewers[i].id==id)vm.reviewers.splice(i,1);
-    }
-  }
-  function fetchProjectMember (){
-    $http({
-      method: 'GET',
-      url:  getProjectMemberAPI+vm.selectedProject.id,
-      //data:$.param({control_op:0}),
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
-    }).then(function successCallback(response) {
-      // this callback will be called asynchronously
-      // when the response is available
-      if(response.data){
+    }*/
+     vm.reviewers.splice(index,1)
 
-        var data = response.data;
-
-        if(data.length>0){
-           vm.projectManager = data;
-         // console.log(data)
-          vm.projectSelected = true;
-        }else{
-          vm.projectSelected = false;
-        }
-       
-      }
-    }, function errorCallback(data, status, headers, config) {
-      // called asynchronously if an error occurs
-      // or server returns response with an error status.
-      vm.projectSelected=false;
-    });
   }
+  
   function changeShop(){
    // console.log("changeShop")
    for(var i =0;i< vm.projects.length;i++){
@@ -710,13 +756,11 @@ var ReviewModifyController =['$scope','$resource','$translate',"$http", function
   function addReviewMember (){
     console.log("add reviewers")
     vm.reviewers.reverse();
-   vm.reviewers.push({id:-1,name:"",levels:-1 });
+   vm.reviewers.push({employee:-1,role:-1 });
    vm.reviewers.reverse();
   }
 
-  function fetchMember(){
-    fetchData(getEmployeeAPI,"employees")
-   }
+  
 
   
   function fetchData(url,arrayname){
@@ -740,6 +784,9 @@ var ReviewModifyController =['$scope','$resource','$translate',"$http", function
     });
 
   }
+  function fetchMember(){
+    fetchData(getEmployeeAPI,"employees")
+   }
   function fetchPlace(){
     fetchData(getMeetingSpaceAPI,"places");
   }
@@ -747,7 +794,9 @@ var ReviewModifyController =['$scope','$resource','$translate',"$http", function
   function fetchReviewType(){
      fetchData(getReviewTypeAPI,"revTypes");
   }
-
+  function fetchProjectMember (){
+    fetchData(getProjectMemberAPI+vm.selectedProject.id,"projectManager");
+  }
   function fetchRole(){
      fetchData(getRoleAPI,"roles");
   }
@@ -756,24 +805,11 @@ var ReviewModifyController =['$scope','$resource','$translate',"$http", function
     fetchData(getProjectListAPI,"projects")
   }
  
-  function removeProjectMember (id){
-    var index = -1;   
-    var comArr = eval( vm.reviewers );
-    for( var i = 0; i < comArr.length; i++ ) {
-      if( comArr[i].id=== id ) {
-        index = i;
-        break;
-      }
-    }
-    if( index === -1 ) {
-      alert( "Something gone wrong" );
-    }
-    vm.reviewers.splice( index, 1 );  
-  }
+  
 
-  function generateId(){}
+}
 
-}]
+]
 
  angular.module('reviewmodify', ['datatables', 'ngResource'])
 .controller('ReviewModifyController', ReviewModifyController)
@@ -785,7 +821,10 @@ var ReviewModifyController =['$scope','$resource','$translate',"$http", function
       .primaryPalette('yellow')
       .dark();
 
-  });
+  })
+.config(['$httpProvider', function ($httpProvider) {
+    $httpProvider.defaults.headers.post['token'] = 'hh1hs6ZsUxllaxk16gaptrcAFRlDEKf8qrWenyiYVpPugdE7gOwUhJ6apnaRebnT';
+}]);
 
 
 

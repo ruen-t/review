@@ -46,7 +46,9 @@ $translateProvider.useStaticFilesLoader({
     'suffix': '.json'
 });
 $translateProvider.preferredLanguage('jp');
+
 $translateProvider.forceAsyncReload(true);
+$translateProvider.useSanitizeValueStrategy('escape');
   
 }])
 .config(function($routeProvider,$locationProvider) {
