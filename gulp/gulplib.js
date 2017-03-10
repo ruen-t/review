@@ -11,6 +11,7 @@ var concat = require('gulp-concat')
 var browserify = require('gulp-browserify')
 var gulpFilter = require('gulp-filter')
 var watch = require('gulp-watch')
+const imagemin = require('gulp-imagemin');
 var jsonminify = require('gulp-jsonminify');
 var rename = require('gulp-rename')
 var mainBowerFiles = require('main-bower-files');
@@ -150,6 +151,11 @@ gulp.task('compress-css', ['css'], function() {
     .pipe(cssmin())
     .pipe(gulp.dest(dist.vendor))*/
 })
+gulp.task('minifyIMG',function(){
+  return gulp.src(['./assets/*.gif'])
+        .pipe(imagemin())
+        .pipe(gulp.dest('dist/assets'))
+})
 gulp.task('compress-js', ['js'], function() {
   /*return gulp.src(dist.js+"vendor.js")
     .pipe(uglify())
@@ -158,7 +164,7 @@ gulp.task('compress-js', ['js'], function() {
 gulp.task('compress', ['compress-css', 'compress-js'])
 
 gulp.task('default', ['bower', 'css', 'js', 'livereload']) // development
-gulp.task('build', ['bower', 'compress','minifyhtml','minifyJSON','injectbuild']) // build for production
+gulp.task('build', ['bower', 'compress','minifyhtml','minifyJSON','minifyIMG','injectbuild']) // build for production
 gulp.task('deploy', ['build'], shell.task([
   
   'scp -r dist/* ruen-t@172.16.252.110:/usr/local/www/apache24/data'

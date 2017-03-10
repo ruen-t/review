@@ -134,10 +134,16 @@ function ReviewController($location,$timeout,$scope, $resource,$mdDialog,$mdMenu
            },
            //serverSide :true,
            //destroy:true,
+           processing: true,
             pagingType  : 'full_numbers',
             lengthMenu  : [[10, 30, 50, 100,-1],[10, 30, 50, 100,"All"]],
             pageLength  : -1,
             scrollY     : '550',
+            language: {
+           "emptyTable": '<img src="assets/ring.gif"  />',
+           "zeroRecords": "No records to display",
+            },
+           
             //responsive  : true,
            // rowCallback : rowCallback,
            // processing : true,
@@ -170,17 +176,36 @@ function ReviewController($location,$timeout,$scope, $resource,$mdDialog,$mdMenu
  function fetchData(){
   //console.log("fetch")
   var today = new Date();
-  
+ /* $.ajax({
+          type: "GET",
+          url: getReviewAPI
+      })
+      .done(function(data) {
+       
+        if(data){
+
+            vm.review=[];
+            for (i in data){
+              console.log(data[i])
+                var managerArray=data[i].pm.concat(data[i].pdm)
+                  vm.review.push({select:false,id:data[i].id,manager:managerArray,date:data[i].review_date_start,location:data[i].review_location,development:{development:data[i].development,shop:data[i].shop,title:data[i].review_title},type:data[i].review_type,reviewer:data[i].reviewer})
+                    }
+
+                   
+                }
+              $scope.$apply();  
+
+      });*/
 
   $http({
               method: 'GET',
               url:  getReviewAPI,
               //data:$.param({control_op:0}),
-              headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+              headers: { 'Content-Type': 'application/json' }
             }).then(function successCallback(response) {
                 // this callback will be called asynchronously
                 // when the response is available
-                //console.log(response);
+                console.log(response);
                 
                 if(response.data){
                    // console.log(response.data)
