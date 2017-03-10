@@ -20,7 +20,159 @@ var addReviewAPI = hostName+"reviewtoolapi/review/add/";
 var addDocumentAPI = hostName+"reviewtoolapi/review/document/add/";
 var editReviewAPI = hostName+"reviewtoolapi/review/edit/";
 var getReviewDocumentAPI = hostName+"reviewtoolapi/review/documents/?review=";
+var getReviewMemberAPI= hostName+"reviewtoolapi/review/members/?review=";
+var addFeedbackAPI=hostName+"reviewtoolapi/review/feedbacks/";
+var getFeedbackAPI=hostName+"reviewtoolapi/review/feedbacks/?review=";
+angular.module('content',[])
+.controller('ContentController', ContentController);
 
+function ContentController ($http,$routeParams,$translate,$rootScope) {
+	var vm = this;
+   vm.reviewID = $routeParams.id;
+   vm.saveButtonClick = saveButtonClick;
+   vm.feedbackCount =0 ;
+  //console.log(vm.reviewID)
+	vm.isEnglish = false;
+   $rootScope.$on("english",function(){
+   		//console.log("hello english")
+   		vm.isEnglish=true;
+   });
+	$rootScope.$on("japanese",function(){
+   		//console.log("hello japanese");
+   		vm.isEnglish = false;
+   });
+   if(vm.reviewID){
+      fetchReview();
+      fetchReviewMember();
+
+   }
+function saveButtonClick(){
+
+   console.log(vm.reviewers)
+   swal({
+     title: 'Are you sure to submit feedback?',
+     text: "",
+     type: 'warning',
+     showCancelButton: true,
+     confirmButtonColor: '#3085d6',
+     cancelButtonColor: '#d33',
+     confirmButtonText: 'Yes, submit it!'
+   }).then(function () {
+      /*
+      {
+        "active": true,
+        "feedback": "string",
+        "feedback_giver": "string",
+        "review": "string"
+      }
+      */
+      vm.feedbackCount=0;
+      for(i in vm.reviewers){
+         var reviewer = vm.reviewers[i];
+         var feedback={active:true,feedback:reviewer.feedback,feedback_giver:reviewer.employee.id,review:vm.reviewID};
+         var json = JSON.stringify(feedback);
+         console.log(json)
+         addFeedback(json,vm.reviewers.length);
+
+      }
+      
+     
+   })
+  }
+   function addFeedback(data,feedback_number){
+      $http({
+         method: 'POST',
+         url:  addFeedbackAPI,
+         data:data,
+         headers: { 'Content-Type': 'application/json' }
+       }).then(function successCallback(response) {
+          vm.feedbackCount++;
+         if(vm.feedbackCount==feedback_number){
+            swal(
+             'submitted!',
+             'Feedbacks have been submitted.',
+             'success'
+           )
+         }
+      
+     }, function errorCallback(data, status, headers, config) {
+      // called asynchronously if an error occurs
+      // or server returns response with an error status.
+    });
+   }
+   function fetchFeedback(){
+      $http({
+      method: 'GET',
+      url:  getFeedbackAPI+vm.reviewID,
+      headers: { 'Content-Type': 'application/json' }
+    }).then(function successCallback(response) {
+ 
+      if(response.data){
+        var data = response.data;
+        for(i in data){
+         var feedback = data[i];
+         for(j in vm.reviewers){
+            var reviewer = vm.reviewers[j];
+            if(reviewer.employee.id==feedback.feedback_giver){
+               reviewer.feedback = feedback.feedback;
+            }
+         }
+        }
+
+
+       
+      }
+    }, function errorCallback(data, status, headers, config) {
+      // called asynchronously if an error occurs
+      // or server returns response with an error status.
+    });
+
+   }
+   function fetchReview(){
+    $http({
+      method: 'GET',
+      url:  getSpecificReviewAPI+vm.reviewID,
+      headers: { 'Content-Type': 'application/json' }
+    }).then(function successCallback(response) {
+ 
+      if(response.data){
+        var data = response.data[0];
+       // console.log(data)
+        vm.review = data;
+       // vm.startDate = new Date(data.review_date_start);
+       // vm.endDate = new Date(data.review_date_end);
+
+       
+      }
+    }, function errorCallback(data, status, headers, config) {
+      // called asynchronously if an error occurs
+      // or server returns response with an error status.
+    });
+   }
+   function fetchReviewMember(){
+         $http({
+            method: 'GET',
+            url:  getReviewMemberAPI+vm.reviewID,
+            headers: { 'Content-Type': 'application/json' }
+       }).then(function successCallback(response) {
+    
+         if(response.data){
+           var data = response.data;
+           //console.log(data);
+
+           vm.reviewers = data;
+           vm.reviewers.forEach(function(v){v.feedback=""});
+           fetchFeedback();
+            
+          
+         }
+       }, function errorCallback(data, status, headers, config) {
+         // called asynchronously if an error occurs
+         // or server returns response with an error status.
+       });
+   }
+    
+}
 
 
 angular.module('login', ['datatables', 'ngResource'])
@@ -33,7 +185,7 @@ function LoginController ($resource,$translate) {
 
 
 
- angular.module('main', ['angular-loading-bar',"ngResource","ngRoute",'sidenav','review','login','pascalprecht.translate','reviewmodify','manual'])
+ angular.module('main', ['angular-loading-bar',"ngResource","ngRoute",'sidenav','review','login','pascalprecht.translate','reviewmodify','manual','content'])
 .controller('MainController', MainController)
 .directive('mainPage',reviewHtml)
 .directive('logo',logoHtml)
@@ -116,6 +268,11 @@ $translateProvider.forceAsyncReload(true);
     .when("/manual",{
         templateUrl : "app/src/manual.html",
         controller: "ManualController",
+        controllerAs:"vm"
+    })
+    .when("/content/:id",{
+        templateUrl : "app/src/content.html",
+        controller: "ContentController",
         controllerAs:"vm"
     })
     .otherwise({redirectTo:'/'});
@@ -238,6 +395,7 @@ function ReviewController($location,$timeout,$scope, $resource,$mdDialog,$mdMenu
     vm.datatableSearch  = datatableSearch;
     vm.gotoAddPage = gotoAddPage;
     vm.gotoEditPage = gotoEditPage;
+    vm.gotoContentPage = gotoContentPage;
     vm.dtInstance = {};
     vm.dateFilter = false;
 
@@ -309,7 +467,7 @@ function ReviewController($location,$timeout,$scope, $resource,$mdDialog,$mdMenu
                 // Bind an external input as a table wide search box
                 if ( searchBox.length > 0 )
                 {
-                    console.log("trigger event")
+                    //console.log("trigger event")
                     searchBox.on('keyup', function (event)
                     { 
                         
@@ -341,14 +499,17 @@ function ReviewController($location,$timeout,$scope, $resource,$mdDialog,$mdMenu
 
     };
  function gotoAddPage(){
-  console.log("go add")
+ // console.log("go add")
    $location.path( "/addReview" );
  }
  function gotoEditPage(){
-  console.log("go edit")
+  //console.log("go edit")
   var selectedID = getselectedReview();
   $location.path( "/editReview/"+selectedID );
-
+ }
+ function gotoContentPage(id){
+  // console.log("go content:"+id)
+  $location.path( "/content/"+id );
 
  }
 
@@ -420,7 +581,7 @@ function changeday(day){
 function sameDate(date1,date2){
   var d1 = new Date(date1);
   var d2 = new Date(date2);
-  console.log(d1.getTime() === d2.getTime())
+ // console.log(d1.getTime() === d2.getTime())
   return d1.getTime() === d2.getTime();
 }
 function datatableSearch(val){
@@ -916,14 +1077,14 @@ angular
       return $mdSidenav('right').isOpen();
     };
     $("header").on("click","#wni-header #menu",function(){
-      console.log("hello")
+     
       vm.toggleLeft();
     })
     $scope.closeLeft = function () {
      
       $mdSidenav('left').close()
         .then(function () {
-          $log.debug("close LEFT is done");
+         // $log.debug("close LEFT is done");
         });
 
     };
@@ -964,7 +1125,7 @@ angular
         $mdSidenav(navID)
           .toggle()
           .then(function () {
-            $log.debug("toggle " + navID + " is done");
+            //$log.debug("toggle " + navID + " is done");
           });
       }, 200);
     }
@@ -975,7 +1136,7 @@ angular
         $mdSidenav(navID)
           .toggle()
           .then(function () {
-            $log.debug("toggle " + navID + " is done");
+            //$log.debug("toggle " + navID + " is done");
           });
       };
     }
@@ -985,7 +1146,7 @@ angular
       // Component lookup should always be available since we are not using `ng-if`
       $mdSidenav('left').close()
         .then(function () {
-          $log.debug("close LEFT is done");
+          //$log.debug("close LEFT is done");
         });
 
     };
@@ -995,7 +1156,7 @@ angular
       // Component lookup should always be available since we are not using `ng-if`
       $mdSidenav('right').close()
         .then(function () {
-          $log.debug("close RIGHT is done");
+        //  $log.debug("close RIGHT is done");
         });
     };
   }]);

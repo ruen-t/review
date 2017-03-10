@@ -15,4 +15,6 @@ var addReviewAPI = hostName+"reviewtoolapi/review/add/";
 var addDocumentAPI = hostName+"reviewtoolapi/review/document/add/";
 var editReviewAPI = hostName+"reviewtoolapi/review/edit/";
 var getReviewDocumentAPI = hostName+"reviewtoolapi/review/documents/?review=";
-var getReviewMember= hostName+"reviewtoolapi/review/members/?review=";
+var getReviewMemberAPI= hostName+"reviewtoolapi/review/members/?review=";
+var addFeedbackAPI=hostName+"reviewtoolapi/review/feedbacks/";
+var getFeedbackAPI=hostName+"reviewtoolapi/review/feedbacks/?review=";
