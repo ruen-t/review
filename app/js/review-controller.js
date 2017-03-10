@@ -49,6 +49,7 @@ function ReviewController($location,$timeout,$scope, $resource,$mdDialog,$mdMenu
     vm.datatableSearch  = datatableSearch;
     vm.gotoAddPage = gotoAddPage;
     vm.gotoEditPage = gotoEditPage;
+    vm.gotoContentPage = gotoContentPage;
     vm.dtInstance = {};
     vm.dateFilter = false;
 
@@ -120,7 +121,7 @@ function ReviewController($location,$timeout,$scope, $resource,$mdDialog,$mdMenu
                 // Bind an external input as a table wide search box
                 if ( searchBox.length > 0 )
                 {
-                    console.log("trigger event")
+                    //console.log("trigger event")
                     searchBox.on('keyup', function (event)
                     { 
                         
@@ -152,14 +153,17 @@ function ReviewController($location,$timeout,$scope, $resource,$mdDialog,$mdMenu
 
     };
  function gotoAddPage(){
-  console.log("go add")
+ // console.log("go add")
    $location.path( "/addReview" );
  }
  function gotoEditPage(){
-  console.log("go edit")
+  //console.log("go edit")
   var selectedID = getselectedReview();
   $location.path( "/editReview/"+selectedID );
-
+ }
+ function gotoContentPage(id){
+  // console.log("go content:"+id)
+  $location.path( "/content/"+id );
 
  }
 
@@ -231,7 +235,7 @@ function changeday(day){
 function sameDate(date1,date2){
   var d1 = new Date(date1);
   var d2 = new Date(date2);
-  console.log(d1.getTime() === d2.getTime())
+ // console.log(d1.getTime() === d2.getTime())
   return d1.getTime() === d2.getTime();
 }
 function datatableSearch(val){

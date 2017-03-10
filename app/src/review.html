@@ -73,7 +73,7 @@
             <td>{{ review.type.revtype_code }}</td>
             <td><div ng-repeat="manager in review.manager">{{ manager.role.role_code }}:{{ manager.employee.employee_name }}<br></div></td>
             <td><span ng-repeat="reviwer in review.reviwer">{{ reviwer.name }}<br></span></td>
-            <td>&nbsp&nbsp&nbsp<i class="material-icons">launch</i></td>
+            <td ng-click="vm.gotoContentPage(review.id)">&nbsp&nbsp&nbsp<i class="material-icons">launch</i></td>
         </tr>
         </tbody>
     </table>

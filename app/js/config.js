@@ -15,3 +15,4 @@ var addReviewAPI = hostName+"reviewtoolapi/review/add/";
 var addDocumentAPI = hostName+"reviewtoolapi/review/document/add/";
 var editReviewAPI = hostName+"reviewtoolapi/review/edit/";
 var getReviewDocumentAPI = hostName+"reviewtoolapi/review/documents/?review=";
+var getReviewMember= hostName+"reviewtoolapi/review/members/?review=";

@@ -9,14 +9,14 @@ angular
       return $mdSidenav('right').isOpen();
     };
     $("header").on("click","#wni-header #menu",function(){
-      console.log("hello")
+     
       vm.toggleLeft();
     })
     $scope.closeLeft = function () {
      
       $mdSidenav('left').close()
         .then(function () {
-          $log.debug("close LEFT is done");
+         // $log.debug("close LEFT is done");
         });
 
     };
@@ -57,7 +57,7 @@ angular
         $mdSidenav(navID)
           .toggle()
           .then(function () {
-            $log.debug("toggle " + navID + " is done");
+            //$log.debug("toggle " + navID + " is done");
           });
       }, 200);
     }
@@ -68,7 +68,7 @@ angular
         $mdSidenav(navID)
           .toggle()
           .then(function () {
-            $log.debug("toggle " + navID + " is done");
+            //$log.debug("toggle " + navID + " is done");
           });
       };
     }
@@ -78,7 +78,7 @@ angular
       // Component lookup should always be available since we are not using `ng-if`
       $mdSidenav('left').close()
         .then(function () {
-          $log.debug("close LEFT is done");
+          //$log.debug("close LEFT is done");
         });
 
     };
@@ -88,7 +88,7 @@ angular
       // Component lookup should always be available since we are not using `ng-if`
       $mdSidenav('right').close()
         .then(function () {
-          $log.debug("close RIGHT is done");
+        //  $log.debug("close RIGHT is done");
         });
     };
   }]);

@@ -15,10 +15,10 @@
       "DETAIL": "詳細",
       "MANAGER":"担当者",
       "BUTTON_LANG_JP": "日本語",
-      "BUTTON_LANG_EN": "英語",
+      "BUTTON_LANG_EN": "English",
 
       "ADD_REVIEW_PAGE":"レビューの追加",
-      "REIVEW_TITLE": "タイトル",
+      "REVIEW_TITLE": "タイトル",
       "START_DATE": "開始日",
       "END_DATE":"終了日",
       "PROJECT_NAME":"プロジェクト名",

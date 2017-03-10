@@ -204,6 +204,11 @@ li{
 	padding-left: 5px;
 	padding-top: 5px;
 }
+*:disabled{
+	color: black !important;
+	opacity:100 !important;
+
+}
 .addReview{
 	border-color: #0B4199;border-style: solid;background-color: white;padding:0px 20px;
 }
@@ -211,6 +216,15 @@ li{
 	position:fixed;top:70px;right:24px;z-index: 4;
 }
 .addReview .saveButton .md-button{
+	background-color: #0B4199;color: white;
+}
+.content{
+	border-color: #0B4199;border-style: solid;background-color: white;padding:0px 20px;
+}
+.content .saveButton{
+	position:fixed;top:70px;right:24px;z-index: 4;
+}
+.content .saveButton .md-button{
 	background-color: #0B4199;color: white;
 }
 .projectManager, .reviewMember{
