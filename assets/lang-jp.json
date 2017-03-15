@@ -18,6 +18,7 @@
       "BUTTON_LANG_EN": "English",
 
       "ADD_REVIEW_PAGE":"レビューの追加",
+      "EDIT_REVIEW_PAGE":"レビューの編集",
       "REVIEW_TITLE": "タイトル",
       "START_DATE": "開始日",
       "END_DATE":"終了日",
@@ -32,5 +33,7 @@
       "DOCUMENT":"資料",
       "DOCUMENT_TYPE":"資料の種類",
       "DOCUMENT_TITLE":"資料のタイトル",
-      "DOCUMENT_URL":"資料のURL"
+      "DOCUMENT_URL":"資料のURL",
+      "ACTION":"作用",
+      "LOGIN":"ログイン"
 }

@@ -1,35 +1,36 @@
 
 <section id="reviewPage" >
 
-<md-whiteframe  style="background-color: white" class="md-whiteframe-1dp" flex-sm="400" flex-gt-sm="400" flex-gt-md="400" layout layout-align="center center">
-   
-   <div layout-gt-xs="row">
-          <!--md-input-container  flex-gt-xs>
-           <label>Search</label>
-           <input ng-model="vm.reviewAnyText"  id="review_search" type="text">
-          </md-input-container-->
-<md-checkbox aria-label="check" ng-check="vm.dateFilter" ng-click="vm.toggleDateFilter()"></md-checkbox>
-          <md-input-container >
-
-            <label>Date filter</label>
-             <md-datepicker ng-model="vm.reviewDate"   onkeydown="return false" ng-change="vm.datatableSearch(vm.reviewDate)" >
-
-
-      </md-datepicker>
+<md-whiteframe  style="margin-bottom: -30px;" class="" flex-sm="400" flex-gt-sm="400" flex-gt-md="400" layout layout-align="center center">
+  <!--<div layout-align="center" style="background-color: white; height: 50px; width: 500px;"> -->
+  <div layout-gt-xs="row">
+    <!--md-input-container  flex-gt-xs>
+     <label>Search</label>
+     <input ng-model="vm.reviewAnyText"  id="review_search" type="text">
+    </md-input-container-->
+    <md-checkbox aria-label="check" ng-check="vm.dateFilter" ng-click="vm.toggleDateFilter()"></md-checkbox>  
+      <md-button md-no-ink class="md-primary" ng-click="vm.changeday(-1)">
+        <i class="material-icons">&#xE045;</i>
+      </md-button>
+      <md-input-container style="margin-top:20px; margin-bottom: 0px;">
+        <label>Date filter</label>
+        <md-datepicker ng-model="vm.reviewDate"  onkeydown="return false" ng-change="vm.datatableSearch(vm.reviewDate)">
+        </md-datepicker>
       </md-input-container>
-       <md-button md-no-ink class="md-primary" ng-click="vm.changeday(-1)" style="padding-bottom: 30px">{{'BACK'|translate}}</md-button>
-      <md-button md-no-ink class="md-primary"  ng-click="vm.changeday(1)" style="padding-bottom: 30px">{{'NEXT'|translate}}</md-button>
-  </div> 
+      <md-button md-no-ink class="md-primary"  ng-click="vm.changeday(1)">
+        <i class="material-icons">&#xE044;</i>
+      </md-button>
+  <!--</div> -->
+  </div>
     
-  </md-whiteframe>
-
-
-    
+</md-whiteframe>
+ 
     <table id="reviewTable" datatable="ng" dt-instance="vm.dtInstance" dt-options="vm.dtOptions" class="row-border hover" style="width: 100%; height:100%">
         <thead style="background-color:#053F8F; color: white">
         <tr>
             <th> <div><md-menu>
-            <i ng-click="$mdOpenMenu()" class="material-icons">menu</i>
+            
+            <i ng-click="$mdOpenMenu()" class="material-icons">&#xE896;</i>
             <md-menu-content>
               <md-menu-item>
                 <md-button ng-click="vm.gotoAddPage()">

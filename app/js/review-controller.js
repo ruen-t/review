@@ -138,7 +138,7 @@ function ReviewController($location,$timeout,$scope, $resource,$mdDialog,$mdMenu
             pagingType  : 'full_numbers',
             lengthMenu  : [[10, 30, 50, 100,-1],[10, 30, 50, 100,"All"]],
             pageLength  : -1,
-            scrollY     : '550',
+            scrollY     : '100%',
             language: {
            "emptyTable": '<img src="assets/ring.gif"  />',
            "zeroRecords": "No records to display",
