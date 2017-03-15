@@ -249,3 +249,6 @@ button .save:hover{
 .login{
 	margin-left: 10px; font-weight: 800;
 }
+div.dataTables-scrollBody{
+	height: 100%;
+}
