@@ -4,9 +4,7 @@ $(function(){
     $('body').css('padding-top', headHeight + 40);
 });
 var hostName= "http://172.16.252.110/";
-var getReviewAPI = hostName+"reviewtoolapi/review/";
-var getSpecificReviewAPI = getReviewAPI+"?id=";
-var deleteAPI = hostName+"reviewtoolapi/review/edit/";
+
 var getEmployeeAPI = hostName+"reviewtoolapi/employee/";
 var getShopAPI = hostName+"reviewtoolapi/master/Shop/";
 var getMeetingSpaceAPI =hostName+"reviewtoolapi/master/MeetSpace/";
@@ -16,13 +14,25 @@ var getReviewTypeAPI =  hostName+"reviewtoolapi/master/RevType/";
 var getRoleAPI = hostName+"reviewtoolapi/master/Role/";
 var getDevelopmentAPI = hostName+"reviewtoolapi/project/developments/?project=";
 var getDocumentTypeAPI = hostName+ "reviewtoolapi/master/DocType/";
-var addReviewAPI = hostName+"reviewtoolapi/review/add/";
-var addDocumentAPI = hostName+"reviewtoolapi/review/document/add/";
+
+
+var getReviewAPI = hostName+"reviewtoolapi/review/";
+var getSpecificReviewAPI = getReviewAPI+"?id=";
+var addReviewAPI = hostName+"reviewtoolapi/review/";
 var editReviewAPI = hostName+"reviewtoolapi/review/edit/";
-var getReviewDocumentAPI = hostName+"reviewtoolapi/review/documents/?review=";
-var getReviewMemberAPI= hostName+"reviewtoolapi/review/members/?review=";
-var addFeedbackAPI=hostName+"reviewtoolapi/review/feedbacks/";
+var deleteAPI = hostName+"reviewtoolapi/review/edit/";
+
 var getFeedbackAPI=hostName+"reviewtoolapi/review/feedbacks/?review=";
+var addFeedbackAPI=hostName+"reviewtoolapi/review/feedbacks/";
+var editFeedbackAPI=hostName+"reviewtoolapi/review/feedback/";
+
+var getReviewMemberAPI= hostName+"reviewtoolapi/review/members/?review=";
+var deleteReviewMemberAPI= hostName+"reviewtoolapi/review/member/";
+
+var getReviewDocumentAPI = hostName+"reviewtoolapi/review/documents/?review=";
+var addDocumentAPI = hostName+"reviewtoolapi/review/documents/";
+var deleteDocumentAPI = hostName+"reviewtoolapi/review/document/";
+
 angular.module('content',[])
 .controller('ContentController', ContentController);
 
@@ -894,18 +904,18 @@ var ReviewModifyController =['$routeParams','$location','$scope','$resource','$t
     vm.reviewers.forEach(function(v){ delete v.$$hashKey; delete v.object });
     var start_date = new Date(vm.startDate).toJSON();
     var end_date = new Date(vm.endDate).toJSON();
-    var json = {review_title:vm.reviewTitle,review_location:vm.selectedPlace,review_date_start: start_date,review_date_end: end_date,development:vm.selectedDevelopmentID,review_type:vm.selectedType,review_comment:vm.comment,reviewmember_set:vm.reviewers}
+    var json = {review_title:vm.reviewTitle,review_location:vm.selectedPlace,review_date_start: start_date,review_date_end: end_date,development:vm.selectedDevelopmentID,review_type:vm.selectedType,review_comment:vm.comment}
     var json_str =JSON.stringify(json);
-    console.log(json_str)
+   // console.log(json_str)
     $http({
-      method: 'PUT',
+      method: 'PATCH',
       url:  editReviewAPI+vm.editId+"/",
       data:json_str,
       headers: { 'Content-Type': 'application/json' }
     }).then(function successCallback(response) {
  
        if(response.data){
-          console.log(response.data)
+          console.log(response)
          }
          
 

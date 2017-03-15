@@ -167,18 +167,18 @@ var ReviewModifyController =['$routeParams','$location','$scope','$resource','$t
     vm.reviewers.forEach(function(v){ delete v.$$hashKey; delete v.object });
     var start_date = new Date(vm.startDate).toJSON();
     var end_date = new Date(vm.endDate).toJSON();
-    var json = {review_title:vm.reviewTitle,review_location:vm.selectedPlace,review_date_start: start_date,review_date_end: end_date,development:vm.selectedDevelopmentID,review_type:vm.selectedType,review_comment:vm.comment,reviewmember_set:vm.reviewers}
+    var json = {review_title:vm.reviewTitle,review_location:vm.selectedPlace,review_date_start: start_date,review_date_end: end_date,development:vm.selectedDevelopmentID,review_type:vm.selectedType,review_comment:vm.comment}
     var json_str =JSON.stringify(json);
-    console.log(json_str)
+   // console.log(json_str)
     $http({
-      method: 'PUT',
+      method: 'PATCH',
       url:  editReviewAPI+vm.editId+"/",
       data:json_str,
       headers: { 'Content-Type': 'application/json' }
     }).then(function successCallback(response) {
  
        if(response.data){
-          console.log(response.data)
+          console.log(response)
          }
          
 

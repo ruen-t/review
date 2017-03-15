@@ -31,7 +31,7 @@ gulp.task('inject', function () {
 });
 
 gulp.task('watch', ['browserSync'], function (){
-  gulp.watch(['app/js/**/*.js','app/src/*.html','app/scss/**/*.scss','app/css/**/*.css'], ['reload']);
+  gulp.watch(['app/js/**/*.js','app/src/*.html','app/scss/**/*.scss','app/css/**/*.css'], ['reload','deploy']);
   // Other watchers
 });
 
