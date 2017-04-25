@@ -1028,7 +1028,7 @@ var ReviewModifyController =['$routeParams','$location','$scope','$resource','$t
         vm.reviewers =[];
         for(i in data.reviewmember_set){
           var reviewer = data.reviewmember_set[i];
-          vm.reviewers.push({update:false,employee:reviewer.employee,role:reviewer.role});
+          vm.reviewers.push({id:data.reviewmember_set[i].id,update:false,employee:reviewer.employee,role:reviewer.role});
         }
         console.log("reviewers")
         console.log(vm.reviewers);
@@ -1159,7 +1159,7 @@ var ReviewModifyController =['$routeParams','$location','$scope','$resource','$t
             requestAddMember(json_data)
          }
          for (var i =0;i<vm.reviewer_deleteQueue.length;i++){
-            requestRemoveMember(vm.reviewer_deleteQueue[i].employee);
+            requestRemoveMember(vm.reviewer_deleteQueue[i].id);
           }
          }
         // $location.path( "/review" );
@@ -1181,8 +1181,13 @@ var ReviewModifyController =['$routeParams','$location','$scope','$resource','$t
     vm.reviewers.forEach(function(v){ delete v.$$hashKey; delete v.object });
     var start_date = new Date(vm.startDate).toJSON();
     var end_date = new Date(vm.endDate).toJSON();
-    var json = {review_title:vm.reviewTitle,review_location:vm.selectedPlace,review_date_start: start_date,review_date_end: end_date,development:vm.selectedDevelopmentID,review_type:vm.selectedType,review_comment:vm.comment}
-    
+    var json;
+    if(vm.selectedDevelopmentID != -1){
+      json = {review_title:vm.reviewTitle,review_location:vm.selectedPlace,review_date_start: start_date,review_date_end: end_date,development:vm.selectedDevelopmentID,review_type:vm.selectedType,review_comment:vm.comment}
+    }else
+    {
+      json = {review_title:vm.reviewTitle,review_location:vm.selectedPlace,review_date_start: start_date,review_date_end: end_date,development:null,review_type:vm.selectedType,review_comment:vm.comment}
+    }
     var json_str =JSON.stringify(json);
     console.log(json_str)
     $http({
@@ -1210,7 +1215,7 @@ var ReviewModifyController =['$routeParams','$location','$scope','$resource','$t
           var json_data = JSON.stringify(doc);
           requestAddMember(json_data)
          }
-          $location.path( "/review" );
+         // $location.path( "/review" );
           swal(
             'New Review Added',
             '',
@@ -1235,7 +1240,7 @@ var ReviewModifyController =['$routeParams','$location','$scope','$resource','$t
      $http({
       method: 'DELETE',
       url:  deleteReviewMemberAPI+id+"/",
-      data:data,
+
       headers: { 'Content-Type': 'application/json',
                  'Accept': 'application/json' ,
                  'Authorization': vm.token_str}

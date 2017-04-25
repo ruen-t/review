@@ -38,7 +38,7 @@
           
             <md-input-container class="md-block" flex-gt-sm >
               <label>{{ 'PROJECT_NAME' | translate }}</label>
-              <md-select ng-model="vm.selectedProject.id" placeholder="{{ 'PROJECT_NAME' | translate }}" required>
+              <md-select ng-model="vm.selectedProject.id" placeholder="{{ 'PROJECT_NAME' | translate }}" >
                 <md-option ng-repeat="project in vm.projects" value="{{project.id}}">
                   {{project.project_name}}
                 </md-option>
