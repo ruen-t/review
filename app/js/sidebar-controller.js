@@ -26,7 +26,7 @@ angular
      {name:"Review",href:"#/review",icon:"description"},
 
       {name:"Manual",href:"#/manual",icon:"grade"},
-      {name:"Print",href:"#/new",icon:"print"},
+      
     ];
     /**
      * Supplies a function that will continue to operate until the

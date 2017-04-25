@@ -137,8 +137,8 @@ function ReviewController($location,$timeout,$scope, $resource,$mdDialog,$mdMenu
            processing: true,
             pagingType  : 'full_numbers',
             lengthMenu  : [[10, 30, 50, 100,-1],[10, 30, 50, 100,"All"]],
-            pageLength  : -1,
-            scrollY     : '100%',
+            pageLength  : 10,
+            scrollY     : '450',
             language: {
            "emptyTable": '<img src="assets/ring.gif"  />',
            "zeroRecords": "No records to display",
@@ -172,7 +172,21 @@ function ReviewController($location,$timeout,$scope, $resource,$mdDialog,$mdMenu
   $location.path( "/content/"+id );
 
  }
-
+function getCookie(cname) {
+    var name = cname + "=";
+    var decodedCookie = decodeURIComponent(document.cookie);
+    var ca = decodedCookie.split(';');
+    for(var i = 0; i <ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0) == ' ') {
+            c = c.substring(1);
+        }
+        if (c.indexOf(name) == 0) {
+            return c.substring(name.length, c.length);
+        }
+    }
+    return "";
+}
  function fetchData(){
   //console.log("fetch")
   var today = new Date();
@@ -196,25 +210,36 @@ function ReviewController($location,$timeout,$scope, $resource,$mdDialog,$mdMenu
               $scope.$apply();  
 
       });*/
-
+      var token = getCookie("token_django");
+      var token_str = 'Bearer '+token;
+      console.log(token_str);
   $http({
               method: 'GET',
               url:  getReviewAPI,
               //data:$.param({control_op:0}),
-              headers: { 'Content-Type': 'application/json' }
+              headers: { 'Content-Type': 'application/json',
+                          'Accept': 'application/json' ,
+                         'Authorization': token_str }
             }).then(function successCallback(response) {
                 // this callback will be called asynchronously
                 // when the response is available
-                console.log(response);
+                //console.log(response);
                 
                 if(response.data){
                    // console.log(response.data)
                     var data = response.data;
                     vm.review=[];
                      for (i in data){
-
-                      var managerArray=data[i].pm.concat(data[i].pdm)
-                       vm.review.push({select:false,id:data[i].id,manager:managerArray,date:data[i].review_date_start,location:data[i].review_location,development:{development:data[i].development,shop:data[i].shop,title:data[i].review_title},type:data[i].review_type,reviewer:data[i].reviewer})
+                     
+                      if(!data[i].pm){
+                        data[i].pm="";
+                      } if(!data[i].pdm){
+                        data[i].pdm = "";
+                      }
+                       var managerArray=data[i].pm.split(",").concat(data[i].pdm.split(","))
+                      //console.log(managerArray)
+                      //var manager = data[i].pm+","+data[i].pdm;
+                       vm.review.push({select:false,id:data[i].id,manager:managerArray,date:data[i].review_date_start,location:data[i].meetspace_name_en,development:data[i].development,title:data[i].review_title,type:data[i].review_type,reviewer:data[i].reviewer})
                     }
 
                     //console.log(vm.review)
@@ -240,6 +265,7 @@ function toggleDateFilter(){
   console.log(vm.dateFilter)
 }
 function changeday(day){
+  //console.log(day)
  if(!vm.dateFilter)return;
   var currentDate;
 //console.log(tomorrow.toLocaleDateString())

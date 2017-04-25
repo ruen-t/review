@@ -30,11 +30,11 @@ var roles = [
 ];
 
 var reviewers = [
-  {employee:-1,role:-1 },
+  {update:true,employee:-1,role:-1 },
  /* {id:2,role:2 },*/
 ];
 var documents = [
-  {title:"",type:-1,url:"" },
+  {update:true,title:"",type:-1,url:"" },
   
 ];
 
@@ -51,6 +51,9 @@ var selectedProject ={
 
 var ReviewModifyController =['$routeParams','$location','$scope','$resource','$translate',"$http", function ($routeParams,$location,$scope,$resource,$translate,$http) {
   var vm = this;
+  var token = getCookie("token_django");
+    var token_str = 'Bearer '+token;
+    vm.token_str= token_str;
    vm.state =0; //0 -> add, 1-> edit
   vm.editId = $routeParams.id;
   console.log(vm.editId)
@@ -67,6 +70,8 @@ var ReviewModifyController =['$routeParams','$location','$scope','$resource','$t
     vm.startDate = new Date();
     vm.endDate = new Date();
     vm.editReview ={};
+    vm.document_deleteQueue=[];
+    vm.reviewer_deleteQueue=[];
   if(!vm.editId){
     vm.state=0;
 
@@ -75,26 +80,60 @@ var ReviewModifyController =['$routeParams','$location','$scope','$resource','$t
     $http({
       method: 'GET',
       url:  getSpecificReviewAPI+vm.editId,
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+      headers: { 'Content-Type': 'application/json',
+                 'Accept': 'application/json' ,
+                 'Authorization': vm.token_str }
     }).then(function successCallback(response) {
  
       if(response.data){
         var data = response.data[0];
+        //console.log(response);
         console.log(data)
+
         vm.projectSelected = true;
         vm.reviewTitle =data.review_title;
-        vm.selectedPlace = data.review_location.id;
+        vm.selectedPlace = data.review_location;
         vm.startDate = new Date(data.review_date_start);
         vm.endDate = new Date(data.review_date_end);
-        vm.selectedDevelopmentID=data.development.id;
-        vm.selectedProject = data.project;
-        vm.selectedType = data.review_type.id;
+        vm.selectedDevelopmentID=data.development;
+       /* for(i =0;i< data.reviewmember_set.length;i++){
+          callAPI(getEmployeeByIDAPI+data.reviewmember_set[i].employee,"GET",function(response){
+            var employee_data = response.data[0];
+            console.log(employee_data);
+            vm.reviewers.push({employee_data})
+          })
+
+        }*/
+
+        
+
+        callAPI(getDevelopmentIDAPI+data.development,"GET",function(response){
+          //console.log(response.data[0]);
+          var development_data = response.data[0];
+          var project_id = development_data.project;
+          vm.selectedProject.id = project_id;
+          callAPI(getProjectByIDAPI+project_id,"GET",function(response){
+            var project_data = response.data[0];
+            console.log(project_data);
+            vm.selectedProject.project_name =project_data.project_name;
+            vm.selectedProject.shop.id = project_data.shop;
+            callAPI(getShopByIDAPI+project_data.shop,"GET",function(response){
+              var shop_data = response.data[0];
+              vm.selectedProject.shop = shop_data;
+
+            })
+          })
+        })
+        vm.selectedProject.id = data.project;
+        vm.selectedType = data.review_type;
         vm.comment = data.review_comment;
         vm.reviewers =[];
         for(i in data.reviewmember_set){
           var reviewer = data.reviewmember_set[i];
-          vm.reviewers.push({employee:reviewer.employee.id,role:reviewer.role.id});
+          vm.reviewers.push({update:false,employee:reviewer.employee,role:reviewer.role});
         }
+        console.log("reviewers")
+        console.log(vm.reviewers);
       }
     }, function errorCallback(data, status, headers, config) {
       // called asynchronously if an error occurs
@@ -103,14 +142,21 @@ var ReviewModifyController =['$routeParams','$location','$scope','$resource','$t
     $http({
       method: 'GET',
       url:  getReviewDocumentAPI+vm.editId,
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+      headers: { 'Content-Type': 'application/json',
+                  'Accept': 'application/json' ,
+                  'Authorization': vm.token_str 
+    }
     }).then(function successCallback(response) {
+      console.log("GET documents")
+      console.log(response)
  
       if(response.data){
        console.log(response.data);
        var data = response.data;
+       vm.documents=[];
        for(i in data){
-        vm.documents.push({url:data[i].document_url,title:data[i].document_title,type:data[i].document_type});
+        //document.update 0->add 1->nothing 2->delete
+        vm.documents.push({id:data[i].id,update:false,url:data[i].document_url,title:data[i].document_title,type:data[i].document_type});
        }
 
       }
@@ -163,6 +209,24 @@ var ReviewModifyController =['$routeParams','$location','$scope','$resource','$t
    fetchRole();
   //vm.fetchProject();
   fetchDocumentType();
+
+  function callAPI(url,type,callback){
+      $http({
+      method: type,
+      url:  url,
+      headers: { 'Content-Type': 'application/json',
+                  'Accept': 'application/json' ,
+                  'Authorization': vm.token_str 
+    }
+    }).then(function successCallback(response) {
+     
+      callback(response);
+      
+    }, function errorCallback(data, status, headers, config) {
+      // called asynchronously if an error occurs
+      // or server returns response with an error status.
+    });
+  }
   function editButtonClick(){
     vm.reviewers.forEach(function(v){ delete v.$$hashKey; delete v.object });
     var start_date = new Date(vm.startDate).toJSON();
@@ -174,41 +238,79 @@ var ReviewModifyController =['$routeParams','$location','$scope','$resource','$t
       method: 'PATCH',
       url:  editReviewAPI+vm.editId+"/",
       data:json_str,
-      headers: { 'Content-Type': 'application/json' }
+      headers: { 'Content-Type': 'application/json',
+                 'Accept': 'application/json' ,
+                 'Authorization': vm.token_str }
     }).then(function successCallback(response) {
  
        if(response.data){
           console.log(response)
+           for(var i = 0;i<vm.documents.length;i++){
+            var doc = {document_url:vm.documents[i].url,document_type:vm.documents[i].type,document_title:vm.documents[i].title,review:vm.editId};
+            var json_doc = JSON.stringify(doc);
+           // console.log(json_doc)
+            if(vm.documents[i].update)submitDucument(json_doc); 
+         }  
+         for (var i =0;i<vm.document_deleteQueue.length;i++){
+            deleteDocument(vm.document_deleteQueue[i].id);
+          }
+          for (var i =0;i<vm.reviewers.length;i++){
+            if(!vm.reviewers[i].update)continue;
+            var data = {review: vm.editId,role: vm.reviewers[i].role,employee:vm.reviewers[i].employee }
+            var json_data = JSON.stringify(data);
+            requestAddMember(json_data)
          }
-         
+         for (var i =0;i<vm.reviewer_deleteQueue.length;i++){
+            requestRemoveMember(vm.reviewer_deleteQueue[i].employee);
+          }
+         }
+        // $location.path( "/review" );
+          swal(
+            'Review edited',
+            '',
+            'success'
+          ).then(function(){
+              //$location.path( "/" );
+          });
 
        });
 
   }
+
   function saveButtonClick(){
    
     //console.log(vm.projectID);
     vm.reviewers.forEach(function(v){ delete v.$$hashKey; delete v.object });
     var start_date = new Date(vm.startDate).toJSON();
     var end_date = new Date(vm.endDate).toJSON();
-    var json = {review_title:vm.reviewTitle,review_location:vm.selectedPlace,review_date_start: start_date,review_date_end: end_date,development:vm.selectedDevelopmentID,review_type:vm.selectedType,review_comment:vm.comment,reviewmember_set:vm.reviewers}
+    var json = {review_title:vm.reviewTitle,review_location:vm.selectedPlace,review_date_start: start_date,review_date_end: end_date,development:vm.selectedDevelopmentID,review_type:vm.selectedType,review_comment:vm.comment}
+    
     var json_str =JSON.stringify(json);
     console.log(json_str)
     $http({
       method: 'POST',
       url:  addReviewAPI,
       data:json_str,
-      headers: { 'Content-Type': 'application/json' }
+      headers: { 'Content-Type': 'application/json' ,
+                'Accept': 'application/json' ,
+                'Authorization': vm.token_str}
     }).then(function successCallback(response) {
+      console.log(response)
  
        if(response.data){
          var createdID = response.data.id;
          for(var i = 0;i<vm.documents.length;i++){
           var doc = {document_url:vm.documents[i].url,document_type:vm.documents[i].type,document_title:vm.documents[i].title,review:createdID};
           var json_doc = JSON.stringify(doc);
-          console.log(json_doc)
+          //console.log(json_doc)
           submitDucument(json_doc);
          
+         }
+         for (var i =0;i<vm.reviewers.length;i++){
+          if(!vm.reviewers[i].update)continue;
+          var data = {review: createdID,role: vm.reviewers[i].role,employee:vm.reviewers[i].employee }
+          var json_data = JSON.stringify(doc);
+          requestAddMember(json_data)
          }
           $location.path( "/review" );
           swal(
@@ -231,13 +333,66 @@ var ReviewModifyController =['$routeParams','$location','$scope','$resource','$t
    
 
   }
-
+  function requestRemoveMember(id){
+     $http({
+      method: 'DELETE',
+      url:  deleteReviewMemberAPI+id+"/",
+      data:data,
+      headers: { 'Content-Type': 'application/json',
+                 'Accept': 'application/json' ,
+                 'Authorization': vm.token_str}
+    }).then(function successCallback(response) {
+        console.log(response)
+      
+    }, function errorCallback(data, status, headers, config) {
+      // called asynchronously if an error occurs
+      // or server returns response with an error status.
+    });
+  }
+  function requestAddMember(data){
+    console.log("requestAddMember");
+    console.log(data);
+    $http({
+      method: 'POST',
+      url:  addReviewMemberAPI,
+      data:data,
+      headers: { 'Content-Type': 'application/json',
+                'Accept': 'application/json' ,
+                 'Authorization': vm.token_str }
+    }).then(function successCallback(response) {
+        console.log(response)
+      
+    }, function errorCallback(data, status, headers, config) {
+      // called asynchronously if an error occurs
+      // or server returns response with an error status.
+    });
+  }
+  function deleteDocument(id){
+    $http({
+      method: 'DELETE',
+      url:  deleteDocumentAPI+id,
+      headers: { 'Content-Type': 'application/json' ,
+            'Accept': 'application/json' ,
+              'Authorization': vm.token_str}
+    }).then(function successCallback(response) {
+        console.log(response)
+      
+    }, function errorCallback(data, status, headers, config) {
+      // called asynchronously if an error occurs
+      // or server returns response with an error status.
+    });
+  }
+  
   function submitDucument(data){
+    console.log("SUBMIT DOCS")
+    console.log(data)
     $http({
       method: 'POST',
       url:  addDocumentAPI,
       data:data,
-      headers: { 'Content-Type': 'application/json' }
+      headers: { 'Content-Type': 'application/json',
+                'Accept': 'application/json' ,
+                'Authorization': vm.token_str }
     }).then(function successCallback(response) {
         console.log(response)
       
@@ -247,13 +402,14 @@ var ReviewModifyController =['$routeParams','$location','$scope','$resource','$t
     });
   }
   function addDocument(){
-    console.log("add documents")
+    //console.log("add documents")
     vm.documents.reverse();
-   vm.documents.push({title:"",type:-1,url:"" });
+   vm.documents.push({update:true,title:"",type:-1,url:"" });
    vm.documents.reverse();
 
   }
   function removeDocument(index){
+   vm.document_deleteQueue.push(vm.documents[index]);
     vm.documents.splice(index,1)
   }
   function fetchDocumentType(){
@@ -268,27 +424,32 @@ var ReviewModifyController =['$routeParams','$location','$scope','$resource','$t
    /* for (var i =0;i<vm.reviewers.length;i++){
       if(vm.reviewers[i].id==id)vm.reviewers.splice(i,1);
     }*/
+     vm.reviewer_deleteQueue.push(vm.reviewers[index]);
      vm.reviewers.splice(index,1)
 
   }
   
   function changeShop(){
-   // console.log("changeShop")
-   for(var i =0;i< vm.projects.length;i++){
+    callAPI(getProjectByIDAPI+vm.selectedProject.id,"GET",function(response){
+            var project_data = response.data[0];
+        
+            vm.selectedProject.project_name =project_data.project_name;
+            vm.selectedProject.shop.id = project_data.shop;
+            callAPI(getShopByIDAPI+project_data.shop,"GET",function(response){
+              var shop_data = response.data[0];
+              vm.selectedProject.shop = shop_data;
 
-    //console.log("Project i:"+vm.projects[i].id)
-    //console.log("selectedProject:"+vm.selectedProject.id)
-    if(vm.projects[i].id == vm.selectedProject.id){
-      //console.log("in if")
-      vm.selectedProject.shop = vm.projects[i].shop;
-      break;
-    }
-   }
+            })
+          })
+   
+
+
+  
   }
   function addReviewMember (){
     console.log("add reviewers")
     vm.reviewers.reverse();
-   vm.reviewers.push({employee:-1,role:-1 });
+   vm.reviewers.push({update:true,employee:-1,role:-1 });
    vm.reviewers.reverse();
   }
 
@@ -300,7 +461,9 @@ var ReviewModifyController =['$routeParams','$location','$scope','$resource','$t
       method: 'GET',
       url:  url,
       //data:$.param({control_op:0}),
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+      headers: { 'Content-Type': 'application/json',
+                  'Accept': 'application/json' ,
+                  'Authorization': vm.token_str }
     }).then(function successCallback(response) {
  
       if(response.data){

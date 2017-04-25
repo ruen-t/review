@@ -3,9 +3,78 @@
 angular.module('login', ['datatables', 'ngResource'])
 .controller('LoginController', LoginController);
 
+var vm;
 
-function LoginController ($resource,$translate) {
-	
+function LoginController ($resource,$translate,$http) {
+	vm = this;
+	vm.http =$http
+	vm.onSignIn = onSignIn;
+	vm.requestDJangoToken = requestDJangoToken;
+	vm.signOut = signOut;
 }
+function onSignIn(googleUser) {
+    var profile = googleUser.getBasicProfile();
+    //var client_id = "BufEoI2OhtOiVwCLpdrPFZrqXHO3Fd9Zk5xmY4mK";
+    var client_id ="I2IAnOzO7QorjqfgXX4YbBUJ6w5ASt8w5qWcwbW1";
+    console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
+    console.log('Name: ' + profile.getName());
+    console.log('Image URL: ' + profile.getImageUrl());
+    console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
+    var authData = googleUser.getAuthResponse(true);
+    console.log(authData);
+    var data = {"grant_type": "convert_token", "client_id":client_id, "backend":"google-oauth2", "token":authData.access_token}
+    var json_data = JSON.stringify(data);
+    requestDJangoToken(json_data);
 
+
+    
+  }
+  function requestDJangoToken(json){
+    console.log(json)
+    vm.http({
+              method: 'POST',
+              url:  "http://pt-reviewtool-vmg.wni.co.jp/easyreviewapi/auth/convert-token/",
+              data:json,
+              headers: { 'Content-Type': 'application/json' }
+            }).then(function successCallback(response) {
+                
+                console.log(response);
+                var today = new Date();
+                var tomorrow = new Date()
+                tomorrow.setDate(today.getDate()+1);
+                //console.log(tomorrow);
+                document.cookie = "token_django="+response.data.access_token+"; expires="+today
+                console.log(document.cookie);
+                console.log(getCookie("token_django"))
+               
+                
+                
+               
+              }, function errorCallback(data, status, headers, config) {
+                // called asynchronously if an error occurs
+                // or server returns response with an error status.
+              });
+
+  }
+ function getCookie(cname) {
+    var name = cname + "=";
+    var decodedCookie = decodeURIComponent(document.cookie);
+    var ca = decodedCookie.split(';');
+    for(var i = 0; i <ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0) == ' ') {
+            c = c.substring(1);
+        }
+        if (c.indexOf(name) == 0) {
+            return c.substring(name.length, c.length);
+        }
+    }
+    return "";
+}
+function signOut() {
+          var auth2 = gapi.auth2.getAuthInstance();
+          auth2.signOut().then(function() {
+          console.log('User signed out.');
+          });
+        }
 

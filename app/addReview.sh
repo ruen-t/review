@@ -1,14 +1,19 @@
 #!/bin/sh
 
-for i in `seq 0 10`;
+for i in `seq 0 300`;
         do
         year=$((RANDOM%1+2017))
 month=$((RANDOM%11+1))
 day=$((RANDOM%27+1))
 hour=$((RANDOM%25))
 min=$((RANDOM%61))
-t=$year"-"$month"-"$day"T"$hour":"$min
-echo $t
+date_s=$year"-"$month"-"$day"T"$hour":"$min
+year2=$((RANDOM%1+2017))
+month2=$((RANDOM%11+1))
+day2=$((RANDOM%27+1))
+hour2=$((RANDOM%25))
+min2=$((RANDOM%61))
+date_e=$year2"-"$month2"-"$day2"T"$hour2":"$min2
 d=$((RANDOM%2+1))
 rt=$((RANDOM%5+1))
 lo=$((RANDOM%12+1))
@@ -34,10 +39,8 @@ for j in `seq 0 4`;
    done
 
         	#eval "curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' --header 'X-CSRFToken: Cgd8agpn80oUBL5JqgD2WArPguyCKi6eLq855IIT9SS3HrpPAOZxKSlp00nQkJeZ' -d '{ \"review_location\": \"2\", \"review_date\": \"2017-02-21T11:00\", \"development\": \"2\", \"review_type\": \"5\", \"review_comment\": \"This is API test.\" }' 'http://172.16.252.110/reviewtoolapi/review/add/'"
-		    eval "curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' --header 'X-CSRFToken: C1y4fOFrfVU9bvIl9GAhtdwIpG1E38evLbt1agYXgNoihb2rjeWMhvqi9cQSDzmg' -d '{  \"review_location\": \""$lo"\", \"review_date\": \""$t"\", \"development\": \""$d"\", \"review_type\": \""$rt"\", \"review_comment\": \"This is API test.\",\"reviewmember_set\":["$userlist"] }' 'http://172.16.252.110/reviewtoolapi/review/add/'"
+		    eval "curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' --header 'X-CSRFToken:  AkaUmNPhyR4p3T6ecpZya9xQsoUZ6l1UJu5Rhf8NzJyy9zqkmXl3YrrqcUJdGM9F' -d '{  \"review_location\": \""$lo"\", \"review_date_start\": \""$date_s"\", \"review_date_end\": \""$date_e"\",\"development\": \""$d"\", \"review_type\": \""$rt"\", \"review_comment\": \"This is API test.\" ,\"review_title\": \"Title Test.\" }' 'http://172.16.252.110/reviewtoolapi/review/'"
        
        done 
-
-
 
 

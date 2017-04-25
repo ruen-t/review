@@ -1,29 +1,35 @@
-var hostName= "http://172.16.252.110/";
+var hostName= "http://pt-reviewtool-vmg.wni.co.jp/easyreviewapi/";
 
-var getEmployeeAPI = hostName+"reviewtoolapi/employee/";
-var getShopAPI = hostName+"reviewtoolapi/master/Shop/";
-var getMeetingSpaceAPI =hostName+"reviewtoolapi/master/MeetSpace/";
-var getProjectListAPI = hostName+"reviewtoolapi/project/";
-var getProjectMemberAPI = hostName+"reviewtoolapi/project/members/?project=";
-var getReviewTypeAPI =  hostName+"reviewtoolapi/master/RevType/";
-var getRoleAPI = hostName+"reviewtoolapi/master/Role/";
-var getDevelopmentAPI = hostName+"reviewtoolapi/project/developments/?project=";
-var getDocumentTypeAPI = hostName+ "reviewtoolapi/master/DocType/";
+var getEmployeeAPI = hostName+"employee/";
+var getEmployeeByIDAPI = hostName+"employee/?id=";
+var getShopAPI = hostName+"master/Shop/";
+var getMeetingSpaceAPI =hostName+"master/MeetSpace/";
+var getProjectListAPI = hostName+"project/";
+var getProjectMemberAPI = hostName+"project/members/?project=";
+var getProjectByIDAPI = hostName+"project/?id=";
+var getShopByIDAPI = hostName+"master/Shop/";
+
+var getReviewTypeAPI =  hostName+"master/RevType/";
+var getRoleAPI = hostName+"master/Role/";
+var getDevelopmentAPI = hostName+"project/developments/?project=";
+var getDevelopmentIDAPI = hostName+"project/developments/?id=";
+var getDocumentTypeAPI = hostName+ "master/DocType/";
 
 
-var getReviewAPI = hostName+"reviewtoolapi/review/";
+var getReviewAPI = hostName+"review/";
 var getSpecificReviewAPI = getReviewAPI+"?id=";
-var addReviewAPI = hostName+"reviewtoolapi/review/";
-var editReviewAPI = hostName+"reviewtoolapi/review/edit/";
-var deleteAPI = hostName+"reviewtoolapi/review/edit/";
+var addReviewAPI = hostName+"review/";
+var editReviewAPI = hostName+"review/edit/";
+var deleteAPI = hostName+"review/edit/";
 
-var getFeedbackAPI=hostName+"reviewtoolapi/review/feedbacks/?review=";
-var addFeedbackAPI=hostName+"reviewtoolapi/review/feedbacks/";
-var editFeedbackAPI=hostName+"reviewtoolapi/review/feedback/";
+var getFeedbackAPI=hostName+"review/feedbacks/?review=";
+var addFeedbackAPI=hostName+"review/feedbacks/";
+var editFeedbackAPI=hostName+"review/feedback/";
 
-var getReviewMemberAPI= hostName+"reviewtoolapi/review/members/?review=";
-var deleteReviewMemberAPI= hostName+"reviewtoolapi/review/member/";
+var getReviewMemberAPI= hostName+"review/members/?review=";
+var deleteReviewMemberAPI= hostName+"review/member/edit/";
+var addReviewMemberAPI= hostName+"review/members/";
 
-var getReviewDocumentAPI = hostName+"reviewtoolapi/review/documents/?review=";
-var addDocumentAPI = hostName+"reviewtoolapi/review/documents/";
-var deleteDocumentAPI = hostName+"reviewtoolapi/review/document/";
+var getReviewDocumentAPI = hostName+"review/documents/?review=";
+var addDocumentAPI = hostName+"review/documents/";
+var deleteDocumentAPI = hostName+"review/document/edit/";

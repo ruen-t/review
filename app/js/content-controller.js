@@ -3,6 +3,9 @@ angular.module('content',[])
 
 function ContentController ($http,$routeParams,$translate,$rootScope) {
 	var vm = this;
+  var token = getCookie("token_django");
+  var token_str = 'Bearer '+token;
+  vm.token_str = token_str;
    vm.reviewID = $routeParams.id;
    vm.saveButtonClick = saveButtonClick;
    vm.feedbackCount =0 ;
@@ -59,7 +62,9 @@ function saveButtonClick(){
          method: 'POST',
          url:  addFeedbackAPI,
          data:data,
-         headers: { 'Content-Type': 'application/json' }
+         headers: { 'Content-Type': 'application/json',
+                  'Accept': 'application/json' ,
+                  'Authorization': token_str }
        }).then(function successCallback(response) {
           vm.feedbackCount++;
          if(vm.feedbackCount==feedback_number){
@@ -79,7 +84,9 @@ function saveButtonClick(){
       $http({
       method: 'GET',
       url:  getFeedbackAPI+vm.reviewID,
-      headers: { 'Content-Type': 'application/json' }
+      headers: { 'Content-Type': 'application/json',
+                 'Accept': 'application/json' ,
+                 'Authorization': token_str }
     }).then(function successCallback(response) {
  
       if(response.data){
@@ -103,17 +110,68 @@ function saveButtonClick(){
     });
 
    }
+  function callAPI(url,type,callback){
+   
+      $http({
+      method: type,
+      url:  url,
+      headers: { 'Content-Type': 'application/json',
+                  'Accept': 'application/json' ,
+                  'Authorization': vm.token_str 
+    }
+    }).then(function successCallback(response) {
+     
+      callback(response);
+      
+    }, function errorCallback(data, status, headers, config) {
+      // called asynchronously if an error occurs
+      // or server returns response with an error status.
+    });
+  }
    function fetchReview(){
     $http({
       method: 'GET',
       url:  getSpecificReviewAPI+vm.reviewID,
-      headers: { 'Content-Type': 'application/json' }
+      headers: { 'Content-Type': 'application/json',
+                 'Accept': 'application/json' ,
+                 'Authorization': token_str }
     }).then(function successCallback(response) {
  
       if(response.data){
         var data = response.data[0];
-       // console.log(data)
+        console.log(data)
         vm.review = data;
+    
+        console.log(vm.reviewers);
+        callAPI(getMeetingSpaceAPI+data.review_location,"GET",function(response){
+          var location_data = response.data[0];
+          //console.log(location_data);
+          vm.review.review_location = location_data;
+        });
+        callAPI(getReviewTypeAPI+data.review_type,"GET",function(response){
+          var review_type_data = response.data[0];
+          //console.log(location_data);
+          vm.review.review_type = review_type_data;
+        });
+        //get Project and shop name
+         callAPI(getDevelopmentIDAPI+data.development,"GET",function(response){
+          console.log(response.data[0]);
+          var development_data = response.data[0];
+          vm.review.development = development_data;
+          var project_id = development_data.project;
+          
+          callAPI(getProjectByIDAPI+project_id,"GET",function(response){
+            var project_data = response.data[0];
+            console.log(project_data);
+            vm.review.project = project_data;
+           
+            callAPI(getShopByIDAPI+project_data.shop,"GET",function(response){
+              var shop_data = response.data[0];
+              vm.review.shop = shop_data;
+
+            })
+          })
+        })
        // vm.startDate = new Date(data.review_date_start);
        // vm.endDate = new Date(data.review_date_end);
 
@@ -128,7 +186,9 @@ function saveButtonClick(){
          $http({
             method: 'GET',
             url:  getReviewMemberAPI+vm.reviewID,
-            headers: { 'Content-Type': 'application/json' }
+            headers: { 'Content-Type': 'application/json',
+                        'Accept': 'application/json' ,
+                         'Authorization': token_str }
        }).then(function successCallback(response) {
     
          if(response.data){
