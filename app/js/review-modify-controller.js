@@ -314,7 +314,7 @@ var ReviewModifyController =['$routeParams','$location','$scope','$resource','$t
          for (var i =0;i<vm.reviewers.length;i++){
           if(!vm.reviewers[i].update)continue;
           var data = {review: createdID,role: vm.reviewers[i].role,employee:vm.reviewers[i].employee }
-          var json_data = JSON.stringify(doc);
+          var json_data = JSON.stringify(data);
           requestAddMember(json_data)
          }
          // $location.path( "/review" );
