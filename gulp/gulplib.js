@@ -50,6 +50,18 @@ var dist = {
 // and *.css to `vendor.css`
 // rename fonts to `fonts/*.*`
 //
+var minifyCssOptions = {
+        inliner: {
+            request: {
+                  hostname: "http://172.16.252.110",   // I'm running a cntlm proxy which relays to the corp proxy
+                  port: 3128,
+                  path: "http://fonts.googleapis.com/css?family=Open+Sans:400italic,700italic,400,700",
+                  headers: {
+                    Host: "fonts.googleapis.com"
+                  }
+            }
+        }
+};
 gulp.task('bower', function() {
   var jsFilter = gulpFilter('**/*.js')
   var cssFilter = gulpFilter('**/*.css')
@@ -61,7 +73,7 @@ gulp.task('bower', function() {
     //.pipe(jsFilter.restore())
     bower().pipe(cssFilter)
     .pipe(concat('vendor.css'))
-    .pipe(cssmin())
+    .pipe(cssmin(minifyCssOptions))
     .pipe(gulp.dest(dist.css))
     //.pipe(cssFilter.restore())
     /* bower().pipe(rename(function(path) {
