@@ -68,6 +68,11 @@ $translateProvider.forceAsyncReload(true);
         controller: "LoginController",
         controllerAs:"vm"
     })
+    .when("/test",{
+        templateUrl : "app/src/test.html",
+        controller: "LoginController",
+        controllerAs:"vm"
+    })
     .when("/addReview",{
         templateUrl : "app/src/addeditreview.html",
         controller: "ReviewModifyController",

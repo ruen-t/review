@@ -78,21 +78,20 @@ var ReviewModifyController =['$routeParams','$location','$scope','$resource','$t
   if(!vm.editId){
     vm.state=0;
     $('#startdate').datetimepicker();
-        $('#enddate').datetimepicker({
-            useCurrent: false //Important! See issue #1075
-        });
-        $("#startdate").on("dp.change", function (e) {
+                    $('#enddate').datetimepicker({
+                        useCurrent: false //Important! See issue #1075
+                    });
+                    $("#startdate").on("dp.change", function (e) {
 
-            $('#enddate').data("DateTimePicker").minDate(e.date);
-          // vm.startDate=  $("#startdate").data("datetimepicker").getDate();
+                        $('#enddate').data("DateTimePicker").minDate(e.date);
+                      
+                       
+                    });
+                    $("#enddate").on("dp.change", function (e) {
+                        $('#startdate').data("DateTimePicker").maxDate(e.date);
+           
            
         });
-        $("#enddate").on("dp.change", function (e) {
-            $('#startdate').data("DateTimePicker").maxDate(e.date);
-           // vm.endDate =  $("#enddate").data("datetimepicker").getDate();
-           
-        });
-
   }else{
     vm.state=1;
     $http({

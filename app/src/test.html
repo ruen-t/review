@@ -1,32 +1,7 @@
-<!--head>
- <meta name="google-signin-client_id"
-  content="184532799768-e0g0s1o6397disvbas5lks7ncg8u8apg.apps.googleusercontent.com">
-<script src="https://apis.google.com/js/platform.js" async defer></script>
-</head>
-
-<div ng-app="LoginForm">
-  
-<body>
-  <div>
-    
-    <div class="g-signin2" data-onsuccess="onSignIn"></div>
-    <div>
-      <button href="#" ng-click="signOut();">Sign out</button>
-     
-    </div>
-    
-  </div>
-  
-   
-</body>
-
-    
-  
-</div-->
 <head>
  <meta name="google-signin-client_id"
   content="184532799768-e0g0s1o6397disvbas5lks7ncg8u8apg.apps.googleusercontent.com">
-<script src="https://apis.google.com/js/platform.js" async defer></script>
+
 </head>
 <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
 
@@ -43,7 +18,7 @@
 }
 	
 .omb_login .omb_socialButtons a {
-	color: white; // In yourUse @body-bg 
+	color: white; 
 	opacity:0.9;
 }
 .omb_login .omb_socialButtons a:hover {
@@ -52,7 +27,7 @@
 }
 .omb_login .omb_socialButtons .omb_btn-facebook {background: #3b5998;}
 .omb_login .omb_socialButtons .omb_btn-twitter {background: #00aced;}
-.omb_login .omb_socialButtons .omb_btn-google {background: #c32f10  !important;}
+.omb_login .omb_socialButtons .omb_btn-google {background: #c32f10;}
 
 
 .omb_login .omb_loginOr {
@@ -100,18 +75,17 @@
     
 
     <div class="omb_login">
-    	<h3 class="omb_authTitle" ng-show="!vm.loggedIn">Login or <a href="https://mail.google.com/mail/signup
-">Sign up</a></h3>
+    	<h3 class="omb_authTitle">Login or <a href="#">Sign up</a></h3>
 		<div class="row omb_row-sm-offset-3 omb_socialButtons">
     	    
-	        <div class="col-xs-4 col-sm-2 g-signin2"  data-onsuccess="onSignIn"  ng-show="!vm.loggedIn">
-		        <a href="#" class="btn btn-lg btn-block ">
+	        <div class="col-xs-4 col-sm-2 "  data-onsuccess="onSignIn" ng-show="!vm.loggedIn">
+		        <a href="#" class="btn btn-lg btn-block omb_btn-google">
 			        <i class="fa fa-google-plus visible-xs"></i>
 			        <span class="hidden-xs">Google+</span>
 		        </a>
 	        </div>	
-	        <div class="col-xs-4 col-sm-2 "  ng-click="vm.signOut();" ng-show="vm.loggedIn" >
-		        <a href="" class="btn btn-lg btn-block omb_btn-google">
+	        <div class="col-xs-4 col-sm-2 "  ng-click="signOut();" ng-show="vm.loggedIn" >
+		        <a href="#" class="btn btn-lg btn-block omb_btn-google">
 			        <i class="fa fa-google-plus visible-xs"></i>
 			        <span class="hidden-xs">Sign out</span>
 		        </a>
@@ -126,3 +100,4 @@
 
 
 </div>
+<script src="https://apis.google.com/js/platform.js" async defer></script>

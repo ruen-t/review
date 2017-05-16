@@ -11,10 +11,14 @@ function LoginController ($resource,$translate,$http) {
 	vm.onSignIn = onSignIn;
 	vm.requestDJangoToken = requestDJangoToken;
 	vm.signOut = signOut;
+  vm.loggedIn = false;
+  var token = getCookie("token_django");
+  if(token)vm.loggedIn = true;
 }
 function onSignIn(googleUser) {
     var profile = googleUser.getBasicProfile();
     //var client_id = "BufEoI2OhtOiVwCLpdrPFZrqXHO3Fd9Zk5xmY4mK";
+    console.log("onSignIn")
     var client_id ="I2IAnOzO7QorjqfgXX4YbBUJ6w5ASt8w5qWcwbW1";
     console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
     console.log('Name: ' + profile.getName());
@@ -25,10 +29,11 @@ function onSignIn(googleUser) {
     var data = {"grant_type": "convert_token", "client_id":client_id, "backend":"google-oauth2", "token":authData.access_token}
     var json_data = JSON.stringify(data);
     requestDJangoToken(json_data);
-
-
+    
     
   }
+
+
   function requestDJangoToken(json){
     console.log(json)
     vm.http({
@@ -44,6 +49,7 @@ function onSignIn(googleUser) {
                 tomorrow.setDate(today.getDate()+1);
                 //console.log(tomorrow);
                 document.cookie = "token_django="+response.data.access_token+"; expires="+today
+               vm.loggedIn = true;
                 console.log(document.cookie);
                 console.log(getCookie("token_django"))
                
@@ -54,8 +60,8 @@ function onSignIn(googleUser) {
                 // called asynchronously if an error occurs
                 // or server returns response with an error status.
               });
-
   }
+
  function getCookie(cname) {
     var name = cname + "=";
     var decodedCookie = decodeURIComponent(document.cookie);
@@ -71,10 +77,16 @@ function onSignIn(googleUser) {
     }
     return "";
 }
+function delete_cookie( name ) {
+  console.log("delete cookie")
+  document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+}
 function signOut() {
+  console.log("signOut")
           var auth2 = gapi.auth2.getAuthInstance();
           auth2.signOut().then(function() {
           console.log('User signed out.');
           });
+          delete_cookie("token_django")
         }
 
