@@ -72,6 +72,23 @@ var ReviewModifyController =['$routeParams','$location','$scope','$resource','$t
     vm.editReview ={};
     vm.document_deleteQueue=[];
     vm.reviewer_deleteQueue=[];
+     
+        $('#startdate').datetimepicker();
+        $('#enddate').datetimepicker({
+            useCurrent: false //Important! See issue #1075
+        });
+        $("#startdate").on("dp.change", function (e) {
+
+            $('#enddate').data("DateTimePicker").minDate(e.date);
+          // vm.startDate=  $("#startdate").data("datetimepicker").getDate();
+           
+        });
+        $("#enddate").on("dp.change", function (e) {
+            $('#startdate').data("DateTimePicker").maxDate(e.date);
+           // vm.endDate =  $("#enddate").data("datetimepicker").getDate();
+           
+        });
+  
   if(!vm.editId){
     vm.state=0;
 
@@ -281,8 +298,19 @@ var ReviewModifyController =['$routeParams','$location','$scope','$resource','$t
    
     //console.log(vm.projectID);
     vm.reviewers.forEach(function(v){ delete v.$$hashKey; delete v.object });
-    var start_date = new Date(vm.startDate).toJSON();
-    var end_date = new Date(vm.endDate).toJSON();
+       vm.startDate=  $("#startdate").find("input").val();
+      vm.endDate=  $("#enddate").find("input").val();
+    //console.log(vm.startDate);
+   // console.log(vm.endDate);
+    var start_date_obj = new Date(vm.startDate);
+    var end_date_obj = new Date(vm.endDate)
+    //console.log(start_date_obj)
+   // console.log(end_date_obj)
+
+    var start_date =new Date(start_date_obj.getTime() - (start_date_obj.getTimezoneOffset() * 60000)).toJSON()
+    var end_date =  new Date(end_date_obj.getTime() - (end_date_obj.getTimezoneOffset() * 60000)).toJSON()
+    //console.log(start_date);
+   // console.log(end_date)
     var json;
     if(vm.selectedDevelopmentID != -1){
       json = {review_title:vm.reviewTitle,review_location:vm.selectedPlace,review_date_start: start_date,review_date_end: end_date,development:vm.selectedDevelopmentID,review_type:vm.selectedType,review_comment:vm.comment}
@@ -292,6 +320,7 @@ var ReviewModifyController =['$routeParams','$location','$scope','$resource','$t
     }
     var json_str =JSON.stringify(json);
     console.log(json_str)
+    //return ;
     $http({
       method: 'POST',
       url:  addReviewAPI,
