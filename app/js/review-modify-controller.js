@@ -73,7 +73,7 @@ var ReviewModifyController =['$routeParams','$location','$scope','$resource','$t
     vm.document_deleteQueue=[];
     vm.reviewer_deleteQueue=[];
      
-        
+
   
   if(!vm.editId){
     vm.state=0;
