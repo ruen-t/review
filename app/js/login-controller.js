@@ -5,13 +5,14 @@ angular.module('login', ['datatables', 'ngResource'])
 
 var vm;
 
-function LoginController ($resource,$translate,$http) {
+function LoginController ($resource,$translate,$http,$location) {
 	vm = this;
 	vm.http =$http
 	vm.onSignIn = onSignIn;
 	vm.requestDJangoToken = requestDJangoToken;
 	vm.signOut = signOut;
   vm.loggedIn = false;
+  vm.location = $location;
   var token = getCookie("token_django");
   if(token)vm.loggedIn = true;
 }
@@ -88,5 +89,12 @@ function signOut() {
           console.log('User signed out.');
           });
           delete_cookie("token_django")
+         vm.loggedIn = false;
+        vm.location.path( "/login" );
         }
+       
+
+
+
+
 

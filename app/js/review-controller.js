@@ -36,8 +36,11 @@ angular.module('review', ['datatables', 'ngResource','ngMaterial','datatables.sc
   })
 
 var hasSelected=false;
+var scope;
 function ReviewController($location,$timeout,$scope, $resource,$mdDialog,$mdMenu,$http) {
     var vm = this;
+     scope = $scope;
+    scope.totalDisplayed = 600;
     vm.hasSelected = hasSelected;
     vm.reviewSelect = reviewSelect;
     vm.checkSelected = checkSelected;
@@ -112,6 +115,7 @@ function ReviewController($location,$timeout,$scope, $resource,$mdDialog,$mdMenu
 
                 vm.countRender++;
                // console.log(this)
+
                 var api = this.api(),
 
                     searchBox = angular.element('body').find('#review_search');
@@ -129,18 +133,26 @@ function ReviewController($location,$timeout,$scope, $resource,$mdDialog,$mdMenu
                         //console.log(event.target.value);
                     });
                 }
-                vm.changeday(0)
+                vm.changeday(0);
+                
+               /* this.on( 'page.dt', function () {
+                  
+                  scope.totalDisplayed+=30;
+                  console.log("total: "+scope.totalDisplayed);
+            } );*/
+                //vm.totalDisplayed = 600;
                 
            },
            //serverSide :true,
            //destroy:true,
+           deferRender: true,
            processing: true,
             pagingType  : 'full_numbers',
-            lengthMenu  : [[10, 30, 50, 100,-1],[10, 30, 50, 100,"All"]],
+            lengthMenu  : [[10, 30, 50,-1],[10, 30, 50,"All"]],
             pageLength  : 10,
             scrollY     : '450',
             language: {
-           "emptyTable": '<img src="assets/ring.gif"  />',
+         "emptyTable": '<img src="assets/ring.gif"  />',
            "zeroRecords": "No records to display",
             },
            
@@ -149,6 +161,7 @@ function ReviewController($location,$timeout,$scope, $resource,$mdDialog,$mdMenu
            // processing : true,
 
         };
+
         vm.review=[];
         
 
@@ -187,9 +200,31 @@ function getCookie(cname) {
     }
     return "";
 }
+function toLocal (date) {
+  var local = new Date(date);
+  local.setMinutes(date.getMinutes() - date.getTimezoneOffset());
+  return local.toJSON();
+}
+
+function toJSONLocal (date) {
+  var local = new Date(date);
+  local.setMinutes(date.getMinutes() - date.getTimezoneOffset());
+  return local.toJSON().slice(0, 10);
+}
  function fetchData(){
   //console.log("fetch")
-  var today = new Date();
+  var start = new Date();
+   start.setDate(1);
+  start.setMonth(start.getMonth()-2);
+  var end = new Date();
+   end.setDate(1);
+  end.setMonth(end.getMonth()+2);
+  var start_date_str = toJSONLocal(start);
+  var end_date_str = toJSONLocal(end);
+  console.log(start_date_str);
+  console.log(end_date_str);
+
+  
  /* $.ajax({
           type: "GET",
           url: getReviewAPI
@@ -211,11 +246,17 @@ function getCookie(cname) {
 
       });*/
       var token = getCookie("token_django");
+      if(!token){
+       $location.path( "/login" );
+       return;
+     }
       var token_str = 'Bearer '+token;
       console.log(token_str);
+
+      var date = start_date_str+"|"+end_date_str;
   $http({
               method: 'GET',
-              url:  getReviewAPI,
+              url:  getReviewByDateAPI+date,
               //data:$.param({control_op:0}),
               headers: { 'Content-Type': 'application/json',
                           'Accept': 'application/json' ,
@@ -226,11 +267,11 @@ function getCookie(cname) {
                 //console.log(response);
                 
                 if(response.data){
-                   // console.log(response.data)
+                   //console.log(response.data)
                     var data = response.data;
                     vm.review=[];
                      for (i in data){
-                     
+                    
                       if(!data[i].pm){
                         data[i].pm="";
                       } if(!data[i].pdm){
@@ -239,10 +280,10 @@ function getCookie(cname) {
                        var managerArray=data[i].pm.split(",").concat(data[i].pdm.split(","))
                       //console.log(managerArray)
                       //var manager = data[i].pm+","+data[i].pdm;
-                       vm.review.push({select:false,id:data[i].id,manager:managerArray,date:data[i].review_date_start,location:data[i].meetspace_name_en,development:data[i].development,title:data[i].review_title,type:data[i].review_type,reviewer:data[i].reviewer})
+                       vm.review[i]={select:false,id:data[i].id,manager:managerArray,date:data[i].review_date_start,location:data[i].meetspace_name_en,development:data[i].development_code,title:data[i].review_title,type_en:data[i].revtype_name_en,type_jp:data[i].revtype_name_jp,reviewer:data[i].reviewer}
                     }
 
-                    //console.log(vm.review)
+                   // console.log(vm.review)
                   //  vm.dtInstance.rerender();
                    // vm.changeday(0)
                 }

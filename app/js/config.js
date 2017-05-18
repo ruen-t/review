@@ -17,6 +17,7 @@ var getDocumentTypeAPI = hostName+ "master/DocType/";
 
 
 var getReviewAPI = hostName+"review/";
+var getReviewByDateAPI = hostName+"review/search/?data=detail&key=DATE&query=";
 var getSpecificReviewAPI = getReviewAPI+"?id=";
 var addReviewAPI = hostName+"review/";
 var editReviewAPI = hostName+"review/edit/";

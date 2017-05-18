@@ -71,7 +71,7 @@
             <td>{{ review.date|date:'yyyy-MM-dd  (HH:mm)' }}</td>
              <td>{{ review.location}}</td>
             <td>[{{review.development}}]&nbsp{{ review.title}} -  {{review.development.development.development_type.devtype_code}}</td>
-            <td>{{ review.type.revtype_code }}</td>
+            <td>{{ review.type_en }}</td>
             <td><div ng-repeat="manager in review.manager track by $index">{{ manager}}<br></div></td>
             <td><span ng-repeat="reviwer in review.reviwer">{{ reviwer.name }}<br></span></td>
             <td ng-click="vm.gotoContentPage(review.id)">&nbsp&nbsp&nbsp<i class="material-icons">launch</i></td>

@@ -52,6 +52,10 @@ var selectedProject ={
 var ReviewModifyController =['$routeParams','$location','$scope','$resource','$translate',"$http", function ($routeParams,$location,$scope,$resource,$translate,$http) {
   var vm = this;
   var token = getCookie("token_django");
+  if(!token){
+    $location.path( "/login" );
+    return;
+  }
     var token_str = 'Bearer '+token;
     vm.token_str= token_str;
    vm.state =0; //0 -> add, 1-> edit
