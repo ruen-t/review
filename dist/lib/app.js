@@ -555,6 +555,7 @@ var scope;
 function ReviewController($location,$timeout,$scope, $resource,$mdDialog,$mdMenu,$http) {
     var vm = this;
      scope = $scope;
+     vm.currentRange = 1;
     scope.totalDisplayed = 600;
     vm.hasSelected = hasSelected;
     vm.reviewSelect = reviewSelect;
@@ -565,6 +566,7 @@ function ReviewController($location,$timeout,$scope, $resource,$mdDialog,$mdMenu
     vm.sameDate = sameDate;
     vm.toggleDateFilter=toggleDateFilter;
     vm.datatableSearch  = datatableSearch;
+    vm.loadMoreReview = loadMoreReview;
     vm.gotoAddPage = gotoAddPage;
     vm.gotoEditPage = gotoEditPage;
     vm.gotoContentPage = gotoContentPage;
@@ -574,7 +576,7 @@ function ReviewController($location,$timeout,$scope, $resource,$mdDialog,$mdMenu
     vm.refreshFlag = false;
     vm.countRender = 0;
     vm.reviewDate;
-
+    vm.datatableAPI ;
         vm.dtOptions = {
             dom         : 'rt<"bottom"<"left"<"length"l>><"right"<"info"i><"pagination"p>>>',
             columnDefs  : [
@@ -631,9 +633,9 @@ function ReviewController($location,$timeout,$scope, $resource,$mdDialog,$mdMenu
                 vm.countRender++;
                // console.log(this)
 
-                var api = this.api(),
+                vm.datatableAPI = this.api();
 
-                    searchBox = angular.element('body').find('#review_search');
+                var  searchBox = angular.element('body').find('#review_search');
 
                    // console.log(searchBox)
 
@@ -644,7 +646,7 @@ function ReviewController($location,$timeout,$scope, $resource,$mdDialog,$mdMenu
                     searchBox.on('keyup', function (event)
                     { 
                         
-                       api.search(event.target.value).draw();
+                       vm.datatableAPI.search(event.target.value).draw();
                         //console.log(event.target.value);
                     });
                 }
@@ -666,6 +668,8 @@ function ReviewController($location,$timeout,$scope, $resource,$mdDialog,$mdMenu
             lengthMenu  : [[10, 30, 50,-1],[10, 30, 50,"All"]],
             pageLength  : 10,
             scrollY     : '450',
+           // destroy:true,
+            bRetrieve:true,
             language: {
          "emptyTable": '<img src="assets/ring.gif"  />',
            "zeroRecords": "No records to display",
@@ -700,6 +704,72 @@ function ReviewController($location,$timeout,$scope, $resource,$mdDialog,$mdMenu
   $location.path( "/content/"+id );
 
  }
+ function appendReview(dateRange){
+  var token = getCookie("token_django");
+      if(!token){
+       $location.path( "/login" );
+       return;
+     }
+      var token_str = 'Bearer '+token;
+   $http({
+              method: 'GET',
+              url:  getReviewByDateAPI+dateRange,
+              headers: { 'Content-Type': 'application/json',
+                          'Accept': 'application/json' ,
+                         'Authorization': token_str }
+            }).then(function successCallback(response) {
+                if(response.data){
+                   //console.log(response.data)
+                    var data = response.data;
+                     for (i in data){
+                      if(!data[i].pm){
+                        data[i].pm="";
+                      } if(!data[i].pdm){
+                        data[i].pdm = "";
+                      }
+                       var managerArray=data[i].pm.split(",").concat(data[i].pdm.split(","));
+                       vm.review.push({select:false,id:data[i].id,manager:managerArray,date:data[i].review_date_start,location:data[i].meetspace_name_en,development:data[i].development_code,title:data[i].review_title,type_en:data[i].revtype_name_en,type_jp:data[i].revtype_name_jp,reviewer:data[i].reviewer});
+                  // vm.datatableAPI.rows.add({select:false,id:data[i].id,manager:managerArray,date:data[i].review_date_start,location:data[i].meetspace_name_en,development:data[i].development_code,title:data[i].review_title,type_en:data[i].revtype_name_en,type_jp:data[i].revtype_name_jp,reviewer:data[i].reviewer})
+                   
+                    }
+                    console.log(vm.review);
+                     vm.dtInstance.rerender();//DataTable.draw();
+              
+                }
+                
+              }, function errorCallback(data, status, headers, config) {
+                // called asynchronously if an error occurs
+                // or server returns response with an error status.
+              });
+ }
+ function loadMoreReview(duration){
+   var start = new Date();
+   start.setDate(1);
+  start.setMonth(start.getMonth()-vm.currentRange);
+  var end = new Date();
+  end.setDate(1);
+  end.setMonth(end.getMonth()+vm.currentRange);
+  var current_start_date_str = toJSONLocal(start);
+  var current_end_date_str = toJSONLocal(end);
+   start.setMonth(start.getMonth()-duration);
+   end.setMonth(end.getMonth()+duration);
+var start_date_str = toJSONLocal(start);
+var end_date_str = toJSONLocal(end);
+console.log(current_start_date_str);
+console.log(start_date_str);
+console.log(current_end_date_str);
+console.log(end_date_str);
+
+      var leftdate = start_date_str+"|"+current_start_date_str;
+      var rightdate = current_end_date_str+"|"+end_date_str;
+  appendReview(leftdate);
+  appendReview(rightdate);
+  vm.currentRange + duration;
+
+
+
+
+ }
 function getCookie(cname) {
     var name = cname + "=";
     var decodedCookie = decodeURIComponent(document.cookie);
@@ -730,10 +800,10 @@ function toJSONLocal (date) {
   //console.log("fetch")
   var start = new Date();
    start.setDate(1);
-  start.setMonth(start.getMonth()-2);
+  start.setMonth(start.getMonth()-vm.currentRange);
   var end = new Date();
    end.setDate(1);
-  end.setMonth(end.getMonth()+2);
+  end.setMonth(end.getMonth()+vm.currentRange);
   var start_date_str = toJSONLocal(start);
   var end_date_str = toJSONLocal(end);
   console.log(start_date_str);
