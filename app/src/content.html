@@ -2,6 +2,7 @@
     <div>
 
       <form name="userForm" class="content">
+    
 
         <div layout-gt-xs="row" class="saveButton">
           <md-button class="save" ng-click="vm.saveButtonClick()" >{{ 'SAVE' | translate }}</md-button>
@@ -99,15 +100,12 @@
             <div layout-gt-xs="row" ng-repeat="reviewer in vm.reviewers" >
               
               <md-input-container  flex="30">
-               <div >{{reviewer.role.role_name_en}}</div>
+               <div >{{reviewer.role_data.role_name_en}}</div>
               </md-input-container>
               <md-input-container flex="30">
-                <div>{{reviewer.employee.employee_name}}</div>
+                <div>{{reviewer.employee_data.employee_name}}</div>
               </md-input-container>
-              <md-input-container flex="30">
-               <label>{{'FEEDBACK'|translate}}</label>
-               <input type="text" ng-model="reviewer.feedback">
-              </md-input-container>
+             
             </div>
           </div>
 

@@ -46,6 +46,7 @@ angular.module('content',[])
 function ContentController ($http,$routeParams,$translate,$rootScope) {
 	var vm = this;
   var token = getCookie("token_django");
+
   var token_str = 'Bearer '+token;
   vm.token_str = token_str;
    vm.reviewID = $routeParams.id;
@@ -179,12 +180,12 @@ function saveButtonClick(){
                  'Authorization': token_str }
     }).then(function successCallback(response) {
  
-      if(response.data){
+      if(response){
         var data = response.data[0];
         console.log(data)
         vm.review = data;
     
-        console.log(vm.reviewers);
+        
         callAPI(getMeetingSpaceAPI+data.review_location,"GET",function(response){
           var location_data = response.data[0];
           //console.log(location_data);
@@ -232,14 +233,50 @@ function saveButtonClick(){
                         'Accept': 'application/json' ,
                          'Authorization': token_str }
        }).then(function successCallback(response) {
-    
-         if(response.data){
+         vm.reviewers ={};
+         if(response){
+         
            var data = response.data;
-           //console.log(data);
+         // console.log(data);
 
            vm.reviewers = data;
-           vm.reviewers.forEach(function(v){v.feedback=""});
-           fetchFeedback();
+           var index =0;
+           console.log(vm.reviewers);
+           for(var i =0;i<vm.reviewers.length;i++){
+            vm.reviewers[i].employee_data = {};
+            vm.reviewers[i].role_data = null;
+            //console.log(vm.reviewers[i])
+            callAPI(getEmployeeByIDAPI+vm.reviewers[i].employee,"GET",function(response){
+              //console.log(response.data[0]);
+              //console.log(vm.reviewers)
+             var reviewer_data =response.data[0];
+              for(index =0;index<vm.reviewers.length;index++){
+                if(vm.reviewers[index].employee ==reviewer_data.id){
+                  vm.reviewers[index].employee_data = reviewer_data;
+                  
+                  break;
+                }
+              }
+
+            })
+
+             callAPI(getRoleAPI+vm.reviewers[i].role,"GET",function(response){
+            
+             var role_data =response.data[0];
+              for(index =0;index<vm.reviewers.length;index++){
+
+               if(vm.reviewers[index].role ==role_data.id&&vm.reviewers[index].role_data==null){
+                  vm.reviewers[index].role_data = role_data;
+                  
+                  break;
+                }
+               // console.log(vm.reviewers)
+              }
+
+            })
+           }
+          // vm.reviewers.forEach(function(v){v.feedback=""});
+          // fetchFeedback();
             
           
          }
