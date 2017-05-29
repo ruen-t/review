@@ -6,6 +6,7 @@ $(function(){
 var hostName= "http://pt-reviewtool-vmg.wni.co.jp/easyreviewapi/";
 
 var getEmployeeAPI = hostName+"employee/";
+var getUserInfo = hostName+"employee/current/"
 var getEmployeeByIDAPI = hostName+"employee/?id=";
 var getShopAPI = hostName+"master/Shop/";
 var getMeetingSpaceAPI =hostName+"master/MeetSpace/";
@@ -50,8 +51,9 @@ function ContentController ($http,$routeParams,$translate,$rootScope) {
   var token_str = 'Bearer '+token;
   vm.token_str = token_str;
    vm.reviewID = $routeParams.id;
-   vm.saveButtonClick = saveButtonClick;
+   
    vm.feedbackCount =0 ;
+   vm.addFeedback = addFeedback;
   //console.log(vm.reviewID)
 	vm.isEnglish = false;
    $rootScope.$on("english",function(){
@@ -65,42 +67,38 @@ function ContentController ($http,$routeParams,$translate,$rootScope) {
    if(vm.reviewID){
       fetchReview();
       fetchReviewMember();
+      getCurrentUserInfo();
+      fetchFeedback();
 
    }
-function saveButtonClick(){
-
-   console.log(vm.reviewers)
-   swal({
-     title: 'Are you sure to submit feedback?',
-     text: "",
-     type: 'warning',
-     showCancelButton: true,
-     confirmButtonColor: '#3085d6',
-     cancelButtonColor: '#d33',
-     confirmButtonText: 'Yes, submit it!'
-   }).then(function () {
-      /*
-      {
-        "active": true,
-        "feedback": "string",
-        "feedback_giver": "string",
-        "review": "string"
-      }
-      */
-      vm.feedbackCount=0;
-      for(i in vm.reviewers){
-         var reviewer = vm.reviewers[i];
-         var feedback={active:true,feedback:reviewer.feedback,feedback_giver:reviewer.employee.id,review:vm.reviewID};
-         var json = JSON.stringify(feedback);
-         console.log(json)
-         addFeedback(json,vm.reviewers.length);
-
-      }
+  function getCurrentUserInfo(){
+     $http({
+         method: 'GET',
+         url:  getUserInfo,
+         headers: { 'Content-Type': 'application/json',
+                  'Accept': 'application/json' ,
+                  'Authorization': token_str }
+       }).then(function successCallback(response) {
+          
+          if(response.data){
+            vm.userInfo = response.data;
+            console.log(vm.userInfo);
+          }
       
-     
-   })
+     }, function errorCallback(data, status, headers, config) {
+      // called asynchronously if an error occurs
+      // or server returns response with an error status.
+    });
   }
-   function addFeedback(data,feedback_number){
+
+   function addFeedback(){
+    
+    
+
+      var feedback_giver = vm.userInfo.id;
+      var feedback = vm.feedback;
+      var reviewID = vm.reviewID;
+      var data ={feedback:feedback,feedback_giver:feedback_giver,review:reviewID};
       $http({
          method: 'POST',
          url:  addFeedbackAPI,
@@ -109,14 +107,9 @@ function saveButtonClick(){
                   'Accept': 'application/json' ,
                   'Authorization': token_str }
        }).then(function successCallback(response) {
-          vm.feedbackCount++;
-         if(vm.feedbackCount==feedback_number){
-            swal(
-             'submitted!',
-             'Feedbacks have been submitted.',
-             'success'
-           )
-         }
+         console.log(response);
+         location.reload();
+        
       
      }, function errorCallback(data, status, headers, config) {
       // called asynchronously if an error occurs
@@ -131,22 +124,33 @@ function saveButtonClick(){
                  'Accept': 'application/json' ,
                  'Authorization': token_str }
     }).then(function successCallback(response) {
- 
+      console.log(response)
       if(response.data){
-        var data = response.data;
-        for(i in data){
-         var feedback = data[i];
-         for(j in vm.reviewers){
-            var reviewer = vm.reviewers[j];
-            if(reviewer.employee.id==feedback.feedback_giver){
-               reviewer.feedback = feedback.feedback;
+        vm.feedbackList = response.data;
+        for (var i =0;i<vm.feedbackList.length;i++){
+          var giverID = vm.feedbackList[i].feedback_giver;
+          var feedbackText = vm.feedbackList[i].feedback;
+          callAPI(getEmployeeByIDAPI+giverID,"GET",function(response){
+            if(response.data){
+              console.log(response.data)
+             var giver = response.data[0];
+             for(var j =0;j<vm.feedbackList.length;j++){
+              if(vm.feedbackList[j].feedback_giver==giver.id&&vm.feedbackList[j].giver==null){
+                vm.feedbackList[j].giver = giver;
+              }
+             }
             }
-         }
+            console.log(vm.feedbackList);
+          })
         }
+       
+
+
+      }
 
 
        
-      }
+      
     }, function errorCallback(data, status, headers, config) {
       // called asynchronously if an error occurs
       // or server returns response with an error status.
@@ -182,7 +186,7 @@ function saveButtonClick(){
  
       if(response){
         var data = response.data[0];
-        console.log(data)
+        //console.log(data)
         vm.review = data;
     
         
@@ -205,7 +209,7 @@ function saveButtonClick(){
           
           callAPI(getProjectByIDAPI+project_id,"GET",function(response){
             var project_data = response.data[0];
-            console.log(project_data);
+            //console.log(project_data);
             vm.review.project = project_data;
            
             callAPI(getShopByIDAPI+project_data.shop,"GET",function(response){
@@ -241,7 +245,7 @@ function saveButtonClick(){
 
            vm.reviewers = data;
            var index =0;
-           console.log(vm.reviewers);
+           //console.log(vm.reviewers);
            for(var i =0;i<vm.reviewers.length;i++){
             vm.reviewers[i].employee_data = {};
             vm.reviewers[i].role_data = null;
@@ -276,7 +280,7 @@ function saveButtonClick(){
             })
            }
           // vm.reviewers.forEach(function(v){v.feedback=""});
-          // fetchFeedback();
+         
             
           
          }

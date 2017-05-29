@@ -1,6 +1,7 @@
 var hostName= "http://pt-reviewtool-vmg.wni.co.jp/easyreviewapi/";
 
 var getEmployeeAPI = hostName+"employee/";
+var getUserInfo = hostName+"employee/current/"
 var getEmployeeByIDAPI = hostName+"employee/?id=";
 var getShopAPI = hostName+"master/Shop/";
 var getMeetingSpaceAPI =hostName+"master/MeetSpace/";

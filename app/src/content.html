@@ -5,7 +5,7 @@
     
 
         <div layout-gt-xs="row" class="saveButton">
-          <md-button class="save" ng-click="vm.saveButtonClick()" >{{ 'SAVE' | translate }}</md-button>
+          
         
         </div>
         <div class="form_title">
@@ -109,9 +109,33 @@
             </div>
           </div>
 
-        
+        <div class="ui comments">
+  <h3 class="ui dividing header">Comments</h3>
+  
+  
+  <div class="comment">
+   
+    <div class="content_c" ng-repeat="feedbackObj in vm.feedbackList">
+
+      <a class="author"><font size="2">{{feedbackObj.giver.employee_name}}</font></a>
+      
+      <div class="text" >
+       <font size="1">{{feedbackObj.feedback}}</font> 
+      </div>
+      
+  </div>
+  <form class="ui reply form">
+    <div class="field" >
+      <textarea ng-model= "vm.feedback" rows="4" cols="50"></textarea>
+    </div>
+    <div class="ui blue labeled submit icon button" ng-click="vm.addFeedback()">
+      <i class="icon edit"></i> Add Reply
+    </div>
+  </form>
+</div>
      
 
       </form>
+      
     </div>
   </md-content>
