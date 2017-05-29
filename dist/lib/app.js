@@ -124,7 +124,7 @@ function ContentController ($http,$routeParams,$translate,$rootScope) {
                  'Accept': 'application/json' ,
                  'Authorization': token_str }
     }).then(function successCallback(response) {
-      console.log(response)
+      //console.log(response)
       if(response.data){
         vm.feedbackList = response.data;
         for (var i =0;i<vm.feedbackList.length;i++){
@@ -140,7 +140,7 @@ function ContentController ($http,$routeParams,$translate,$rootScope) {
               }
              }
             }
-            console.log(vm.feedbackList);
+            //console.log(vm.feedbackList);
           })
         }
        

@@ -110,12 +110,24 @@
           </div>
 
         <div class="ui comments">
-  <h3 class="ui dividing header">Comments</h3>
+  <h1 class="ui dividing header">{{ 'COMMENTS' | translate}}</h1>
   
   
   <div class="comment">
-   
-    <div class="content_c" ng-repeat="feedbackObj in vm.feedbackList">
+   <md-content>
+    <md-list>
+      <md-list-item class="md-3-line" ng-repeat="feedbackObj in vm.feedbackList">
+        
+        <div class="md-list-item-text">
+          <h3>{{feedbackObj.giver.employee_name}}</h3>
+         
+          <p>{{feedbackObj.feedback}}</p>
+        </div>
+        <md-divider  ng-if="!$last"></md-divider>
+      </md-list-item>
+    </md-list>
+  </md-content>
+    <!--div class="content_c" ng-repeat="feedbackObj in vm.feedbackList">
 
       <a class="author"><font size="2">{{feedbackObj.giver.employee_name}}</font></a>
       
@@ -123,13 +135,13 @@
        <font size="1">{{feedbackObj.feedback}}</font> 
       </div>
       
-  </div>
+  </div-->
   <form class="ui reply form">
     <div class="field" >
       <textarea ng-model= "vm.feedback" rows="4" cols="50"></textarea>
     </div>
     <div class="ui blue labeled submit icon button" ng-click="vm.addFeedback()">
-      <i class="icon edit"></i> Add Reply
+      <i class="icon edit"></i> {{ 'ADD_FEEDBACK' | translate}} 
     </div>
   </form>
 </div>
