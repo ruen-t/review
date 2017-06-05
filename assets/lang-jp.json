@@ -16,8 +16,11 @@
       "MANAGER":"担当者",
       "BUTTON_LANG_JP": "日本語",
       "BUTTON_LANG_EN": "English",
-
+      "FEEDBACK":"フィードバック",
+      "REVIEW_CONTENT":"レビューの詳細",
       "ADD_REVIEW_PAGE":"レビューの追加",
+            
+      "ADD_FEEDBACK":"フィードバック追加",
       "EDIT_REVIEW_PAGE":"レビューの編集",
       "REVIEW_TITLE": "タイトル",
       "START_DATE": "開始日",

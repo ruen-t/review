@@ -82,7 +82,7 @@
         </div >
         <div layout-gt-xs="row">
           <md-input-container class="md-block" flex-gt-xs>
-          <label>{{'COMMENT'|translate}}</label>
+          <label>{{'FEEDBACK'|translate}}</label>
           <textarea ng-model="vm.review.review_comment"  rows="2" md-select-on-focus disabled></textarea>
         </md-input-container>
         </div>
@@ -110,7 +110,7 @@
           </div>
 
         <div class="ui comments">
-  <h1 class="ui dividing header">{{ 'COMMENTS' | translate}}</h1>
+  <h1 class="ui dividing header">{{ 'FEEDBACK' | translate}}</h1>
   
   
   <div class="comment">
@@ -138,7 +138,7 @@
   </div-->
   <form class="ui reply form">
     <div class="field" >
-      <textarea ng-model= "vm.feedback" rows="4" cols="50"></textarea>
+      <textarea ng-model= "vm.feedback" rows="8" cols="80"></textarea>
     </div>
     <div class="ui blue labeled submit icon button" ng-click="vm.addFeedback()">
       <i class="icon edit"></i> {{ 'ADD_FEEDBACK' | translate}} 

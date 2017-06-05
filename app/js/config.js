@@ -8,7 +8,10 @@ var getMeetingSpaceAPI =hostName+"master/MeetSpace/";
 var getProjectListAPI = hostName+"project/";
 var getProjectMemberAPI = hostName+"project/members/?project=";
 var getProjectByIDAPI = hostName+"project/?id=";
+var getProjectByShopAPI = hostName+"project/search/?data=detail&key=SHOPCODE&query=";
 var getShopByIDAPI = hostName+"master/Shop/";
+
+
 
 var getReviewTypeAPI =  hostName+"master/RevType/";
 var getRoleAPI = hostName+"master/Role/";

@@ -79,7 +79,7 @@
             <td>[{{review.development}}]&nbsp{{ review.title}} -  {{review.development.development.development_type.devtype_code}}</td>
             <td>{{ review.type_en }}</td>
             <td><div ng-repeat="manager in review.manager track by $index">{{ manager}}<br></div></td>
-            <td><span ng-repeat="reviwer in review.reviwer">{{ reviwer.name }}<br></span></td>
+            <td><div ng-repeat="rev in review.reviewers track by $index">{{ rev }}<br></div></td>
             <td ng-click="vm.gotoContentPage(review.id)">&nbsp&nbsp&nbsp<i class="material-icons">launch</i></td>
         </tr>
         </tbody>

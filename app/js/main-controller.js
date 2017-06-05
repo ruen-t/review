@@ -1,4 +1,4 @@
- angular.module('main', ['angular-loading-bar',"ngResource","ngRoute",'sidenav','review','login','pascalprecht.translate','reviewmodify','manual','content'])
+ angular.module('main', ['angular-loading-bar',"ngResource","ngRoute",'sidenav','review','login','pascalprecht.translate','reviewmodify','manual','content',"test"])
 .controller('MainController', MainController)
 .directive('mainPage',reviewHtml)
 .directive('logo',logoHtml)
@@ -70,8 +70,8 @@ $translateProvider.forceAsyncReload(true);
     })
     .when("/test",{
         templateUrl : "app/src/test.html",
-        controller: "LoginController",
-        controllerAs:"vm"
+        controller: "TestController",
+        controllerAs:"ctrl"
     })
     .when("/addReview",{
         templateUrl : "app/src/addeditreview.html",

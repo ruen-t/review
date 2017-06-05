@@ -66,7 +66,15 @@
             </md-input-container-->
 
                 <div layout-gt-xs="row">
-
+                
+        <md-input-container class="md-block" flex-gt-sm>
+                        <label>{{ 'SHOP_NAME' | translate }}</label>
+                        <md-select ng-model="vm.selectedShopID" placeholder="{{ 'SHOP_NAME' | translate }}">
+                            <md-option ng-repeat="shop in vm.shops" value="{{shop.id}}">
+                                {{shop.shop_name_en}}
+                            </md-option>
+                        </md-select>
+        </md-input-container>
                     <md-input-container class="md-block" flex-gt-sm>
                         <label>{{ 'PROJECT_NAME' | translate }}</label>
                         <md-select ng-model="vm.selectedProject.id" placeholder="{{ 'PROJECT_NAME' | translate }}">
@@ -83,11 +91,7 @@
                             </md-option>
                         </md-select>
                     </md-input-container>
-                    <md-input-container flex-gt-sm ng-show="vm.projectSelected">
-                        <span>{{ 'SHOP_NAME' | translate }} :</span>
-                        <span id="shopname">{{vm.selectedProject.shop.shop_name_en}}</span>
-                    </md-input-container>
-
+                    
                 </div>
 
                 <!--div ng-show="vm.projectSelected">
@@ -147,14 +151,42 @@
                                 </md-option>
                             </md-select>
                         </md-input-container>
-                        <md-input-container class="md-block" flex-gt-sm>
+    
+
+                        <!--md-input-container class="md-block" flex-gt-sm>
                             <label>{{ 'EMPLOYEE' | translate }}</label>
                             <md-select ng-model="reviewer.employee" placeholder="{{ 'EMPLOYEE' | translate }}" 　required>
                                 <md-option ng-repeat="employee in vm.employees" value="{{employee.id}}">
                                     {{employee.employee_name}}
                                 </md-option>
                             </md-select>
-                        </md-input-container>
+                        </md-input-container-->
+                        <md-content class="md-padding">
+                        <form ng-submit="$event.preventDefault()">
+                          <md-autocomplete
+
+                              class="staff-name"
+                              ng-disabled="vm.isDisabled"
+                              md-no-cache="vm.noCache"
+                              md-selected-item="reviewer.employeeObj"
+                              md-search-text-change="vm.searchTextChange(reviewer.searchText)"
+                              md-search-text="reviewer.searchText"
+                              md-selected-item-change="vm.selectedItemChange(item,reviewer)"
+                              md-items="item in vm.querySearch(reviewer.searchText)"
+                              md-item-text="item.employee_name"
+                              md-min-length="0"
+                              placeholder="Staff's name">
+                            <md-item-template>
+                              <span md-highlight-text="reviewer.searchText" md-highlight-flags="^i">{{item.employee_name}}</span>
+                            </md-item-template>
+                            <md-not-found>
+                              No states matching "{{reviewer.searchText}}" were found.
+                              <a ng-click="vm.newState(reviewer.searchText)">Create a new one!</a>
+                            </md-not-found>
+                          </md-autocomplete>
+                          <br/>
+                        </form>
+                      </md-content>
                         <md-input-container>
 
                             <md-button md-no-ink ng-click="vm.removeReviewerMember($index)">-</md-button>

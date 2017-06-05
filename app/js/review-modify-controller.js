@@ -6,7 +6,7 @@ var reviews = [
 ]
 
 var employees = [
-  {id:'20',structural_pos:'gl',name:'angela',email:'puspit@wni.com'}
+  {id:'20',structural_pos:'gl',employee_name:'angela',email:'puspit@wni.com'}
 ]
 
 var types = ('PSR RR CDR').split(' ').map(function(types){
@@ -30,7 +30,7 @@ var roles = [
 ];
 
 var reviewers = [
-  {update:true,employee:-1,role:-1 },
+  {update:true,employee:[],role:-1 },
  /* {id:2,role:2 },*/
 ];
 var documents = [
@@ -49,7 +49,7 @@ var selectedProject ={
   id:-1,project_name:"-------",shop:{id:17,shop_code:"NOCODE",shop_name_en:"---------",shop_name_jp:"---------"}
 }
 
-var ReviewModifyController =['$routeParams','$location','$scope','$resource','$translate',"$http", function ($routeParams,$location,$scope,$resource,$translate,$http) {
+var ReviewModifyController =['$routeParams','$location','$scope','$resource','$translate',"$http","$log","$timeout", "$q", function ($routeParams,$location,$scope,$resource,$translate,$http,$log,$timeout, $q) {
   var vm = this;
   var token = getCookie("token_django");
   if(!token){
@@ -62,7 +62,10 @@ var ReviewModifyController =['$routeParams','$location','$scope','$resource','$t
   vm.editId = $routeParams.id;
   console.log(vm.editId)
 
-    vm.reviewers =reviewers;
+    vm.reviewers = [
+  {update:true,employee:[],role:-1 },
+ /* {id:2,role:2 },*/
+];;
     vm.members = members;
     vm.places = places;
     vm.selectedProject = selectedProject;
@@ -96,6 +99,7 @@ var ReviewModifyController =['$routeParams','$location','$scope','$resource','$t
            
            
         });
+
   }else{
     vm.state=1;
     $http({
@@ -161,6 +165,8 @@ var ReviewModifyController =['$routeParams','$location','$scope','$resource','$t
             callAPI(getShopByIDAPI+project_data.shop,"GET",function(response){
               var shop_data = response.data[0];
               vm.selectedProject.shop = shop_data;
+              vm.selectedShopID = shop_data.id;
+
 
             })
           })
@@ -171,8 +177,26 @@ var ReviewModifyController =['$routeParams','$location','$scope','$resource','$t
         vm.reviewers =[];
         for(i in data.reviewmember_set){
           var reviewer = data.reviewmember_set[i];
+
           vm.reviewers.push({id:data.reviewmember_set[i].id,update:false,employee:reviewer.employee,role:reviewer.role});
         }
+        fetchDataWithCallBack(getEmployeeAPI,function (response){
+          //console.log(response);
+           if(response.data){
+            vm.employees = response.data;
+              for (i in vm.reviewers){
+                  for(j in vm.employees){
+                    if(vm.reviewers[i].employee==vm.employees[j].id){
+                      vm.reviewers[i].employeeObj = vm.employees[j];
+                      continue;
+                    }
+                  }
+              }
+             // console.log(vm.reviewers);
+           }
+            
+        });
+        
         console.log("reviewers")
         console.log(vm.reviewers);
       }
@@ -226,14 +250,21 @@ var ReviewModifyController =['$routeParams','$location','$scope','$resource','$t
   vm.removeDocument = removeDocument;
   vm.editButtonClick = editButtonClick;
   
-
+$scope.$watch("vm.selectedShopID",function(newValue,oldValue){
+   if(vm.selectedShopID>0){
+    vm.shopSelected = true;
+   
+     fetchProjectByShop(vm.selectedShopID);
+   }
+  
+ })
  $scope.$watch("vm.selectedProject.id",function(newValue,oldValue){
    if(vm.selectedProject.id>0){
     vm.projectSelected = true;
    if(vm.state==0) vm.selectedDevelopmentID=-1;
-    changeShop();
+    //changeShop();
    //fetchProjectMember();
-   fetchDevelopment();
+    fetchDevelopment();
    }
   
  })
@@ -242,13 +273,14 @@ var ReviewModifyController =['$routeParams','$location','$scope','$resource','$t
 
 
 
-  vm.fetchMember();
+  //vm.fetchMember();
+  fetchShop();
   fetchProject();
 
    fetchPlace();
    fetchReviewType();
    fetchRole();
-  //vm.fetchProject();
+  
   fetchDocumentType();
 
   function callAPI(url,type,callback){
@@ -521,7 +553,23 @@ var ReviewModifyController =['$routeParams','$location','$scope','$resource','$t
   }
 
   
+  function fetchDataWithCallBack(url,callback){
+    $http({
+      method: 'GET',
+      url:  url,
+      //data:$.param({control_op:0}),
+      headers: { 'Content-Type': 'application/json',
+                  'Accept': 'application/json' ,
+                  'Authorization': vm.token_str }
+    }).then(function successCallback(response) {
+        callback(response);
+      
+    }, function errorCallback(data, status, headers, config) {
+      // called asynchronously if an error occurs
+      // or server returns response with an error status.
+    });
 
+  }
   
   function fetchData(url,arrayname){
     $http({
@@ -537,7 +585,7 @@ var ReviewModifyController =['$routeParams','$location','$scope','$resource','$t
         array =[]
         var data = response.data;
         vm[arrayname]= data;
-       // console.log(data)
+      // if(arrayname=="shops")console.log(data)
 
       }
     }, function errorCallback(data, status, headers, config) {
@@ -562,10 +610,90 @@ var ReviewModifyController =['$routeParams','$location','$scope','$resource','$t
   function fetchRole(){
      fetchData(getRoleAPI,"roles");
   }
-
+ function fetchProjectByShop(shopID){
+    fetchData(getProjectByShopAPI+shopID,"projects")
+  }
   function fetchProject(){
     fetchData(getProjectListAPI,"projects")
   }
+  function fetchShop(){
+    fetchData(getShopAPI,"shops")
+  }
+  //============================== Auto complete ========================
+  var self = this;
+
+    self.simulateQuery = false;
+    self.isDisabled    = false;
+
+    // list of `state` value/display objects
+    self.states        = getEmployee();
+    self.querySearch   = querySearch;
+    self.selectedItemChange = selectedItemChange;
+    self.searchTextChange   = searchTextChange;
+  
+    self.noCache = true;
+
+
+
+    self.newState = newState;
+
+    function newState(state) {
+      alert("Sorry! You'll need to create a Constitution for " + state + " first!");
+    }
+
+    function querySearch (query) {
+      if(!query)return vm.employees;
+      var results =[];
+      var lowercaseQuery = angular.lowercase(query);
+      for(var i=0;i<vm.employees.length;i++){
+        var filter_value = angular.lowercase(vm.employees[i].employee_name);
+        if(filter_value.indexOf(lowercaseQuery)==0){
+          results.push(vm.employees[i]);
+
+        }
+      }
+      console.log(results)
+     return results;
+    }
+
+    function searchTextChange(text) {
+      $log.info('Text changed to ' + text);
+    }
+
+    function selectedItemChange(item,reviewer) {
+      reviewer.employeeObj=item;
+      reviewer.employee = item.employee_no;
+      console.log(reviewer);
+     console.log(item);
+    }
+
+    
+    function getEmployee(){
+      return $http({
+      method: 'GET',
+      url:  getEmployeeAPI,
+      //data:$.param({control_op:0}),
+      headers: { 'Content-Type': 'application/json',
+                  'Accept': 'application/json' ,
+                  'Authorization': vm.token_str }
+    }).then(function successCallback(response) {
+ 
+      if(response.data){
+       
+        var data = response.data;
+        vm.employees= data;
+        return vm.employees;
+      // if(arrayname=="shops")console.log(data)
+
+      }
+    }, function errorCallback(data, status, headers, config) {
+      // called asynchronously if an error occurs
+      // or server returns response with an error status.
+    });
+    }
+    
+   
+
  
   
 
@@ -587,7 +715,5 @@ var ReviewModifyController =['$routeParams','$location','$scope','$resource','$t
 .config(['$httpProvider', function ($httpProvider) {
     $httpProvider.defaults.headers.post['token'] = 'hh1hs6ZsUxllaxk16gaptrcAFRlDEKf8qrWenyiYVpPugdE7gOwUhJ6apnaRebnT';
 }]);
-
-
 
 

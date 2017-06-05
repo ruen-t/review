@@ -71,6 +71,10 @@ a #follow-button .btn{
 	padding-left: 15px;
 	padding-right: 15px;
 }
+.staff-name {
+     width:400px !important;
+}
+
 .col-1 {width: 8.33%;}
 .col-2 {width: 16.66%;}
 .col-3 {width: 25%;}
@@ -255,3 +259,18 @@ button .save:hover{
 .form_title{
 	width: 230px;margin-left: -23px;margin-top:-3px;padding: 20px;background-color: #0B4199;color: white;font-weight: 800;display: -webkit-box;display: -webkit-flex;display: flex;border-radius: 3px;
 }
+.custom-combobox {
+		position: relative;
+		display: inline-block;
+	}
+	.custom-combobox-toggle {
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		margin-left: -1px;
+		padding: 0;
+	}
+	.custom-combobox-input {
+		margin: 0;
+		padding: 5px 10px;
+	}

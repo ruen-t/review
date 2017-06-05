@@ -40,7 +40,7 @@ var scope;
 function ReviewController($location,$timeout,$scope, $resource,$mdDialog,$mdMenu,$http) {
     var vm = this;
      scope = $scope;
-     vm.currentRange = 1;
+     vm.currentRange = 2;
     scope.totalDisplayed = 600;
     vm.hasSelected = hasSelected;
     vm.reviewSelect = reviewSelect;
@@ -203,6 +203,7 @@ function ReviewController($location,$timeout,$scope, $resource,$mdDialog,$mdMenu
                           'Accept': 'application/json' ,
                          'Authorization': token_str }
             }).then(function successCallback(response) {
+              console.log(getReviewByDateAPI+dateRange)
                 if(response.data){
                    //console.log(response.data)
                     var data = response.data;
@@ -217,7 +218,7 @@ function ReviewController($location,$timeout,$scope, $resource,$mdDialog,$mdMenu
                   // vm.datatableAPI.rows.add({select:false,id:data[i].id,manager:managerArray,date:data[i].review_date_start,location:data[i].meetspace_name_en,development:data[i].development_code,title:data[i].review_title,type_en:data[i].revtype_name_en,type_jp:data[i].revtype_name_jp,reviewer:data[i].reviewer})
                    
                     }
-                    console.log(vm.review);
+                     console.log(vm.review);
                      vm.dtInstance.rerender();//DataTable.draw();
               
                 }
@@ -322,8 +323,9 @@ function toJSONLocal (date) {
      }
       var token_str = 'Bearer '+token;
       console.log(token_str);
-
+    
       var date = start_date_str+"|"+end_date_str;
+      console.log(getReviewByDateAPI+date)
   $http({
               method: 'GET',
               url:  getReviewByDateAPI+date,
@@ -334,10 +336,10 @@ function toJSONLocal (date) {
             }).then(function successCallback(response) {
                 // this callback will be called asynchronously
                 // when the response is available
-                //console.log(response);
+                console.log(response);
                 
                 if(response.data){
-                   //console.log(response.data)
+                   
                     var data = response.data;
                     vm.review=[];
                      for (i in data){
@@ -346,14 +348,17 @@ function toJSONLocal (date) {
                         data[i].pm="";
                       } if(!data[i].pdm){
                         data[i].pdm = "";
+                      }if(!data[i].reviewer){
+                        data[i].reviewer = "";
                       }
                        var managerArray=data[i].pm.split(",").concat(data[i].pdm.split(","))
-                      //console.log(managerArray)
+                       console.log(managerArray)
+                       var reviewersArray=data[i].reviewer.split(",");
                       //var manager = data[i].pm+","+data[i].pdm;
-                       vm.review[i]={select:false,id:data[i].id,manager:managerArray,date:data[i].review_date_start,location:data[i].meetspace_name_en,development:data[i].development_code,title:data[i].review_title,type_en:data[i].revtype_name_en,type_jp:data[i].revtype_name_jp,reviewer:data[i].reviewer}
+                       vm.review[i]={select:false,id:data[i].id,manager:managerArray,date:data[i].review_date_start,location:data[i].meetspace_name_en,development:data[i].development_code,title:data[i].review_title,type_en:data[i].revtype_name_en,type_jp:data[i].revtype_name_jp,reviewers:reviewersArray}
                     }
 
-                   // console.log(vm.review)
+                    console.log(vm.review)
                   //  vm.dtInstance.rerender();
                    // vm.changeday(0)
                 }
@@ -427,6 +432,12 @@ var newdate = year + "-" + monthStr + "-" + dayStr;
 }
 function deleteReview(){///reviewtoolapi/review/{id}/delete/
   var id = getselectedReview();
+  var token = getCookie("token_django");
+      if(!token){
+       $location.path( "/login" );
+       return;
+     }
+      var token_str = 'Bearer '+token;
   //console.log(id);
   //console.log(deleteAPI)
     swal({
@@ -438,19 +449,32 @@ function deleteReview(){///reviewtoolapi/review/{id}/delete/
       cancelButtonColor: '#d33',
       confirmButtonText: 'Yes, delete it!'
   }).then(function () {
-    $.ajax({
-    url: deleteAPI+id,
-    type: 'DELETE',
-    success: function(result) {
-        // Do something with the result
-        vm.fetchData();
+
+     $http({
+              method: 'DELETE',
+              url:  deleteAPI+id,
+              //data:$.param({control_op:0}),
+              headers: { 'Content-Type': 'application/json',
+                          'Accept': 'application/json' ,
+                         'Authorization': token_str }
+            }).then(function successCallback(response) {
+                // this callback will be called asynchronously
+                // when the response is available
+                console.log(response);
+                 vm.fetchData();
                 swal(
                   'Deleted!',
                   'Your file has been deleted.',
                   'success'
                 )
-      }
-    });
+               
+                
+               // $scope.$apply();
+              }, function errorCallback(data, status, headers, config) {
+                // called asynchronously if an error occurs
+                // or server returns response with an error status.
+              });
+    
 
   /*  $http({
               method: 'DELETE',

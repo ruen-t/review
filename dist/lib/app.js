@@ -13,7 +13,10 @@ var getMeetingSpaceAPI =hostName+"master/MeetSpace/";
 var getProjectListAPI = hostName+"project/";
 var getProjectMemberAPI = hostName+"project/members/?project=";
 var getProjectByIDAPI = hostName+"project/?id=";
+var getProjectByShopAPI = hostName+"project/search/?data=detail&key=SHOPCODE&query=";
 var getShopByIDAPI = hostName+"master/Shop/";
+
+
 
 var getReviewTypeAPI =  hostName+"master/RevType/";
 var getRoleAPI = hostName+"master/Role/";
@@ -392,7 +395,7 @@ function signOut() {
 
 
 
- angular.module('main', ['angular-loading-bar',"ngResource","ngRoute",'sidenav','review','login','pascalprecht.translate','reviewmodify','manual','content'])
+ angular.module('main', ['angular-loading-bar',"ngResource","ngRoute",'sidenav','review','login','pascalprecht.translate','reviewmodify','manual','content',"test"])
 .controller('MainController', MainController)
 .directive('mainPage',reviewHtml)
 .directive('logo',logoHtml)
@@ -464,8 +467,8 @@ $translateProvider.forceAsyncReload(true);
     })
     .when("/test",{
         templateUrl : "app/src/test.html",
-        controller: "LoginController",
-        controllerAs:"vm"
+        controller: "TestController",
+        controllerAs:"ctrl"
     })
     .when("/addReview",{
         templateUrl : "app/src/addeditreview.html",
@@ -596,7 +599,7 @@ var scope;
 function ReviewController($location,$timeout,$scope, $resource,$mdDialog,$mdMenu,$http) {
     var vm = this;
      scope = $scope;
-     vm.currentRange = 1;
+     vm.currentRange = 2;
     scope.totalDisplayed = 600;
     vm.hasSelected = hasSelected;
     vm.reviewSelect = reviewSelect;
@@ -759,6 +762,7 @@ function ReviewController($location,$timeout,$scope, $resource,$mdDialog,$mdMenu
                           'Accept': 'application/json' ,
                          'Authorization': token_str }
             }).then(function successCallback(response) {
+              console.log(getReviewByDateAPI+dateRange)
                 if(response.data){
                    //console.log(response.data)
                     var data = response.data;
@@ -773,7 +777,7 @@ function ReviewController($location,$timeout,$scope, $resource,$mdDialog,$mdMenu
                   // vm.datatableAPI.rows.add({select:false,id:data[i].id,manager:managerArray,date:data[i].review_date_start,location:data[i].meetspace_name_en,development:data[i].development_code,title:data[i].review_title,type_en:data[i].revtype_name_en,type_jp:data[i].revtype_name_jp,reviewer:data[i].reviewer})
                    
                     }
-                    console.log(vm.review);
+                     console.log(vm.review);
                      vm.dtInstance.rerender();//DataTable.draw();
               
                 }
@@ -878,8 +882,9 @@ function toJSONLocal (date) {
      }
       var token_str = 'Bearer '+token;
       console.log(token_str);
-
+    
       var date = start_date_str+"|"+end_date_str;
+      console.log(getReviewByDateAPI+date)
   $http({
               method: 'GET',
               url:  getReviewByDateAPI+date,
@@ -890,10 +895,10 @@ function toJSONLocal (date) {
             }).then(function successCallback(response) {
                 // this callback will be called asynchronously
                 // when the response is available
-                //console.log(response);
+                console.log(response);
                 
                 if(response.data){
-                   //console.log(response.data)
+                   
                     var data = response.data;
                     vm.review=[];
                      for (i in data){
@@ -902,14 +907,17 @@ function toJSONLocal (date) {
                         data[i].pm="";
                       } if(!data[i].pdm){
                         data[i].pdm = "";
+                      }if(!data[i].reviewer){
+                        data[i].reviewer = "";
                       }
                        var managerArray=data[i].pm.split(",").concat(data[i].pdm.split(","))
-                      //console.log(managerArray)
+                       console.log(managerArray)
+                       var reviewersArray=data[i].reviewer.split(",");
                       //var manager = data[i].pm+","+data[i].pdm;
-                       vm.review[i]={select:false,id:data[i].id,manager:managerArray,date:data[i].review_date_start,location:data[i].meetspace_name_en,development:data[i].development_code,title:data[i].review_title,type_en:data[i].revtype_name_en,type_jp:data[i].revtype_name_jp,reviewer:data[i].reviewer}
+                       vm.review[i]={select:false,id:data[i].id,manager:managerArray,date:data[i].review_date_start,location:data[i].meetspace_name_en,development:data[i].development_code,title:data[i].review_title,type_en:data[i].revtype_name_en,type_jp:data[i].revtype_name_jp,reviewers:reviewersArray}
                     }
 
-                   // console.log(vm.review)
+                    console.log(vm.review)
                   //  vm.dtInstance.rerender();
                    // vm.changeday(0)
                 }
@@ -983,6 +991,12 @@ var newdate = year + "-" + monthStr + "-" + dayStr;
 }
 function deleteReview(){///reviewtoolapi/review/{id}/delete/
   var id = getselectedReview();
+  var token = getCookie("token_django");
+      if(!token){
+       $location.path( "/login" );
+       return;
+     }
+      var token_str = 'Bearer '+token;
   //console.log(id);
   //console.log(deleteAPI)
     swal({
@@ -994,19 +1008,32 @@ function deleteReview(){///reviewtoolapi/review/{id}/delete/
       cancelButtonColor: '#d33',
       confirmButtonText: 'Yes, delete it!'
   }).then(function () {
-    $.ajax({
-    url: deleteAPI+id,
-    type: 'DELETE',
-    success: function(result) {
-        // Do something with the result
-        vm.fetchData();
+
+     $http({
+              method: 'DELETE',
+              url:  deleteAPI+id,
+              //data:$.param({control_op:0}),
+              headers: { 'Content-Type': 'application/json',
+                          'Accept': 'application/json' ,
+                         'Authorization': token_str }
+            }).then(function successCallback(response) {
+                // this callback will be called asynchronously
+                // when the response is available
+                console.log(response);
+                 vm.fetchData();
                 swal(
                   'Deleted!',
                   'Your file has been deleted.',
                   'success'
                 )
-      }
-    });
+               
+                
+               // $scope.$apply();
+              }, function errorCallback(data, status, headers, config) {
+                // called asynchronously if an error occurs
+                // or server returns response with an error status.
+              });
+    
 
   /*  $http({
               method: 'DELETE',
@@ -1082,7 +1109,7 @@ var reviews = [
 ]
 
 var employees = [
-  {id:'20',structural_pos:'gl',name:'angela',email:'puspit@wni.com'}
+  {id:'20',structural_pos:'gl',employee_name:'angela',email:'puspit@wni.com'}
 ]
 
 var types = ('PSR RR CDR').split(' ').map(function(types){
@@ -1106,7 +1133,7 @@ var roles = [
 ];
 
 var reviewers = [
-  {update:true,employee:-1,role:-1 },
+  {update:true,employee:[],role:-1 },
  /* {id:2,role:2 },*/
 ];
 var documents = [
@@ -1125,7 +1152,7 @@ var selectedProject ={
   id:-1,project_name:"-------",shop:{id:17,shop_code:"NOCODE",shop_name_en:"---------",shop_name_jp:"---------"}
 }
 
-var ReviewModifyController =['$routeParams','$location','$scope','$resource','$translate',"$http", function ($routeParams,$location,$scope,$resource,$translate,$http) {
+var ReviewModifyController =['$routeParams','$location','$scope','$resource','$translate',"$http","$log","$timeout", "$q", function ($routeParams,$location,$scope,$resource,$translate,$http,$log,$timeout, $q) {
   var vm = this;
   var token = getCookie("token_django");
   if(!token){
@@ -1138,7 +1165,10 @@ var ReviewModifyController =['$routeParams','$location','$scope','$resource','$t
   vm.editId = $routeParams.id;
   console.log(vm.editId)
 
-    vm.reviewers =reviewers;
+    vm.reviewers = [
+  {update:true,employee:[],role:-1 },
+ /* {id:2,role:2 },*/
+];;
     vm.members = members;
     vm.places = places;
     vm.selectedProject = selectedProject;
@@ -1172,6 +1202,7 @@ var ReviewModifyController =['$routeParams','$location','$scope','$resource','$t
            
            
         });
+
   }else{
     vm.state=1;
     $http({
@@ -1237,6 +1268,8 @@ var ReviewModifyController =['$routeParams','$location','$scope','$resource','$t
             callAPI(getShopByIDAPI+project_data.shop,"GET",function(response){
               var shop_data = response.data[0];
               vm.selectedProject.shop = shop_data;
+              vm.selectedShopID = shop_data.id;
+
 
             })
           })
@@ -1247,8 +1280,26 @@ var ReviewModifyController =['$routeParams','$location','$scope','$resource','$t
         vm.reviewers =[];
         for(i in data.reviewmember_set){
           var reviewer = data.reviewmember_set[i];
+
           vm.reviewers.push({id:data.reviewmember_set[i].id,update:false,employee:reviewer.employee,role:reviewer.role});
         }
+        fetchDataWithCallBack(getEmployeeAPI,function (response){
+          //console.log(response);
+           if(response.data){
+            vm.employees = response.data;
+              for (i in vm.reviewers){
+                  for(j in vm.employees){
+                    if(vm.reviewers[i].employee==vm.employees[j].id){
+                      vm.reviewers[i].employeeObj = vm.employees[j];
+                      continue;
+                    }
+                  }
+              }
+             // console.log(vm.reviewers);
+           }
+            
+        });
+        
         console.log("reviewers")
         console.log(vm.reviewers);
       }
@@ -1302,14 +1353,21 @@ var ReviewModifyController =['$routeParams','$location','$scope','$resource','$t
   vm.removeDocument = removeDocument;
   vm.editButtonClick = editButtonClick;
   
-
+$scope.$watch("vm.selectedShopID",function(newValue,oldValue){
+   if(vm.selectedShopID>0){
+    vm.shopSelected = true;
+   
+     fetchProjectByShop(vm.selectedShopID);
+   }
+  
+ })
  $scope.$watch("vm.selectedProject.id",function(newValue,oldValue){
    if(vm.selectedProject.id>0){
     vm.projectSelected = true;
    if(vm.state==0) vm.selectedDevelopmentID=-1;
-    changeShop();
+    //changeShop();
    //fetchProjectMember();
-   fetchDevelopment();
+    fetchDevelopment();
    }
   
  })
@@ -1318,13 +1376,14 @@ var ReviewModifyController =['$routeParams','$location','$scope','$resource','$t
 
 
 
-  vm.fetchMember();
+  //vm.fetchMember();
+  fetchShop();
   fetchProject();
 
    fetchPlace();
    fetchReviewType();
    fetchRole();
-  //vm.fetchProject();
+  
   fetchDocumentType();
 
   function callAPI(url,type,callback){
@@ -1597,7 +1656,23 @@ var ReviewModifyController =['$routeParams','$location','$scope','$resource','$t
   }
 
   
+  function fetchDataWithCallBack(url,callback){
+    $http({
+      method: 'GET',
+      url:  url,
+      //data:$.param({control_op:0}),
+      headers: { 'Content-Type': 'application/json',
+                  'Accept': 'application/json' ,
+                  'Authorization': vm.token_str }
+    }).then(function successCallback(response) {
+        callback(response);
+      
+    }, function errorCallback(data, status, headers, config) {
+      // called asynchronously if an error occurs
+      // or server returns response with an error status.
+    });
 
+  }
   
   function fetchData(url,arrayname){
     $http({
@@ -1613,7 +1688,7 @@ var ReviewModifyController =['$routeParams','$location','$scope','$resource','$t
         array =[]
         var data = response.data;
         vm[arrayname]= data;
-       // console.log(data)
+      // if(arrayname=="shops")console.log(data)
 
       }
     }, function errorCallback(data, status, headers, config) {
@@ -1638,10 +1713,90 @@ var ReviewModifyController =['$routeParams','$location','$scope','$resource','$t
   function fetchRole(){
      fetchData(getRoleAPI,"roles");
   }
-
+ function fetchProjectByShop(shopID){
+    fetchData(getProjectByShopAPI+shopID,"projects")
+  }
   function fetchProject(){
     fetchData(getProjectListAPI,"projects")
   }
+  function fetchShop(){
+    fetchData(getShopAPI,"shops")
+  }
+  //============================== Auto complete ========================
+  var self = this;
+
+    self.simulateQuery = false;
+    self.isDisabled    = false;
+
+    // list of `state` value/display objects
+    self.states        = getEmployee();
+    self.querySearch   = querySearch;
+    self.selectedItemChange = selectedItemChange;
+    self.searchTextChange   = searchTextChange;
+  
+    self.noCache = true;
+
+
+
+    self.newState = newState;
+
+    function newState(state) {
+      alert("Sorry! You'll need to create a Constitution for " + state + " first!");
+    }
+
+    function querySearch (query) {
+      if(!query)return vm.employees;
+      var results =[];
+      var lowercaseQuery = angular.lowercase(query);
+      for(var i=0;i<vm.employees.length;i++){
+        var filter_value = angular.lowercase(vm.employees[i].employee_name);
+        if(filter_value.indexOf(lowercaseQuery)==0){
+          results.push(vm.employees[i]);
+
+        }
+      }
+      console.log(results)
+     return results;
+    }
+
+    function searchTextChange(text) {
+      $log.info('Text changed to ' + text);
+    }
+
+    function selectedItemChange(item,reviewer) {
+      reviewer.employeeObj=item;
+      reviewer.employee = item.employee_no;
+      console.log(reviewer);
+     console.log(item);
+    }
+
+    
+    function getEmployee(){
+      return $http({
+      method: 'GET',
+      url:  getEmployeeAPI,
+      //data:$.param({control_op:0}),
+      headers: { 'Content-Type': 'application/json',
+                  'Accept': 'application/json' ,
+                  'Authorization': vm.token_str }
+    }).then(function successCallback(response) {
+ 
+      if(response.data){
+       
+        var data = response.data;
+        vm.employees= data;
+        return vm.employees;
+      // if(arrayname=="shops")console.log(data)
+
+      }
+    }, function errorCallback(data, status, headers, config) {
+      // called asynchronously if an error occurs
+      // or server returns response with an error status.
+    });
+    }
+    
+   
+
  
   
 
@@ -1663,8 +1818,6 @@ var ReviewModifyController =['$routeParams','$location','$scope','$resource','$t
 .config(['$httpProvider', function ($httpProvider) {
     $httpProvider.defaults.headers.post['token'] = 'hh1hs6ZsUxllaxk16gaptrcAFRlDEKf8qrWenyiYVpPugdE7gOwUhJ6apnaRebnT';
 }]);
-
-
 
 
 
@@ -1762,3 +1915,81 @@ angular
         });
     };
   }]);
+angular
+      .module('test', ['ngMaterial'])
+      .controller('TestController', TestController);
+
+  function TestController ($timeout, $q, $log) {
+    var self = this;
+
+    self.simulateQuery = false;
+    self.isDisabled    = false;
+
+    // list of `state` value/display objects
+    self.states        = loadAll();
+    self.querySearch   = querySearch;
+    self.selectedItemChange = selectedItemChange;
+    self.searchTextChange   = searchTextChange;
+  
+    self.noCache = true;
+
+
+
+    self.newState = newState;
+
+    function newState(state) {
+      alert("Sorry! You'll need to create a Constitution for " + state + " first!");
+    }
+
+    function querySearch (query) {
+      var results = query ? self.states.filter( createFilterFor(query) ) : self.states,
+          deferred;
+      if (self.simulateQuery) {
+        deferred = $q.defer();
+        $timeout(function () { deferred.resolve( results ); }, Math.random() * 1000, false);
+        return deferred.promise;
+      } else {
+        return results;
+      }
+    }
+
+    function searchTextChange(text) {
+      $log.info('Text changed to ' + text);
+    }
+
+    function selectedItemChange(item) {
+      $log.info('Item changed to ' + JSON.stringify(item));
+    }
+
+    
+
+    function loadAll() {
+      var allStates = 'Alabama, Alaska, Arizona, Arkansas, California, Colorado, Connecticut, Delaware,\
+              Florida, Georgia, Hawaii, Idaho, Illinois, Indiana, Iowa, Kansas, Kentucky, Louisiana,\
+              Maine, Maryland, Massachusetts, Michigan, Minnesota, Mississippi, Missouri, Montana,\
+              Nebraska, Nevada, New Hampshire, New Jersey, New Mexico, New York, North Carolina,\
+              North Dakota, Ohio, Oklahoma, Oregon, Pennsylvania, Rhode Island, South Carolina,\
+              South Dakota, Tennessee, Texas, Utah, Vermont, Virginia, Washington, West Virginia,\
+              Wisconsin, Wyoming';
+
+      return allStates.split(/, +/g).map( function (state) {
+        return {
+          value: state.toLowerCase(),
+          display: state
+        };
+      });
+    }
+
+    /**
+     * Create filter function for a query string
+     */
+    function createFilterFor(query) {
+      var lowercaseQuery = angular.lowercase(query);
+
+      return function filterFn(state) {
+        return (state.value.indexOf(lowercaseQuery) === 0);
+      };
+
+    }
+  
+}
