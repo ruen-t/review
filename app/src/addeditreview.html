@@ -116,7 +116,7 @@
                         <label>{{ 'REVIEW_TYPE' | translate }}</label>
                         <md-select ng-model="vm.selectedType" placeholder="{{ 'REVIEW_TYPE' | translate }}" 　required>
                             <md-option ng-repeat="value in vm.revTypes" value="{{value.id}}">
-                                {{value.revtype_name_en}}
+                                {{value.revtype_code}}
                             </md-option>
                         </md-select>
                     </md-input-container>

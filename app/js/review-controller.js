@@ -361,6 +361,7 @@ function toJSONLocal (date) {
                     console.log(vm.review)
                   //  vm.dtInstance.rerender();
                    // vm.changeday(0)
+                   vm.toggleDateFilter(true);
                 }
                  //console.log("data is loaded")
                 
@@ -370,14 +371,22 @@ function toJSONLocal (date) {
                 // or server returns response with an error status.
               });
 } 
-function toggleDateFilter(){
-  vm.dateFilter = !vm.dateFilter
+function toggleDateFilter(flag){
+  console.log(vm.dateFilter)
+  
+  if(flag){
+    vm.dateFilter=true;
+  } else{
+    vm.dateFilter= !vm.dateFilter;
+  }
   if(!vm.dateFilter){
    $("#reviewTable").DataTable().search("",true,true).draw();
   }else{
      
     vm.changeday(0)
   }
+ // if(!flag)vm.dateFilter =!vm.dateFilter;
+
   console.log(vm.dateFilter)
 }
 function changeday(day){

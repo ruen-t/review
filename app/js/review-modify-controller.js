@@ -328,6 +328,7 @@ $scope.$watch("vm.selectedShopID",function(newValue,oldValue){
        if(response.data){
           console.log(response)
            for(var i = 0;i<vm.documents.length;i++){
+            if(parseInt(vm.documents[i].type)<0)continue;
             var doc = {document_url:vm.documents[i].url,document_type:vm.documents[i].type,document_title:vm.documents[i].title,review:vm.editId};
             var json_doc = JSON.stringify(doc);
            // console.log(json_doc)
@@ -337,7 +338,7 @@ $scope.$watch("vm.selectedShopID",function(newValue,oldValue){
             deleteDocument(vm.document_deleteQueue[i].id);
           }
           for (var i =0;i<vm.reviewers.length;i++){
-            if(!vm.reviewers[i].update)continue;
+            if(!vm.reviewers[i].update||parseInt(vm.reviewers[i].role)<0)continue;
             var data = {review: vm.editId,role: vm.reviewers[i].role,employee:vm.reviewers[i].employee }
             var json_data = JSON.stringify(data);
             requestAddMember(json_data)
@@ -352,7 +353,8 @@ $scope.$watch("vm.selectedShopID",function(newValue,oldValue){
             '',
             'success'
           ).then(function(){
-              //$location.path( "/" );
+              $location.path( "/" );
+              $scope.$apply();
           });
 
        });
@@ -399,6 +401,7 @@ $scope.$watch("vm.selectedShopID",function(newValue,oldValue){
        if(response.data){
          var createdID = response.data.id;
          for(var i = 0;i<vm.documents.length;i++){
+           if(parseInt(vm.documents[i].type)<0)continue;
           var doc = {document_url:vm.documents[i].url,document_type:vm.documents[i].type,document_title:vm.documents[i].title,review:createdID};
           var json_doc = JSON.stringify(doc);
           //console.log(json_doc)
@@ -406,7 +409,7 @@ $scope.$watch("vm.selectedShopID",function(newValue,oldValue){
          
          }
          for (var i =0;i<vm.reviewers.length;i++){
-          if(!vm.reviewers[i].update)continue;
+          if(!vm.reviewers[i].update||parseInt(vm.reviewers[i].role)<0)continue;
           var data = {review: createdID,role: vm.reviewers[i].role,employee:vm.reviewers[i].employee }
           var json_data = JSON.stringify(data);
           requestAddMember(json_data)
@@ -417,7 +420,9 @@ $scope.$watch("vm.selectedShopID",function(newValue,oldValue){
             '',
             'success'
           ).then(function(){
-              //$location.path( "/" );
+              console.log("change Location");
+              $location.path( "/" );
+              $scope.$apply()
           });
        
 
@@ -427,6 +432,17 @@ $scope.$watch("vm.selectedShopID",function(newValue,oldValue){
     }, function errorCallback(data, status, headers, config) {
       // called asynchronously if an error occurs
       // or server returns response with an error status.
+      swal({
+        type:'warning',
+         title: 'Cannot add',
+         html:'<p>Make sure the minimum information is complete:</p><br><p>1. Title</p><br><p>2. Date and Time</p><br></p>3. Review Type</p>'
+      }
+            
+           
+            
+          ).then(function(){
+             // $location.path( "/" );
+          });
     });
     console.log(vm.documents)
    
@@ -585,6 +601,7 @@ $scope.$watch("vm.selectedShopID",function(newValue,oldValue){
         array =[]
         var data = response.data;
         vm[arrayname]= data;
+        //if(arrayname="revTypes")console.log(response)
       // if(arrayname=="shops")console.log(data)
 
       }
@@ -603,6 +620,7 @@ $scope.$watch("vm.selectedShopID",function(newValue,oldValue){
 
   function fetchReviewType(){
      fetchData(getReviewTypeAPI,"revTypes");
+
   }
   function fetchProjectMember (){
     fetchData(getProjectMemberAPI+vm.selectedProject.id,"projectManager");

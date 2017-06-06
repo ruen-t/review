@@ -8,7 +8,7 @@
      <label>Search</label>
      <input ng-model="vm.reviewAnyText"  id="review_search" type="text">
     </md-input-container-->
-    <md-checkbox aria-label="check" ng-check="vm.dateFilter" ng-click="vm.toggleDateFilter()"></md-checkbox>  
+    <md-checkbox aria-label="check" ng-checked="vm.dateFilter"   ng-click="vm.toggleDateFilter(false)"></md-checkbox>  
       <md-button md-no-ink class="md-primary" ng-click="vm.changeday(-1)">
         <i class="material-icons">&#xE045;</i>
       </md-button>
