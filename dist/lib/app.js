@@ -1750,7 +1750,8 @@ $scope.$watch("vm.selectedShopID",function(newValue,oldValue){
       var lowercaseQuery = angular.lowercase(query);
       for(var i=0;i<vm.employees.length;i++){
         var filter_value = angular.lowercase(vm.employees[i].employee_name);
-        if(filter_value.indexOf(lowercaseQuery)==0){
+        
+        if(filter_value.indexOf(lowercaseQuery)>=0){
           results.push(vm.employees[i]);
 
         }
@@ -1759,13 +1760,16 @@ $scope.$watch("vm.selectedShopID",function(newValue,oldValue){
      return results;
     }
 
-    function searchTextChange(text) {
+    function searchTextChange(reviewer,text) {
+      reviewer.update= true;
       $log.info('Text changed to ' + text);
     }
 
     function selectedItemChange(item,reviewer) {
+      if(!item)return false;
+     // reviewer.update = true;
       reviewer.employeeObj=item;
-      reviewer.employee = item.employee_no;
+      reviewer.employee = item.id;
       console.log(reviewer);
      console.log(item);
     }

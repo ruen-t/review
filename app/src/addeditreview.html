@@ -166,10 +166,10 @@
                           <md-autocomplete
 
                               class="staff-name"
-                              ng-disabled="vm.isDisabled"
+                              ng-disabled="!reviewer.update"
                               md-no-cache="vm.noCache"
                               md-selected-item="reviewer.employeeObj"
-                              md-search-text-change="vm.searchTextChange(reviewer.searchText)"
+                              md-search-text-change="vm.searchTextChange(reviewer, reviewer.searchText)"
                               md-search-text="reviewer.searchText"
                               md-selected-item-change="vm.selectedItemChange(item,reviewer)"
                               md-items="item in vm.querySearch(reviewer.searchText)"
