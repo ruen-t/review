@@ -5,17 +5,27 @@ angular.module('login', ['datatables', 'ngResource'])
 
 var vm;
 
-function LoginController ($resource,$translate,$http,$location) {
+function LoginController ($routeParams,$resource,$translate,$http,$location) {
 	vm = this;
+  vm.routeParams = $routeParams;
 	vm.http =$http
+   vm.location = $location;
 	vm.onSignIn = onSignIn;
 	vm.requestDJangoToken = requestDJangoToken;
 	vm.signOut = signOut;
   vm.loggedIn = false;
-  vm.location = $location;
+ 
   var token = getCookie("token_django");
-  if(token)vm.loggedIn = true;
+  if(token){
+    vm.loggedIn = true;
+  }
+  
 }
+
+       
+
+
+
 function onSignIn(googleUser) {
     var profile = googleUser.getBasicProfile();
     //var client_id = "BufEoI2OhtOiVwCLpdrPFZrqXHO3Fd9Zk5xmY4mK";
@@ -29,7 +39,7 @@ function onSignIn(googleUser) {
     console.log(authData);
     var data = {"grant_type": "convert_token", "client_id":client_id, "backend":"google-oauth2", "token":authData.access_token}
     var json_data = JSON.stringify(data);
-    requestDJangoToken(json_data);
+    vm.requestDJangoToken(json_data);
     
     
   }
@@ -53,7 +63,28 @@ function onSignIn(googleUser) {
                vm.loggedIn = true;
                 console.log(document.cookie);
                 console.log(getCookie("token_django"))
-               
+                if(vm.routeParams.state){
+                  var state = parseInt(vm.routeParams.state);
+                  switch(state){
+                    case 0:
+                      vm.location.path("/");
+                      break;
+                    case 1: 
+                      vm.location.path("/addReview");
+                      break;
+                    case 2: 
+                      var id =vm.routeParams.id;
+                      vm.location.path("/editReview/"+id);
+                      break;
+                    case 3: 
+                      var id =vm.routeParams.id;
+                      vm.location.path("/content/"+id);
+                      break;  
+
+
+                  }
+                  
+                }
                 
                 
                
@@ -91,10 +122,5 @@ function signOut() {
           delete_cookie("token_django")
          vm.loggedIn = false;
         vm.location.path( "/login" );
-        }
-       
-
-
-
-
+    }
 

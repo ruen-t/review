@@ -47,10 +47,13 @@ var deleteDocumentAPI = hostName+"review/document/edit/";
 angular.module('content',[])
 .controller('ContentController', ContentController);
 
-function ContentController ($http,$routeParams,$translate,$rootScope) {
+function ContentController ($location,$http,$routeParams,$translate,$rootScope) {
 	var vm = this;
   var token = getCookie("token_django");
-
+ if(!token){
+       $location.path( "/login/3/"+$routeParams.id);
+       return;
+ }
   var token_str = 'Bearer '+token;
   vm.token_str = token_str;
    vm.reviewID = $routeParams.id;
@@ -294,6 +297,38 @@ function ContentController ($http,$routeParams,$translate,$rootScope) {
    }
     
 }
+angular.module('review', [ ])
+.controller('LoadMoreController', LoadMoreController);
+
+function LoadMoreController ($mdDialog,$location,$rootScope) {
+	var vm = this;
+  
+   vm.loadData = loadData;
+   vm.cancel = cancel;
+   vm.startDateParam = new Date();
+   vm.endDateParam = new Date();
+   function loadData(){
+      
+      var startDate = new Date(vm.startDateParam)
+      var endDate = new Date(vm.endDateParam)
+      var start_date_str = toJSONLocal(startDate);
+      var end_date_str = toJSONLocal(endDate);
+      console.log(start_date_str)
+      console.log(end_date_str)
+       $location.path( "/review/"+start_date_str+"/"+end_date_str);
+      $mdDialog.hide();
+   }
+   function cancel(){
+      $mdDialog.hide();
+   }
+   function toJSONLocal (date) {
+     var local = new Date(date);
+     local.setMinutes(date.getMinutes() - date.getTimezoneOffset());
+     return local.toJSON().slice(0, 10);
+   }
+	
+}
+
 
 
 angular.module('login', ['datatables', 'ngResource'])
@@ -301,17 +336,27 @@ angular.module('login', ['datatables', 'ngResource'])
 
 var vm;
 
-function LoginController ($resource,$translate,$http,$location) {
+function LoginController ($routeParams,$resource,$translate,$http,$location) {
 	vm = this;
+  vm.routeParams = $routeParams;
 	vm.http =$http
+   vm.location = $location;
 	vm.onSignIn = onSignIn;
 	vm.requestDJangoToken = requestDJangoToken;
 	vm.signOut = signOut;
   vm.loggedIn = false;
-  vm.location = $location;
+ 
   var token = getCookie("token_django");
-  if(token)vm.loggedIn = true;
+  if(token){
+    vm.loggedIn = true;
+  }
+  
 }
+
+       
+
+
+
 function onSignIn(googleUser) {
     var profile = googleUser.getBasicProfile();
     //var client_id = "BufEoI2OhtOiVwCLpdrPFZrqXHO3Fd9Zk5xmY4mK";
@@ -325,7 +370,7 @@ function onSignIn(googleUser) {
     console.log(authData);
     var data = {"grant_type": "convert_token", "client_id":client_id, "backend":"google-oauth2", "token":authData.access_token}
     var json_data = JSON.stringify(data);
-    requestDJangoToken(json_data);
+    vm.requestDJangoToken(json_data);
     
     
   }
@@ -349,7 +394,28 @@ function onSignIn(googleUser) {
                vm.loggedIn = true;
                 console.log(document.cookie);
                 console.log(getCookie("token_django"))
-               
+                if(vm.routeParams.state){
+                  var state = parseInt(vm.routeParams.state);
+                  switch(state){
+                    case 0:
+                      vm.location.path("/");
+                      break;
+                    case 1: 
+                      vm.location.path("/addReview");
+                      break;
+                    case 2: 
+                      var id =vm.routeParams.id;
+                      vm.location.path("/editReview/"+id);
+                      break;
+                    case 3: 
+                      var id =vm.routeParams.id;
+                      vm.location.path("/content/"+id);
+                      break;  
+
+
+                  }
+                  
+                }
                 
                 
                
@@ -387,12 +453,7 @@ function signOut() {
           delete_cookie("token_django")
          vm.loggedIn = false;
         vm.location.path( "/login" );
-        }
-       
-
-
-
-
+    }
 
 
  angular.module('main', ['angular-loading-bar',"ngResource","ngRoute",'sidenav','review','login','pascalprecht.translate','reviewmodify','manual','content',"test"])
@@ -455,12 +516,22 @@ $translateProvider.forceAsyncReload(true);
         controller: "ReviewController",
         controllerAs:"vm"
     })
-    .when("/review",{
+    .when("/review/:startdate/:enddate",{
         templateUrl : "app/src/review.html",
         controller: "ReviewController",
         controllerAs:"vm"
     })
     .when("/login",{
+        templateUrl : "app/src/login.html",
+        controller: "LoginController",
+        controllerAs:"vm"
+    })
+    .when("/login/:state",{
+        templateUrl : "app/src/login.html",
+        controller: "LoginController",
+        controllerAs:"vm"
+    })
+    .when("/login/:state/:id",{
         templateUrl : "app/src/login.html",
         controller: "LoginController",
         controllerAs:"vm"
@@ -596,7 +667,7 @@ angular.module('review', ['datatables', 'ngResource','ngMaterial','datatables.sc
 
 var hasSelected=false;
 var scope;
-function ReviewController($location,$timeout,$scope, $resource,$mdDialog,$mdMenu,$http) {
+function ReviewController($routeParams,$location,$timeout,$scope, $resource,$mdDialog,$mdMenu,$http) {
     var vm = this;
      scope = $scope;
      vm.currentRange = 2;
@@ -633,7 +704,9 @@ function ReviewController($location,$timeout,$scope, $resource,$mdDialog,$mdMenu
                 {
                     // Target the id column
                     targets: 1,
-                    width  : '200px'
+                    width  : '200px',
+                    type: "date",
+
                 },
                 {
                     // Target the id column
@@ -706,6 +779,7 @@ function ReviewController($location,$timeout,$scope, $resource,$mdDialog,$mdMenu
            },
            //serverSide :true,
            //destroy:true,
+            order: [[ 1, "asc" ]],
            deferRender: true,
            processing: true,
             pagingType  : 'full_numbers',
@@ -727,7 +801,7 @@ function ReviewController($location,$timeout,$scope, $resource,$mdDialog,$mdMenu
 
         vm.review=[];
         
-
+ 
    
    vm.openMenu= function () {
      
@@ -748,70 +822,24 @@ function ReviewController($location,$timeout,$scope, $resource,$mdDialog,$mdMenu
   $location.path( "/content/"+id );
 
  }
- function appendReview(dateRange){
-  var token = getCookie("token_django");
-      if(!token){
-       $location.path( "/login" );
-       return;
-     }
-      var token_str = 'Bearer '+token;
-   $http({
-              method: 'GET',
-              url:  getReviewByDateAPI+dateRange,
-              headers: { 'Content-Type': 'application/json',
-                          'Accept': 'application/json' ,
-                         'Authorization': token_str }
-            }).then(function successCallback(response) {
-              console.log(getReviewByDateAPI+dateRange)
-                if(response.data){
-                   //console.log(response.data)
-                    var data = response.data;
-                     for (i in data){
-                      if(!data[i].pm){
-                        data[i].pm="";
-                      } if(!data[i].pdm){
-                        data[i].pdm = "";
-                      }
-                       var managerArray=data[i].pm.split(",").concat(data[i].pdm.split(","));
-                       vm.review.push({select:false,id:data[i].id,manager:managerArray,date:data[i].review_date_start,location:data[i].meetspace_name_en,development:data[i].development_code,title:data[i].review_title,type_en:data[i].revtype_name_en,type_jp:data[i].revtype_name_jp,reviewer:data[i].reviewer});
-                  // vm.datatableAPI.rows.add({select:false,id:data[i].id,manager:managerArray,date:data[i].review_date_start,location:data[i].meetspace_name_en,development:data[i].development_code,title:data[i].review_title,type_en:data[i].revtype_name_en,type_jp:data[i].revtype_name_jp,reviewer:data[i].reviewer})
-                   
-                    }
-                     console.log(vm.review);
-                     vm.dtInstance.rerender();//DataTable.draw();
-              
-                }
-                
-              }, function errorCallback(data, status, headers, config) {
-                // called asynchronously if an error occurs
-                // or server returns response with an error status.
-              });
- }
- function loadMoreReview(duration){
-   var start = new Date();
-   start.setDate(1);
-  start.setMonth(start.getMonth()-vm.currentRange);
-  var end = new Date();
-  end.setDate(1);
-  end.setMonth(end.getMonth()+vm.currentRange);
-  var current_start_date_str = toJSONLocal(start);
-  var current_end_date_str = toJSONLocal(end);
-   start.setMonth(start.getMonth()-duration);
-   end.setMonth(end.getMonth()+duration);
-var start_date_str = toJSONLocal(start);
-var end_date_str = toJSONLocal(end);
-console.log(current_start_date_str);
-console.log(start_date_str);
-console.log(current_end_date_str);
-console.log(end_date_str);
-
-      var leftdate = start_date_str+"|"+current_start_date_str;
-      var rightdate = current_end_date_str+"|"+end_date_str;
-  appendReview(leftdate);
-  appendReview(rightdate);
-  vm.currentRange + duration;
-
-
+ 
+ function loadMoreReview(event){
+  
+    $mdDialog.show({
+      controller: LoadMoreController,
+      controllerAs:'vm',
+      templateUrl: 'app/src/dialog_loadmore.html',
+      parent: angular.element(document.body),
+      targetEvent: event,
+      clickOutsideToClose:true,
+      fullscreen: $scope.customFullscreen // Only for -xs, -sm breakpoints.
+    })
+    .then(function(answer) {
+      $scope.status = 'You said the information was "' + answer + '".';
+    }, function() {
+      $scope.status = 'You cancelled the dialog.';
+    });
+ 
 
 
  }
@@ -842,8 +870,26 @@ function toJSONLocal (date) {
   return local.toJSON().slice(0, 10);
 }
  function fetchData(){
-  //console.log("fetch")
-  var start = new Date();
+  var token = getCookie("token_django");
+      if(!token){
+       $location.path( "/login/0" );
+       $scope.$apply();
+       return;
+     }
+      var token_str = 'Bearer '+token;
+      console.log(token_str);
+  var customDateRange = false;
+  var date;
+  if($routeParams.startdate&&$routeParams.enddate){
+    var startdateParam = $routeParams.startdate;
+    var enddateParam = $routeParams.enddate;
+    var dateParam =startdateParam+"|"+enddateParam;
+    date = dateParam;
+    console.log("fetch:"+dateParam);
+    customDateRange = true;
+  }
+  else{
+    var start = new Date();
    start.setDate(1);
   start.setMonth(start.getMonth()-vm.currentRange);
   var end = new Date();
@@ -851,39 +897,9 @@ function toJSONLocal (date) {
   end.setMonth(end.getMonth()+vm.currentRange);
   var start_date_str = toJSONLocal(start);
   var end_date_str = toJSONLocal(end);
-  console.log(start_date_str);
-  console.log(end_date_str);
+   date = start_date_str+"|"+end_date_str;
+  }
 
-  
- /* $.ajax({
-          type: "GET",
-          url: getReviewAPI
-      })
-      .done(function(data) {
-       
-        if(data){
-
-            vm.review=[];
-            for (i in data){
-              console.log(data[i])
-                var managerArray=data[i].pm.concat(data[i].pdm)
-                  vm.review.push({select:false,id:data[i].id,manager:managerArray,date:data[i].review_date_start,location:data[i].review_location,development:{development:data[i].development,shop:data[i].shop,title:data[i].review_title},type:data[i].review_type,reviewer:data[i].reviewer})
-                    }
-
-                   
-                }
-              $scope.$apply();  
-
-      });*/
-      var token = getCookie("token_django");
-      if(!token){
-       $location.path( "/login" );
-       return;
-     }
-      var token_str = 'Bearer '+token;
-      console.log(token_str);
-    
-      var date = start_date_str+"|"+end_date_str;
       console.log(getReviewByDateAPI+date)
   $http({
               method: 'GET',
@@ -911,23 +927,52 @@ function toJSONLocal (date) {
                         data[i].reviewer = "";
                       }
                        var managerArray=data[i].pm.split(",").concat(data[i].pdm.split(","))
-                       console.log(managerArray)
+                      // console.log(managerArray)
                        var reviewersArray=data[i].reviewer.split(",");
                       //var manager = data[i].pm+","+data[i].pdm;
                        vm.review[i]={select:false,id:data[i].id,manager:managerArray,date:data[i].review_date_start,location:data[i].meetspace_name_en,development:data[i].development_code,title:data[i].review_title,type_en:data[i].revtype_name_en,type_jp:data[i].revtype_name_jp,reviewers:reviewersArray}
                     }
 
-                    console.log(vm.review)
+                    //console.log(vm.review)
                   //  vm.dtInstance.rerender();
                    // vm.changeday(0)
-                   vm.toggleDateFilter(true);
+                  // vm.toggleDateFilter(true);
                 }
                  //console.log("data is loaded")
                 
                // $scope.$apply();
               }, function errorCallback(data, status, headers, config) {
-                // called asynchronously if an error occurs
-                // or server returns response with an error status.
+                if(customDateRange){
+                    swal({
+                        title: 'Something wrong',
+                        text: "Your date inputs are probably wrong. Would you like to try default data?",
+                        type: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Yes, give me default!'
+                      }).then(function () {
+                        $location.path("/");
+                         $scope.$apply();
+                      },function (dismiss) {
+                        console.log("cancel")
+                        if (dismiss === 'cancel') {
+                          location.reload();
+                          }
+                        }
+                    )
+                }else{
+                  if(!token){
+                   $location.path( "/login/0" );
+                   $scope.$apply();
+                   return;
+                 }else{
+                   $location.path( "/" );
+                   $scope.$apply();
+
+                 }
+                              
+                }
               });
 } 
 function toggleDateFilter(flag){
@@ -1002,7 +1047,7 @@ function deleteReview(){///reviewtoolapi/review/{id}/delete/
   var id = getselectedReview();
   var token = getCookie("token_django");
       if(!token){
-       $location.path( "/login" );
+       $location.path( "/login/0" );
        return;
      }
       var token_str = 'Bearer '+token;
@@ -1043,23 +1088,6 @@ function deleteReview(){///reviewtoolapi/review/{id}/delete/
                 // or server returns response with an error status.
               });
     
-
-  /*  $http({
-              method: 'DELETE',
-              url: deleteAPI+id,
-              //data:$.param({control_op:0}),
-              
-            }).then(function successCallback(response) {
-                vm.fetchData();
-                swal(
-                  'Deleted!',
-                  'Your file has been deleted.',
-                  'success'
-                )
-              }, function errorCallback(data, status, headers, config) {
-                // called asynchronously if an error occurs
-                // or server returns response with an error status.
-        });*/
    } 
     
   )
@@ -1165,9 +1193,15 @@ var ReviewModifyController =['$routeParams','$location','$scope','$resource','$t
   var vm = this;
   var token = getCookie("token_django");
   if(!token){
-    $location.path( "/login" );
-    return;
-  }
+    if($routeParams.id){
+      $location.path( "/login/2/"+$routeParams.id);
+       return;
+    }else{
+      $location.path( "/login/1");
+       return;
+    }
+       
+ }
     var token_str = 'Bearer '+token;
     vm.token_str= token_str;
    vm.state =0; //0 -> add, 1-> edit
@@ -1177,7 +1211,7 @@ var ReviewModifyController =['$routeParams','$location','$scope','$resource','$t
     vm.reviewers = [
   {update:true,employee:[],role:-1 },
  /* {id:2,role:2 },*/
-];;
+];
     vm.members = members;
     vm.places = places;
     vm.selectedProject = selectedProject;

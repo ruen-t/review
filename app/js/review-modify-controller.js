@@ -53,9 +53,15 @@ var ReviewModifyController =['$routeParams','$location','$scope','$resource','$t
   var vm = this;
   var token = getCookie("token_django");
   if(!token){
-    $location.path( "/login" );
-    return;
-  }
+    if($routeParams.id){
+      $location.path( "/login/2/"+$routeParams.id);
+       return;
+    }else{
+      $location.path( "/login/1");
+       return;
+    }
+       
+ }
     var token_str = 'Bearer '+token;
     vm.token_str= token_str;
    vm.state =0; //0 -> add, 1-> edit
@@ -65,7 +71,7 @@ var ReviewModifyController =['$routeParams','$location','$scope','$resource','$t
     vm.reviewers = [
   {update:true,employee:[],role:-1 },
  /* {id:2,role:2 },*/
-];;
+];
     vm.members = members;
     vm.places = places;
     vm.selectedProject = selectedProject;

@@ -1,10 +1,13 @@
 angular.module('content',[])
 .controller('ContentController', ContentController);
 
-function ContentController ($http,$routeParams,$translate,$rootScope) {
+function ContentController ($location,$http,$routeParams,$translate,$rootScope) {
 	var vm = this;
   var token = getCookie("token_django");
-
+ if(!token){
+       $location.path( "/login/3/"+$routeParams.id);
+       return;
+ }
   var token_str = 'Bearer '+token;
   vm.token_str = token_str;
    vm.reviewID = $routeParams.id;

@@ -22,7 +22,7 @@
       </md-button>
   <!--</div> -->
   </div>
-    
+  
 </md-whiteframe>
  
     <table id="reviewTable" datatable="ng" dt-instance="vm.dtInstance" dt-options="vm.dtOptions" class="row-border hover" style="width: 100%; height:100%">
@@ -52,7 +52,7 @@
                 </md-button>
               </md-menu-item>
               <md-menu-item>
-                <md-button  ng-click="vm.loadMoreReview(2)">
+                <md-button  ng-click="vm.loadMoreReview($event)">
                   {{'LOADMORE'|translate}}
                   
                 </md-button>
