@@ -1,7 +1,7 @@
 var review =[
 //{id:1,date:"2017-01-11T05:18:27",selected:true,shop:"BRAND",project:"CharaTV",development:"Check for bugs",type:"CDR",location:"AA3I",comment:"hello"},
 ];
-angular.module('review', ['datatables', 'ngResource','ngMaterial','datatables.scroller'])
+angular.module('review', ['datatables', 'ngResource','ngMaterial','datatables.scroller','datatables.buttons'])
 .controller('ReviewController', ReviewController)
 .config(function($mdIconProvider) {
     $mdIconProvider
@@ -63,7 +63,7 @@ function ReviewController($routeParams,$location,$timeout,$scope, $resource,$mdD
     vm.reviewDate;
     vm.datatableAPI ;
         vm.dtOptions = {
-            dom         : 'rt<"bottom"<"left"<"length"l>><"right"<"info"i><"pagination"p>>>',
+            dom         : 'Brt<"bottom"<"left"<"length"l>><"right"<"info"i><"pagination"p>>>',
             columnDefs  : [
                 {
                     // Target the id column
@@ -150,6 +150,28 @@ function ReviewController($routeParams,$location,$timeout,$scope, $resource,$mdD
            //serverSide :true,
            //destroy:true,
             order: [[ 1, "asc" ]],
+            buttons: [
+    
+    {
+        extend: "csvHtml5",
+        fileName:  "ReviewList",
+        exportOptions: {
+                columns: [1,2,3,4,5,6]
+        },
+        exportData: {decodeEntities:false}
+    },
+   
+    {
+        extend: 'print',
+        //text: 'Print current page',
+        autoPrint: false,
+         exportOptions: {
+                columns: [1,2,3,4,5,6]
+        },
+    },
+    
+],
+
            deferRender: true,
            processing: true,
             pagingType  : 'full_numbers',

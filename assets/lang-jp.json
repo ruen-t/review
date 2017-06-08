@@ -38,5 +38,6 @@
       "DOCUMENT_TITLE":"資料のタイトル",
       "DOCUMENT_URL":"資料のURL",
       "ACTION":"作用",
-      "LOGIN":"ログイン"
+      "LOGIN":"ログイン",
+      "LOADMORE":"読み込む"
 }
