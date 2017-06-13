@@ -43,6 +43,7 @@ var addReviewMemberAPI= hostName+"review/members/";
 var getReviewDocumentAPI = hostName+"review/documents/?review=";
 var addDocumentAPI = hostName+"review/documents/";
 var deleteDocumentAPI = hostName+"review/document/edit/";
+var reportAPI = "http://pt-reviewtool-vmg.wni.co.jp/easyreviewapi/report/?key=DATE&query=";
 
 angular.module('content',[])
 .controller('ContentController', ContentController);
@@ -60,6 +61,7 @@ function ContentController ($location,$http,$routeParams,$translate,$rootScope) 
    
    vm.feedbackCount =0 ;
    vm.addFeedback = addFeedback;
+   vm.redirectToEdit = redirectToEdit;
   //console.log(vm.reviewID)
 	vm.isEnglish = false;
    $rootScope.$on("english",function(){
@@ -76,6 +78,9 @@ function ContentController ($location,$http,$routeParams,$translate,$rootScope) 
       getCurrentUserInfo();
       fetchFeedback();
 
+   }
+   function redirectToEdit(){
+    $location.path( "/editReview/"+vm.reviewID);
    }
   function getCurrentUserInfo(){
      $http({
@@ -297,6 +302,32 @@ function ContentController ($location,$http,$routeParams,$translate,$rootScope) 
    }
     
 }
+angular.module('history', [])
+.controller('HistoryController', HistoryController);
+
+function HistoryController ($translate,$rootScope) {
+	var vm = this;
+	vm.isEnglish = true;
+   $rootScope.$on("english",function(){
+   		//console.log("hello english")
+   		vm.isEnglish=true;
+   });
+	$rootScope.$on("japanese",function(){
+   		//console.log("hello japanese");
+   		vm.isEnglish = false;
+   });
+
+   vm.team = [
+      {name:"Marc Ericson Chavez Santos",email:"santos@wni.com",img:"assets/1806.jpg"},
+      {name:"Naldo Sancho Liman",email:"liman@wni.com",img:"assets/1769.jpg"},
+      {name:"Angela Puspitasari",email:"puspit@wni.com",img:"assets/1680.jpg"},
+      {name:"Ayako Yagi",email:"yagi-a@wni.com",img:"assets/1800.jpg"},
+      {name:"Masahiro Hirano",email:"hirano@wni.com",img:"assets/1794.jpg"},
+      {name:"Tanapat Ruengsatra",email:"ruen-t@wni.com",img:"assets/1821.jpg"},
+
+
+   ]
+}
 angular.module('review', [ ])
 .controller('LoadMoreController', LoadMoreController);
 
@@ -456,7 +487,7 @@ function signOut() {
     }
 
 
- angular.module('main', ['angular-loading-bar',"ngResource","ngRoute",'sidenav','review','login','pascalprecht.translate','reviewmodify','manual','content',"test"])
+ angular.module('main', ['angular-loading-bar',"ngResource","ngRoute",'sidenav','review','login','pascalprecht.translate','reviewmodify','manual','content',"test","history"])
 .controller('MainController', MainController)
 .directive('mainPage',reviewHtml)
 .directive('logo',logoHtml)
@@ -556,6 +587,11 @@ $translateProvider.forceAsyncReload(true);
         controller: "ManualController",
         controllerAs:"vm"
     })
+    .when("/history",{
+        templateUrl : "app/src/history.html",
+        controller: "HistoryController",
+        controllerAs:"vm"
+    })
     .when("/content/:id",{
         templateUrl : "app/src/content.html",
         controller: "ContentController",
@@ -613,19 +649,19 @@ function logoHtml(){
 		};
 }
 
-angular.module('manual', ['datatables', 'ngResource'])
+angular.module('manual', [ 'ngResource'])
 .controller('ManualController', ManualController);
 
 function ManualController ($resource,$translate,$rootScope) {
-	var vm = this;
-	vm.isEnglish = false;
+   var vm = this;
+   vm.isEnglish = false;
    $rootScope.$on("english",function(){
-   		//console.log("hello english")
-   		vm.isEnglish=true;
+         //console.log("hello english")
+         vm.isEnglish=true;
    });
-	$rootScope.$on("japanese",function(){
-   		//console.log("hello japanese");
-   		vm.isEnglish = false;
+   $rootScope.$on("japanese",function(){
+         //console.log("hello japanese");
+         vm.isEnglish = false;
    });
 }
 var review =[
@@ -687,6 +723,7 @@ function ReviewController($routeParams,$location,$timeout,$scope, $resource,$mdD
     vm.gotoContentPage = gotoContentPage;
     vm.dtInstance = {};
     vm.dateFilter = false;
+    vm.dateQuery = "";
 
     vm.refreshFlag = false;
     vm.countRender = 0;
@@ -782,23 +819,29 @@ function ReviewController($routeParams,$location,$timeout,$scope, $resource,$mdD
             order: [[ 1, "asc" ]],
             buttons: [
     
-    {
-        extend: "csvHtml5",
-        fileName:  "ReviewList",
-        exportOptions: {
-                columns: [1,2,3,4,5,6]
-        },
-        exportData: {decodeEntities:false}
-    },
+    
    
     {
-        extend: 'print',
-        //text: 'Print current page',
-        autoPrint: false,
-         exportOptions: {
-                columns: [1,2,3,4,5,6]
-        },
+        text: 'JSON',
+        key: '1',
+        action: function (e, dt, node, config) {
+
+            window.open(reportAPI+vm.dateQuery+"&format=json")
+            //console.log(reportAPI+vm.dateQuery+"&format=csv")
+
+        }
+
     },
+     {
+        text: 'CSV',
+        key: '1',
+        action: function (e, dt, node, config) {
+
+            window.open(reportAPI+vm.dateQuery+"&format=csv")
+            //console.log(reportAPI+vm.dateQuery+"&format=csv")
+
+        },
+      },
     
 ],
 
@@ -921,7 +964,7 @@ function toJSONLocal (date) {
   var end_date_str = toJSONLocal(end);
    date = start_date_str+"|"+end_date_str;
   }
-
+  vm.dateQuery = date;
       console.log(getReviewByDateAPI+date)
   $http({
               method: 'GET',
@@ -948,9 +991,21 @@ function toJSONLocal (date) {
                       }if(!data[i].reviewer){
                         data[i].reviewer = "";
                       }
-                       var managerArray=data[i].pm.split(",").concat(data[i].pdm.split(","))
+                      if(!data[i].pm)data[i].pm="";
+                      if(!data[i].pdm)data[i].pdm="";
+                      if(!data[i].cic)data[i].cic="";
+                      if(!data[i].qc_corner)data[i].qc_corner="";
+                      var pmArray = data[i].pm.split(",").map(function(el) { if(el.length==0){return ""}else{ return el+" (PM) " ; }});
+                      var pdmArray = data[i].pdm.split(",").map(function(el) { if(el.length==0){return ""}else{ return el+" (PDM) " ; }});
+                      var cicArray = data[i].cic.split(",").map(function(el) { if(el.length==0){return ""}else{ return el+" (CI) " ; }});
+                      var qcArray = data[i].qc_corner.split(",").map(function(el) { if(el.length==0){return ""}else{ return el+" (QC) " ; }});
+                      var leaderArray = data[i].reviewer.split(",").map(function(el) { if(el.length==0){return ""}else{ return el+" (L) " ; }});
+                      
+                       //var managerArray=data[i].pm.split(",").concat(data[i].pdm.split(",")).concat(data[i].cic.split(",")).concat(data[i].qc_corner.split(","))
+                      var managerArray = pmArray.concat(pdmArray);
                       // console.log(managerArray)
-                       var reviewersArray=data[i].reviewer.split(",");
+                       var reviewersArray=leaderArray.concat(cicArray).concat(qcArray);
+
                       //var manager = data[i].pm+","+data[i].pdm;
                        vm.review[i]={select:false,id:data[i].id,manager:managerArray,date:data[i].review_date_start,location:data[i].meetspace_name_en,development:data[i].development_code,title:data[i].review_title,type_en:data[i].revtype_name_en,type_jp:data[i].revtype_name_jp,reviewers:reviewersArray}
                     }
@@ -1936,6 +1991,7 @@ angular
      {name:"Review",href:"#/review",icon:"description"},
 
       {name:"Manual",href:"#/manual",icon:"grade"},
+      {name:"Histroy",href:"#/history",icon:"history"},
       
     ];
     /**

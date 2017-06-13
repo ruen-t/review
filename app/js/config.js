@@ -38,3 +38,4 @@ var addReviewMemberAPI= hostName+"review/members/";
 var getReviewDocumentAPI = hostName+"review/documents/?review=";
 var addDocumentAPI = hostName+"review/documents/";
 var deleteDocumentAPI = hostName+"review/document/edit/";
+var reportAPI = "http://pt-reviewtool-vmg.wni.co.jp/easyreviewapi/report/?key=DATE&query=";

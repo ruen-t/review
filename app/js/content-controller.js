@@ -14,6 +14,7 @@ function ContentController ($location,$http,$routeParams,$translate,$rootScope) 
    
    vm.feedbackCount =0 ;
    vm.addFeedback = addFeedback;
+   vm.redirectToEdit = redirectToEdit;
   //console.log(vm.reviewID)
 	vm.isEnglish = false;
    $rootScope.$on("english",function(){
@@ -30,6 +31,9 @@ function ContentController ($location,$http,$routeParams,$translate,$rootScope) 
       getCurrentUserInfo();
       fetchFeedback();
 
+   }
+   function redirectToEdit(){
+    $location.path( "/editReview/"+vm.reviewID);
    }
   function getCurrentUserInfo(){
      $http({

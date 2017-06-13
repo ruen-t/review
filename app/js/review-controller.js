@@ -57,6 +57,7 @@ function ReviewController($routeParams,$location,$timeout,$scope, $resource,$mdD
     vm.gotoContentPage = gotoContentPage;
     vm.dtInstance = {};
     vm.dateFilter = false;
+    vm.dateQuery = "";
 
     vm.refreshFlag = false;
     vm.countRender = 0;
@@ -152,23 +153,29 @@ function ReviewController($routeParams,$location,$timeout,$scope, $resource,$mdD
             order: [[ 1, "asc" ]],
             buttons: [
     
-    {
-        extend: "csvHtml5",
-        fileName:  "ReviewList",
-        exportOptions: {
-                columns: [1,2,3,4,5,6]
-        },
-        exportData: {decodeEntities:false}
-    },
+    
    
     {
-        extend: 'print',
-        //text: 'Print current page',
-        autoPrint: false,
-         exportOptions: {
-                columns: [1,2,3,4,5,6]
-        },
+        text: 'JSON',
+        key: '1',
+        action: function (e, dt, node, config) {
+
+            window.open(reportAPI+vm.dateQuery+"&format=json")
+            //console.log(reportAPI+vm.dateQuery+"&format=csv")
+
+        }
+
     },
+     {
+        text: 'CSV',
+        key: '1',
+        action: function (e, dt, node, config) {
+
+            window.open(reportAPI+vm.dateQuery+"&format=csv")
+            //console.log(reportAPI+vm.dateQuery+"&format=csv")
+
+        },
+      },
     
 ],
 
@@ -291,7 +298,7 @@ function toJSONLocal (date) {
   var end_date_str = toJSONLocal(end);
    date = start_date_str+"|"+end_date_str;
   }
-
+  vm.dateQuery = date;
       console.log(getReviewByDateAPI+date)
   $http({
               method: 'GET',
@@ -318,9 +325,21 @@ function toJSONLocal (date) {
                       }if(!data[i].reviewer){
                         data[i].reviewer = "";
                       }
-                       var managerArray=data[i].pm.split(",").concat(data[i].pdm.split(","))
+                      if(!data[i].pm)data[i].pm="";
+                      if(!data[i].pdm)data[i].pdm="";
+                      if(!data[i].cic)data[i].cic="";
+                      if(!data[i].qc_corner)data[i].qc_corner="";
+                      var pmArray = data[i].pm.split(",").map(function(el) { if(el.length==0){return ""}else{ return el+" (PM) " ; }});
+                      var pdmArray = data[i].pdm.split(",").map(function(el) { if(el.length==0){return ""}else{ return el+" (PDM) " ; }});
+                      var cicArray = data[i].cic.split(",").map(function(el) { if(el.length==0){return ""}else{ return el+" (CI) " ; }});
+                      var qcArray = data[i].qc_corner.split(",").map(function(el) { if(el.length==0){return ""}else{ return el+" (QC) " ; }});
+                      var leaderArray = data[i].reviewer.split(",").map(function(el) { if(el.length==0){return ""}else{ return el+" (L) " ; }});
+                      
+                       //var managerArray=data[i].pm.split(",").concat(data[i].pdm.split(",")).concat(data[i].cic.split(",")).concat(data[i].qc_corner.split(","))
+                      var managerArray = pmArray.concat(pdmArray);
                       // console.log(managerArray)
-                       var reviewersArray=data[i].reviewer.split(",");
+                       var reviewersArray=leaderArray.concat(cicArray).concat(qcArray);
+
                       //var manager = data[i].pm+","+data[i].pdm;
                        vm.review[i]={select:false,id:data[i].id,manager:managerArray,date:data[i].review_date_start,location:data[i].meetspace_name_en,development:data[i].development_code,title:data[i].review_title,type_en:data[i].revtype_name_en,type_jp:data[i].revtype_name_jp,reviewers:reviewersArray}
                     }

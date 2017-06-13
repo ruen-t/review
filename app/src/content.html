@@ -5,12 +5,12 @@
     
 
         <div layout-gt-xs="row" class="saveButton">
-          
+            <md-button class="add" ng-click="vm.redirectToEdit()" >{{ 'EDIT' | translate }}</md-button>
         
         </div>
         <div class="form_title">
         <div ><i class="material-icons">&#xE02E;</i><h3>  {{'REVIEW_CONTENT'|translate}}</h3></div>
-       
+        
         </div>
 
 
@@ -82,7 +82,7 @@
         </div >
         <div layout-gt-xs="row">
           <md-input-container class="md-block" flex-gt-xs>
-          <label>{{'FEEDBACK'|translate}}</label>
+          <label>{{'COMMENT'|translate}}</label>
           <textarea ng-model="vm.review.review_comment"  rows="2" md-select-on-focus disabled></textarea>
         </md-input-container>
         </div>
