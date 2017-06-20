@@ -26,7 +26,7 @@ angular
      {name:"Review",href:"#/review",icon:"description"},
 
       {name:"Manual",href:"#/manual",icon:"grade"},
-      {name:"Histroy",href:"#/history",icon:"history"},
+      {name:"History",href:"#/history",icon:"history"},
       
     ];
     /**

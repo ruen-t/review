@@ -74,6 +74,12 @@ a #follow-button .btn{
 .staff-name {
      width:400px !important;
 }
+.project-name {
+     width:300px !important;
+}
+.shop-name {
+     width:300px !important;
+}
 
 .col-1 {width: 8.33%;}
 .col-2 {width: 16.66%;}

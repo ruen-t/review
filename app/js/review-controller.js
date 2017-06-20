@@ -188,7 +188,7 @@ function ReviewController($routeParams,$location,$timeout,$scope, $resource,$mdD
            // destroy:true,
             bRetrieve:true,
             language: {
-         "emptyTable": '<img src="assets/ring.gif"  />',
+           //"emptyTable": '<img src="assets/ring.gif"  />',
            "zeroRecords": "No records to display",
             },
            

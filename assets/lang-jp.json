@@ -39,5 +39,6 @@
       "DOCUMENT_URL":"資料のURL",
       "ACTION":"作用",
       "LOGIN":"ログイン",
-      "LOADMORE":"読み込む"
+      "LOADMORE":"読み込む",
+      "DATE_SELECT":"日付"
 }

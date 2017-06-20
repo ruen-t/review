@@ -77,7 +77,7 @@
             <td> <md-checkbox aria-label="check" ng-checked="review.selected"></md-checkbox></td>
             <td>{{ review.date|date:'yyyy-MM-dd  (HH:mm)' }}</td>
              <td>{{ review.location}}</td>
-            <td>[{{review.development}}]&nbsp{{ review.title}} -  {{review.development.development.development_type.devtype_code}}</td>
+            <td>[{{review.development}}]&nbsp{{ review.title}} </td>
             <td>{{ review.type_en }}</td>
             <td><div ng-repeat="manager in review.manager track by $index">{{ manager}}<br></div></td>
             <td><div ng-repeat="rev in review.reviewers track by $index">{{ rev }}<br></div></td>

@@ -854,7 +854,7 @@ function ReviewController($routeParams,$location,$timeout,$scope, $resource,$mdD
            // destroy:true,
             bRetrieve:true,
             language: {
-         "emptyTable": '<img src="assets/ring.gif"  />',
+           //"emptyTable": '<img src="assets/ring.gif"  />',
            "zeroRecords": "No records to display",
             },
            
@@ -1472,14 +1472,21 @@ var ReviewModifyController =['$routeParams','$location','$scope','$resource','$t
   vm.addDocument = addDocument;
   vm.removeDocument = removeDocument;
   vm.editButtonClick = editButtonClick;
+  vm.validateTitle = validateTitle;
+  vm.validateTitleObj = {pattern:false,required:false};
   
 $scope.$watch("vm.selectedShopID",function(newValue,oldValue){
    if(vm.selectedShopID>0){
     vm.shopSelected = true;
    
      fetchProjectByShop(vm.selectedShopID);
+    // console.log("Fetch Project")
    }
   
+ })
+$scope.$watch("vm.reviewTitle",function(newValue,oldValue){
+    //console.log(vm.reviewTitle.$error);
+    validateTitle();
  })
  $scope.$watch("vm.selectedProject.id",function(newValue,oldValue){
    if(vm.selectedProject.id>0){
@@ -1583,8 +1590,20 @@ $scope.$watch("vm.selectedShopID",function(newValue,oldValue){
        });
 
   }
-
+  function validateTitle() {
+    console.log("validated")
+    var re = /^.+(\[NEW\]|\[MANTE\]|\[VUP\])$/gi;
+    if(typeof vm.reviewTitle!= "undefined"){
+      vm.validateTitleObj.required=false;
+    }else{
+       vm.validateTitleObj.required=true;
+    }
+    vm.validateTitleObj.pattern = !re.test(vm.reviewTitle);
+    console.log(vm.reviewTitle)
+    console.log(vm.validateTitleObj)
+}
   function saveButtonClick(){
+
    
     //console.log(vm.projectID);
     vm.reviewers.forEach(function(v){ delete v.$$hashKey; delete v.object });
@@ -1872,6 +1891,18 @@ $scope.$watch("vm.selectedShopID",function(newValue,oldValue){
     self.selectedItemChange = selectedItemChange;
     self.searchTextChange   = searchTextChange;
   
+    self.shopQuerySearch   = shopQuerySearch;
+    self.shopSelectedItemChange = shopSelectedItemChange;
+    self.shopSearchTextChange   = shopSearchTextChange;
+
+    self.projectQuerySearch   = projectQuerySearch;
+    self.projectSelectedItemChange = projectSelectedItemChange;
+    self.projectSearchTextChange   = projectSearchTextChange;
+
+    self.projectQuerySearch   = projectQuerySearch;
+    self.projectSelectedItemChange = projectSelectedItemChange;
+    self.projectSearchTextChange   = projectSearchTextChange;
+
     self.noCache = true;
 
 
@@ -1881,7 +1912,13 @@ $scope.$watch("vm.selectedShopID",function(newValue,oldValue){
     function newState(state) {
       alert("Sorry! You'll need to create a Constitution for " + state + " first!");
     }
+     function shopNewState(state) {
+      alert("Sorry! You'll need to create a Constitution for " + state + " first!");
+    }
 
+    function projectNewState(state) {
+      alert("Sorry! You'll need to create a Constitution for " + state + " first!");
+    }
     function querySearch (query) {
       if(!query)return vm.employees;
       var results =[];
@@ -1897,11 +1934,50 @@ $scope.$watch("vm.selectedShopID",function(newValue,oldValue){
       console.log(results)
      return results;
     }
+    function shopQuerySearch (query) {
+      if(!query)return vm.shops;
+      var results =[];
+      var lowercaseQuery = angular.lowercase(query);
+      for(var i=0;i<vm.shops.length;i++){
+        var filter_value = angular.lowercase(vm.shops[i].shop_name_en);
+        
+        if(filter_value.indexOf(lowercaseQuery)>=0){
+          results.push(vm.shops[i]);
+
+        }
+      }
+      console.log(results)
+     return results;
+    }
+    function projectQuerySearch (query) {
+      if(!query)return vm.projects;
+      var results =[];
+      var lowercaseQuery = angular.lowercase(query);
+      for(var i=0;i<vm.projects.length;i++){
+        var filter_value = angular.lowercase(vm.projects[i].project_name);
+        
+        if(filter_value.indexOf(lowercaseQuery)>=0){
+          results.push(vm.projects[i]);
+
+        }
+      }
+      console.log(results)
+     return results;
+    }
 
     function searchTextChange(reviewer,text) {
       reviewer.update= true;
       $log.info('Text changed to ' + text);
     }
+    function shopSearchTextChange(shop,text) {
+     
+      $log.info('Text changed to ' + text);
+    }
+     function projectSearchTextChange(shop,text) {
+     
+      $log.info('Text changed to ' + text);
+    }
+
 
     function selectedItemChange(item,reviewer) {
       if(!item)return false;
@@ -1910,6 +1986,22 @@ $scope.$watch("vm.selectedShopID",function(newValue,oldValue){
       reviewer.employee = item.id;
       console.log(reviewer);
      console.log(item);
+    }
+    function shopSelectedItemChange(item,shop) {
+      if(!item)return false;
+     // reviewer.update = true;
+      console.log(shop);
+     console.log(item);
+     vm.selectedShopID = item.id;
+
+    }
+    function projectSelectedItemChange(item,project) {
+      if(!item)return false;
+     // reviewer.update = true;
+      console.log(project);
+     console.log(item);
+     vm.selectedProject.id = item.id;
+
     }
 
     
@@ -1991,7 +2083,7 @@ angular
      {name:"Review",href:"#/review",icon:"description"},
 
       {name:"Manual",href:"#/manual",icon:"grade"},
-      {name:"Histroy",href:"#/history",icon:"history"},
+      {name:"History",href:"#/history",icon:"history"},
       
     ];
     /**
