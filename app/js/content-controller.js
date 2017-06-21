@@ -3,6 +3,7 @@ angular.module('content',[])
 
 function ContentController ($location,$http,$routeParams,$translate,$rootScope) {
 	var vm = this;
+  vm.documentTypes = new Map();
   var token = getCookie("token_django");
  if(!token){
        $location.path( "/login/3/"+$routeParams.id);
@@ -30,6 +31,8 @@ function ContentController ($location,$http,$routeParams,$translate,$rootScope) 
       fetchReviewMember();
       getCurrentUserInfo();
       fetchFeedback();
+      fetchDocumentType();
+      fetchDocument();
 
    }
    function redirectToEdit(){
@@ -46,7 +49,7 @@ function ContentController ($location,$http,$routeParams,$translate,$rootScope) 
           
           if(response.data){
             vm.userInfo = response.data;
-            console.log(vm.userInfo);
+            //console.log(vm.userInfo);
           }
       
      }, function errorCallback(data, status, headers, config) {
@@ -71,11 +74,37 @@ function ContentController ($location,$http,$routeParams,$translate,$rootScope) 
                   'Accept': 'application/json' ,
                   'Authorization': token_str }
        }).then(function successCallback(response) {
-         console.log(response);
+        // console.log(response);
          location.reload();
         
       
      }, function errorCallback(data, status, headers, config) {
+      // called asynchronously if an error occurs
+      // or server returns response with an error status.
+    });
+   }
+   function fetchDocumentType(){//getDocumentTypeAPI
+     $http({
+      method: 'GET',
+      url:  getDocumentTypeAPI,
+      headers: { 'Content-Type': 'application/json',
+                  'Accept': 'application/json' ,
+                  'Authorization': vm.token_str 
+    }
+    }).then(function successCallback(response) {
+      
+ 
+      if(response.data){
+       var data = response.data;
+       vm.documentTypes = new Map();
+       console.log(data);
+       for(i in data){
+        vm.documentTypes.set(data[i].id,data[i].doctype_code);
+       }
+       console.log(vm.documentTypes)
+
+      }
+    }, function errorCallback(data, status, headers, config) {
       // called asynchronously if an error occurs
       // or server returns response with an error status.
     });
@@ -134,6 +163,32 @@ function ContentController ($location,$http,$routeParams,$translate,$rootScope) 
      
       callback(response);
       
+    }, function errorCallback(data, status, headers, config) {
+      // called asynchronously if an error occurs
+      // or server returns response with an error status.
+    });
+  }
+  function fetchDocument(){
+     $http({
+      method: 'GET',
+      url:  getReviewDocumentAPI+vm.reviewID,
+      headers: { 'Content-Type': 'application/json',
+                  'Accept': 'application/json' ,
+                  'Authorization': vm.token_str 
+    }
+    }).then(function successCallback(response) {
+      //console.log("GET documents")
+      console.log(response)
+ 
+      if(response.data){
+       var data = response.data;
+       vm.documents=[];
+       for(i in data){
+        //document.update 0->add 1->nothing 2->delete
+        vm.documents.push({id:data[i].id,update:false,url:data[i].document_url,title:data[i].document_title,type:data[i].document_type});
+       }
+
+      }
     }, function errorCallback(data, status, headers, config) {
       // called asynchronously if an error occurs
       // or server returns response with an error status.

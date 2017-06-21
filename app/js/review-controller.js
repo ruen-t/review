@@ -341,7 +341,7 @@ function toJSONLocal (date) {
                        var reviewersArray=leaderArray.concat(cicArray).concat(qcArray);
 
                       //var manager = data[i].pm+","+data[i].pdm;
-                       vm.review[i]={select:false,id:data[i].id,manager:managerArray,date:data[i].review_date_start,location:data[i].meetspace_name_en,development:data[i].development_code,title:data[i].review_title,type_en:data[i].revtype_name_en,type_jp:data[i].revtype_name_jp,reviewers:reviewersArray}
+                       vm.review[i]={select:false,id:data[i].id,manager:managerArray,date:data[i].review_date_start,location:data[i].meetspace_name_en,development:data[i].development_code,title:data[i].review_title,type_en:data[i].revtype_name_en,type_code:data[i].revtype_code,type_jp:data[i].revtype_name_jp,reviewers:reviewersArray}
                     }
 
                     //console.log(vm.review)

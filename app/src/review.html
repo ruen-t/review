@@ -78,9 +78,9 @@
             <td>{{ review.date|date:'yyyy-MM-dd  (HH:mm)' }}</td>
              <td>{{ review.location}}</td>
             <td>[{{review.development}}]&nbsp{{ review.title}} </td>
-            <td>{{ review.type_en }}</td>
+            <td>{{ review.type_code }}</td>
             <td><div ng-repeat="manager in review.manager track by $index">{{ manager}}<br></div></td>
-            <td><div ng-repeat="rev in review.reviewers track by $index">{{ rev }}<br></div></td>
+            <td><div ng-repeat="rev in review.reviewers track by $index">{{ rev }}<br ng-show="$index>0"></div></td>
             <td ng-click="vm.gotoContentPage(review.id)">&nbsp&nbsp&nbsp<i class="material-icons">launch</i></td>
         </tr>
         </tbody>

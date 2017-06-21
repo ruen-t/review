@@ -109,6 +109,24 @@
             </div>
           </div>
 
+           <div >
+            <div layout-gt-xs="row">
+              <div class="reviewMember">{{ 'DOCUMENT' | translate}}  </div>
+
+            </div>
+            <div layout-gt-xs="row" ng-repeat="document in vm.documents" >
+              <md-input-container  flex="20">
+               <div >{{document.title}}</div>
+              </md-input-container>
+              <md-input-container  flex="10">
+               <div >{{vm.documentTypes.get(document.type)}}</div>
+              </md-input-container>
+              <md-input-container flex="30">
+                <div>{{document.url}}</div>
+              </md-input-container>
+             
+            </div>
+          </div>
         <div class="ui comments">
   <h1 class="ui dividing header">{{ 'FEEDBACK' | translate}}</h1>
   

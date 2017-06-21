@@ -79,7 +79,7 @@ var ReviewModifyController =['$routeParams','$location','$scope','$resource','$t
     vm.developments = [];
     vm.selectedDevelopmentID =-1;
     vm.documentTypes =[];
-    vm.documents = documents;
+    vm.documents = [{update:true,title:"",type:-1,url:"" }];
     vm.startDate = new Date();
     vm.endDate = new Date();
     vm.editReview ={};
@@ -90,10 +90,17 @@ var ReviewModifyController =['$routeParams','$location','$scope','$resource','$t
   
   if(!vm.editId){
     vm.state=0;
-    $('#startdate').datetimepicker();
-                    $('#enddate').datetimepicker({
-                        useCurrent: false //Important! See issue #1075
-                    });
+    var d = new Date();
+    var date_str = d.toDateString()
+    console.log(d.toDateString())
+    $('#startdate').datetimepicker({
+      defaultDate:date_str
+    });
+      $('#enddate').datetimepicker({
+         useCurrent: false ,//Important! See issue #1075
+         defaultDate:date_str
+
+    });
                     $("#startdate").on("dp.change", function (e) {
 
                         $('#enddate').data("DateTimePicker").minDate(e.date);
@@ -105,6 +112,8 @@ var ReviewModifyController =['$routeParams','$location','$scope','$resource','$t
            
            
         });
+  fetchShop();
+  fetchProject();
 
   }else{
     vm.state=1;
@@ -164,13 +173,35 @@ var ReviewModifyController =['$routeParams','$location','$scope','$resource','$t
           var project_id = development_data.project;
           vm.selectedProject.id = project_id;
           callAPI(getProjectByIDAPI+project_id,"GET",function(response){
-            var project_data = response.data[0];
-            console.log(project_data);
+            let project_data = response.data[0];
+            vm.project = {};
+            
+            fetchDataWithCallBack(getProjectListAPI,function(response){
+               if(response.data){
+                  array =[]
+                  var data = response.data;
+                  vm["projects"]= data;
+                  vm.project.projectObj = project_data;
+                }
+             })
+           
+            
             vm.selectedProject.project_name =project_data.project_name;
             vm.selectedProject.shop.id = project_data.shop;
             callAPI(getShopByIDAPI+project_data.shop,"GET",function(response){
               var shop_data = response.data[0];
               vm.selectedProject.shop = shop_data;
+              vm.shop ={};
+              fetchDataWithCallBack(getShopAPI,function(response){
+               if(response.data){
+                  array =[]
+                  var data = response.data;
+                  vm["shops"]= data;
+                 vm.shop.shopObj = shop_data;
+                }
+             })
+              
+              
               vm.selectedShopID = shop_data.id;
 
 
@@ -287,8 +318,7 @@ $scope.$watch("vm.reviewTitle",function(newValue,oldValue){
 
 
   //vm.fetchMember();
-  fetchShop();
-  fetchProject();
+  
 
    fetchPlace();
    fetchReviewType();
@@ -375,7 +405,7 @@ $scope.$watch("vm.reviewTitle",function(newValue,oldValue){
   }
   function validateTitle() {
     console.log("validated")
-    var re = /^.+(\[NEW\]|\[MANTE\]|\[VUP\])$/gi;
+    var re = /^.+(\[NEW\]|\[MAINTE\]|\[VUP\])$/gi;
     if(typeof vm.reviewTitle!= "undefined"){
       vm.validateTitleObj.required=false;
     }else{
@@ -682,9 +712,7 @@ $scope.$watch("vm.reviewTitle",function(newValue,oldValue){
     self.projectSelectedItemChange = projectSelectedItemChange;
     self.projectSearchTextChange   = projectSearchTextChange;
 
-    self.projectQuerySearch   = projectQuerySearch;
-    self.projectSelectedItemChange = projectSelectedItemChange;
-    self.projectSearchTextChange   = projectSearchTextChange;
+   
 
     self.noCache = true;
 
@@ -769,6 +797,7 @@ $scope.$watch("vm.reviewTitle",function(newValue,oldValue){
       reviewer.employee = item.id;
       console.log(reviewer);
      console.log(item);
+      
     }
     function shopSelectedItemChange(item,shop) {
       if(!item)return false;
@@ -776,14 +805,18 @@ $scope.$watch("vm.reviewTitle",function(newValue,oldValue){
       console.log(shop);
      console.log(item);
      vm.selectedShopID = item.id;
-
+     console.log(vm.project)
+     //vm.project ={};
+     // vm.selectedProject.id= -1;
+      //vm.selectedDevelopmentID = -1 ;
     }
     function projectSelectedItemChange(item,project) {
       if(!item)return false;
      // reviewer.update = true;
       console.log(project);
-     console.log(item);
-     vm.selectedProject.id = item.id;
+      console.log(item);
+      vm.selectedProject.id = item.id;
+      //vm.selectedDevelopmentID = -1
 
     }
 

@@ -50,6 +50,7 @@ angular.module('content',[])
 
 function ContentController ($location,$http,$routeParams,$translate,$rootScope) {
 	var vm = this;
+  vm.documentTypes = new Map();
   var token = getCookie("token_django");
  if(!token){
        $location.path( "/login/3/"+$routeParams.id);
@@ -77,6 +78,8 @@ function ContentController ($location,$http,$routeParams,$translate,$rootScope) 
       fetchReviewMember();
       getCurrentUserInfo();
       fetchFeedback();
+      fetchDocumentType();
+      fetchDocument();
 
    }
    function redirectToEdit(){
@@ -93,7 +96,7 @@ function ContentController ($location,$http,$routeParams,$translate,$rootScope) 
           
           if(response.data){
             vm.userInfo = response.data;
-            console.log(vm.userInfo);
+            //console.log(vm.userInfo);
           }
       
      }, function errorCallback(data, status, headers, config) {
@@ -118,11 +121,37 @@ function ContentController ($location,$http,$routeParams,$translate,$rootScope) 
                   'Accept': 'application/json' ,
                   'Authorization': token_str }
        }).then(function successCallback(response) {
-         console.log(response);
+        // console.log(response);
          location.reload();
         
       
      }, function errorCallback(data, status, headers, config) {
+      // called asynchronously if an error occurs
+      // or server returns response with an error status.
+    });
+   }
+   function fetchDocumentType(){//getDocumentTypeAPI
+     $http({
+      method: 'GET',
+      url:  getDocumentTypeAPI,
+      headers: { 'Content-Type': 'application/json',
+                  'Accept': 'application/json' ,
+                  'Authorization': vm.token_str 
+    }
+    }).then(function successCallback(response) {
+      
+ 
+      if(response.data){
+       var data = response.data;
+       vm.documentTypes = new Map();
+       console.log(data);
+       for(i in data){
+        vm.documentTypes.set(data[i].id,data[i].doctype_code);
+       }
+       console.log(vm.documentTypes)
+
+      }
+    }, function errorCallback(data, status, headers, config) {
       // called asynchronously if an error occurs
       // or server returns response with an error status.
     });
@@ -181,6 +210,32 @@ function ContentController ($location,$http,$routeParams,$translate,$rootScope) 
      
       callback(response);
       
+    }, function errorCallback(data, status, headers, config) {
+      // called asynchronously if an error occurs
+      // or server returns response with an error status.
+    });
+  }
+  function fetchDocument(){
+     $http({
+      method: 'GET',
+      url:  getReviewDocumentAPI+vm.reviewID,
+      headers: { 'Content-Type': 'application/json',
+                  'Accept': 'application/json' ,
+                  'Authorization': vm.token_str 
+    }
+    }).then(function successCallback(response) {
+      //console.log("GET documents")
+      console.log(response)
+ 
+      if(response.data){
+       var data = response.data;
+       vm.documents=[];
+       for(i in data){
+        //document.update 0->add 1->nothing 2->delete
+        vm.documents.push({id:data[i].id,update:false,url:data[i].document_url,title:data[i].document_title,type:data[i].document_type});
+       }
+
+      }
     }, function errorCallback(data, status, headers, config) {
       // called asynchronously if an error occurs
       // or server returns response with an error status.
@@ -1007,7 +1062,7 @@ function toJSONLocal (date) {
                        var reviewersArray=leaderArray.concat(cicArray).concat(qcArray);
 
                       //var manager = data[i].pm+","+data[i].pdm;
-                       vm.review[i]={select:false,id:data[i].id,manager:managerArray,date:data[i].review_date_start,location:data[i].meetspace_name_en,development:data[i].development_code,title:data[i].review_title,type_en:data[i].revtype_name_en,type_jp:data[i].revtype_name_jp,reviewers:reviewersArray}
+                       vm.review[i]={select:false,id:data[i].id,manager:managerArray,date:data[i].review_date_start,location:data[i].meetspace_name_en,development:data[i].development_code,title:data[i].review_title,type_en:data[i].revtype_name_en,type_code:data[i].revtype_code,type_jp:data[i].revtype_name_jp,reviewers:reviewersArray}
                     }
 
                     //console.log(vm.review)
@@ -1296,7 +1351,7 @@ var ReviewModifyController =['$routeParams','$location','$scope','$resource','$t
     vm.developments = [];
     vm.selectedDevelopmentID =-1;
     vm.documentTypes =[];
-    vm.documents = documents;
+    vm.documents = [{update:true,title:"",type:-1,url:"" }];
     vm.startDate = new Date();
     vm.endDate = new Date();
     vm.editReview ={};
@@ -1307,10 +1362,17 @@ var ReviewModifyController =['$routeParams','$location','$scope','$resource','$t
   
   if(!vm.editId){
     vm.state=0;
-    $('#startdate').datetimepicker();
-                    $('#enddate').datetimepicker({
-                        useCurrent: false //Important! See issue #1075
-                    });
+    var d = new Date();
+    var date_str = d.toDateString()
+    console.log(d.toDateString())
+    $('#startdate').datetimepicker({
+      defaultDate:date_str
+    });
+      $('#enddate').datetimepicker({
+         useCurrent: false ,//Important! See issue #1075
+         defaultDate:date_str
+
+    });
                     $("#startdate").on("dp.change", function (e) {
 
                         $('#enddate').data("DateTimePicker").minDate(e.date);
@@ -1322,6 +1384,8 @@ var ReviewModifyController =['$routeParams','$location','$scope','$resource','$t
            
            
         });
+  fetchShop();
+  fetchProject();
 
   }else{
     vm.state=1;
@@ -1381,13 +1445,35 @@ var ReviewModifyController =['$routeParams','$location','$scope','$resource','$t
           var project_id = development_data.project;
           vm.selectedProject.id = project_id;
           callAPI(getProjectByIDAPI+project_id,"GET",function(response){
-            var project_data = response.data[0];
-            console.log(project_data);
+            let project_data = response.data[0];
+            vm.project = {};
+            
+            fetchDataWithCallBack(getProjectListAPI,function(response){
+               if(response.data){
+                  array =[]
+                  var data = response.data;
+                  vm["projects"]= data;
+                  vm.project.projectObj = project_data;
+                }
+             })
+           
+            
             vm.selectedProject.project_name =project_data.project_name;
             vm.selectedProject.shop.id = project_data.shop;
             callAPI(getShopByIDAPI+project_data.shop,"GET",function(response){
               var shop_data = response.data[0];
               vm.selectedProject.shop = shop_data;
+              vm.shop ={};
+              fetchDataWithCallBack(getShopAPI,function(response){
+               if(response.data){
+                  array =[]
+                  var data = response.data;
+                  vm["shops"]= data;
+                 vm.shop.shopObj = shop_data;
+                }
+             })
+              
+              
               vm.selectedShopID = shop_data.id;
 
 
@@ -1504,8 +1590,7 @@ $scope.$watch("vm.reviewTitle",function(newValue,oldValue){
 
 
   //vm.fetchMember();
-  fetchShop();
-  fetchProject();
+  
 
    fetchPlace();
    fetchReviewType();
@@ -1592,7 +1677,7 @@ $scope.$watch("vm.reviewTitle",function(newValue,oldValue){
   }
   function validateTitle() {
     console.log("validated")
-    var re = /^.+(\[NEW\]|\[MANTE\]|\[VUP\])$/gi;
+    var re = /^.+(\[NEW\]|\[MAINTE\]|\[VUP\])$/gi;
     if(typeof vm.reviewTitle!= "undefined"){
       vm.validateTitleObj.required=false;
     }else{
@@ -1899,9 +1984,7 @@ $scope.$watch("vm.reviewTitle",function(newValue,oldValue){
     self.projectSelectedItemChange = projectSelectedItemChange;
     self.projectSearchTextChange   = projectSearchTextChange;
 
-    self.projectQuerySearch   = projectQuerySearch;
-    self.projectSelectedItemChange = projectSelectedItemChange;
-    self.projectSearchTextChange   = projectSearchTextChange;
+   
 
     self.noCache = true;
 
@@ -1986,6 +2069,7 @@ $scope.$watch("vm.reviewTitle",function(newValue,oldValue){
       reviewer.employee = item.id;
       console.log(reviewer);
      console.log(item);
+      
     }
     function shopSelectedItemChange(item,shop) {
       if(!item)return false;
@@ -1993,14 +2077,18 @@ $scope.$watch("vm.reviewTitle",function(newValue,oldValue){
       console.log(shop);
      console.log(item);
      vm.selectedShopID = item.id;
-
+     console.log(vm.project)
+     //vm.project ={};
+     // vm.selectedProject.id= -1;
+      //vm.selectedDevelopmentID = -1 ;
     }
     function projectSelectedItemChange(item,project) {
       if(!item)return false;
      // reviewer.update = true;
       console.log(project);
-     console.log(item);
-     vm.selectedProject.id = item.id;
+      console.log(item);
+      vm.selectedProject.id = item.id;
+      //vm.selectedDevelopmentID = -1
 
     }
 
