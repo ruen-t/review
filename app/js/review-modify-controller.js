@@ -85,7 +85,7 @@ var ReviewModifyController =['$routeParams','$location','$scope','$resource','$t
     vm.editReview ={};
     vm.document_deleteQueue=[];
     vm.reviewer_deleteQueue=[];
-    vm.autoTrigger  = true;
+    vm.autoTrigger  = false;
      
 var fetched = false;
   
@@ -180,20 +180,28 @@ var fetched = false;
 
         callAPI(getDevelopmentIDAPI+data.development,"GET",function(response){
           //console.log(response.data[0]);
-          fetched = true;
           
+         
           var development_data = response.data[0];
+          console.log("development response")
+          //console.log(response)
+          if(typeof development_data=="undefined"){
+            
+            return;
+          }
           var project_id = development_data.project;
           vm.selectedProject.id = project_id;
           callAPI(getProjectByIDAPI+project_id,"GET",function(response){
             var project_data = response.data[0];
-            vm.project = {};
+           
             
             fetchDataWithCallBack(getProjectListAPI,function(response){
                if(response.data){
-                  array =[]
+                 vm.autoTrigger = true;
+                  
                   var data = response.data;
-                  vm["projects"]= data;
+                  vm.projects= data;
+                  fetched = true;
                   callAPI(getShopByIDAPI+project_data.shop,"GET",function(response){
                   var shop_data = response.data[0];
                   vm.selectedProject.shop = shop_data;
@@ -202,10 +210,12 @@ var fetched = false;
                    if(response.data){
                       array =[]
                       var data = response.data;
-                      vm["shops"]= data;
-                     vm.shop.shopObj = shop_data;
-                     vm.project.projectObj = project_data;
-                     vm.selectedShopID = shop_data.id;
+                      vm.shops= data;
+                      vm.shop ={};
+                      vm.shop.shopObj = shop_data;
+                      vm.project = {};
+                      vm.project.projectObj = project_data;
+                      vm.selectedShopID = shop_data.id;
                     // vm.autoTrigger = false;
                     }
                  })
@@ -818,8 +828,8 @@ $scope.$watch("vm.reviewTitle",function(newValue,oldValue){
      // reviewer.update = true;
       reviewer.employeeObj=item;
       reviewer.employee = item.id;
-      console.log(reviewer);
-     console.log(item);
+      //console.log(reviewer);
+     //console.log(item);
       
     }
     function shopSelectedItemChange(item,shop) {
@@ -828,28 +838,30 @@ $scope.$watch("vm.reviewTitle",function(newValue,oldValue){
       console.log(shop);
      console.log(item);
      vm.selectedShopID = item.id;
-     console.log(vm.project)
-     console.log("Shop changed "+vm.autoTrigger);
-
+     //console.log(vm.project)
+     //console.log("Shop changed "+vm.autoTrigger);
+    
     if(!vm.autoTrigger){
       vm.project ={};
       vm.selectedDevelopmentID = -1 ;
     }
+    
      //vm.selectedProject.id= -1;
      
     }
     function projectSelectedItemChange(item,project) {
       if(!item)return false;
      // reviewer.update = true;
-      console.log(project);
-      console.log(item);
+      //console.log(project);
+      //console.log(item);
       vm.selectedProject.id = item.id;
-      if(vm.autoTrigger){
-        //vm.autoTrigger = false; //Fixed 
-      }
+     
       if(!vm.autoTrigger){
         vm.selectedDevelopmentID = -1
         
+      }
+       if(vm.autoTrigger){
+        vm.autoTrigger = false; //Fixed 
       }
     }
 
