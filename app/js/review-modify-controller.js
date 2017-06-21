@@ -85,10 +85,12 @@ var ReviewModifyController =['$routeParams','$location','$scope','$resource','$t
     vm.editReview ={};
     vm.document_deleteQueue=[];
     vm.reviewer_deleteQueue=[];
+    vm.autoTrigger  = true;
      
-
+var fetched = false;
   
   if(!vm.editId){
+    vm.autoTrigger = false;
     vm.state=0;
     var d = new Date();
     var date_str = d.toDateString()
@@ -97,19 +99,27 @@ var ReviewModifyController =['$routeParams','$location','$scope','$resource','$t
       defaultDate:date_str
     });
       $('#enddate').datetimepicker({
-         useCurrent: false ,//Important! See issue #1075
+         useCurrent: false,//Important! See issue #1075
          defaultDate:date_str
-
     });
+       //$('#enddate').data("DateTimePicker").date((moment(d).add(1, 'hours')));
+      /*
                     $("#startdate").on("dp.change", function (e) {
-
                         $('#enddate').data("DateTimePicker").minDate(e.date);
-                      
-                       
                     });
                     $("#enddate").on("dp.change", function (e) {
                         $('#startdate').data("DateTimePicker").maxDate(e.date);
-           
+                      });*/
+          $("#startdate").on("dp.change", function (e) {
+          if(e.date != e.defaultDate){
+            $('#enddate').data("DateTimePicker").date((moment(e.date.toDate()).add(1, 'hours')));
+          }
+          $('#enddate').data("DateTimePicker").minDate(e.date);
+          // vm.startDate=  $("#startdate").data("datetimepicker").getDate();
+        });
+        $("#enddate").on("dp.change", function (e) {
+           //$('#startdate').data("DateTimePicker").maxDate(e.date);
+           // vm.endDate =  $("#enddate").data("datetimepicker").getDate();
            
         });
   fetchShop();
@@ -144,14 +154,15 @@ var ReviewModifyController =['$routeParams','$location','$scope','$resource','$t
           defaultDate: data.review_date_end,
             useCurrent: false //Important! See issue #1075
         });
-        $("#startdate").on("dp.change", function (e) {
-
-            $('#enddate').data("DateTimePicker").minDate(e.date);
+         $("#startdate").on("dp.change", function (e) {
+          if(e.date != e.defaultDate){
+            $('#enddate').data("DateTimePicker").date((moment(e.date.toDate()).add(1, 'hours')));
+          }
+          $('#enddate').data("DateTimePicker").minDate(e.date);
           // vm.startDate=  $("#startdate").data("datetimepicker").getDate();
-           
         });
         $("#enddate").on("dp.change", function (e) {
-            $('#startdate').data("DateTimePicker").maxDate(e.date);
+           //$('#startdate').data("DateTimePicker").maxDate(e.date);
            // vm.endDate =  $("#enddate").data("datetimepicker").getDate();
            
         });
@@ -169,11 +180,13 @@ var ReviewModifyController =['$routeParams','$location','$scope','$resource','$t
 
         callAPI(getDevelopmentIDAPI+data.development,"GET",function(response){
           //console.log(response.data[0]);
+          fetched = true;
+          
           var development_data = response.data[0];
           var project_id = development_data.project;
           vm.selectedProject.id = project_id;
           callAPI(getProjectByIDAPI+project_id,"GET",function(response){
-            let project_data = response.data[0];
+            var project_data = response.data[0];
             vm.project = {};
             
             fetchDataWithCallBack(getProjectListAPI,function(response){
@@ -181,31 +194,29 @@ var ReviewModifyController =['$routeParams','$location','$scope','$resource','$t
                   array =[]
                   var data = response.data;
                   vm["projects"]= data;
-                  vm.project.projectObj = project_data;
-                }
-             })
+                  callAPI(getShopByIDAPI+project_data.shop,"GET",function(response){
+                  var shop_data = response.data[0];
+                  vm.selectedProject.shop = shop_data;
+                  vm.shop ={};
+                  fetchDataWithCallBack(getShopAPI,function(response){
+                   if(response.data){
+                      array =[]
+                      var data = response.data;
+                      vm["shops"]= data;
+                     vm.shop.shopObj = shop_data;
+                     vm.project.projectObj = project_data;
+                     vm.selectedShopID = shop_data.id;
+                    // vm.autoTrigger = false;
+                    }
+                 })
+                })
+          }
+       })
            
             
             vm.selectedProject.project_name =project_data.project_name;
             vm.selectedProject.shop.id = project_data.shop;
-            callAPI(getShopByIDAPI+project_data.shop,"GET",function(response){
-              var shop_data = response.data[0];
-              vm.selectedProject.shop = shop_data;
-              vm.shop ={};
-              fetchDataWithCallBack(getShopAPI,function(response){
-               if(response.data){
-                  array =[]
-                  var data = response.data;
-                  vm["shops"]= data;
-                 vm.shop.shopObj = shop_data;
-                }
-             })
-              
-              
-              vm.selectedShopID = shop_data.id;
-
-
-            })
+            
           })
         })
         vm.selectedProject.id = data.project;
@@ -288,13 +299,15 @@ var ReviewModifyController =['$routeParams','$location','$scope','$resource','$t
   vm.editButtonClick = editButtonClick;
   vm.validateTitle = validateTitle;
   vm.validateTitleObj = {pattern:false,required:false};
-  
+
 $scope.$watch("vm.selectedShopID",function(newValue,oldValue){
    if(vm.selectedShopID>0){
     vm.shopSelected = true;
-   
-     fetchProjectByShop(vm.selectedShopID);
-    // console.log("Fetch Project")
+     if(!vm.autoTrigger){
+       fetchProjectByShop(vm.selectedShopID);
+       console.log("Fetch Project")
+     }
+    
    }
   
  })
@@ -319,7 +332,10 @@ $scope.$watch("vm.reviewTitle",function(newValue,oldValue){
 
   //vm.fetchMember();
   
-
+ if(!fetched){
+  fetchProject();
+  fetchShop();
+ }
    fetchPlace();
    fetchReviewType();
    fetchRole();
@@ -762,11 +778,18 @@ $scope.$watch("vm.reviewTitle",function(newValue,oldValue){
     }
     function projectQuerySearch (query) {
       if(!query)return vm.projects;
+      console.log(query);
       var results =[];
       var lowercaseQuery = angular.lowercase(query);
+      console.log(lowercaseQuery);
+      //console.log(vm.projects);
       for(var i=0;i<vm.projects.length;i++){
         var filter_value = angular.lowercase(vm.projects[i].project_name);
-        
+       // console.log(filter_value);
+        if(!filter_value){
+          results.push(vm.projects[i]);
+          continue;
+        }
         if(filter_value.indexOf(lowercaseQuery)>=0){
           results.push(vm.projects[i]);
 
@@ -806,9 +829,14 @@ $scope.$watch("vm.reviewTitle",function(newValue,oldValue){
      console.log(item);
      vm.selectedShopID = item.id;
      console.log(vm.project)
-     //vm.project ={};
-     // vm.selectedProject.id= -1;
-      //vm.selectedDevelopmentID = -1 ;
+     console.log("Shop changed "+vm.autoTrigger);
+
+    if(!vm.autoTrigger){
+      vm.project ={};
+      vm.selectedDevelopmentID = -1 ;
+    }
+     //vm.selectedProject.id= -1;
+     
     }
     function projectSelectedItemChange(item,project) {
       if(!item)return false;
@@ -816,8 +844,13 @@ $scope.$watch("vm.reviewTitle",function(newValue,oldValue){
       console.log(project);
       console.log(item);
       vm.selectedProject.id = item.id;
-      //vm.selectedDevelopmentID = -1
-
+      if(vm.autoTrigger){
+        //vm.autoTrigger = false; //Fixed 
+      }
+      if(!vm.autoTrigger){
+        vm.selectedDevelopmentID = -1
+        
+      }
     }
 
     
