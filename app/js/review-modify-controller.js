@@ -782,9 +782,11 @@ $scope.$watch("vm.reviewTitle",function(newValue,oldValue){
      return results;
     }
     function shopQuerySearch (query) {
+      console.log("SHOP query search: "+query)
       if(!query)return vm.shops;
       var results =[];
       var lowercaseQuery = angular.lowercase(query);
+      console.log(lowercaseQuery)
       for(var i=0;i<vm.shops.length;i++){
         var filter_value = angular.lowercase(vm.shops[i].shop_name_en);
         
@@ -798,7 +800,7 @@ $scope.$watch("vm.reviewTitle",function(newValue,oldValue){
     }
     function projectQuerySearch (query) {
       if(!query)return vm.projects;
-      //console.log(query);
+    console.log(query);
       var results =[];
       var lowercaseQuery = angular.lowercase(query);
       //console.log(lowercaseQuery);
@@ -843,18 +845,18 @@ $scope.$watch("vm.reviewTitle",function(newValue,oldValue){
       
     }
     function shopSelectedItemChange(item,shop) {
-      console.log("Shop changed")
-      console.log(item)
-      console.log(shop)
+     // console.log("Shop changed")
+     // console.log(item)
+      //console.log(shop)
       if(typeof item=="undefined")return false;
      // reviewer.update = true;
       
      vm.selectedShopID = item.id;
      //console.log(vm.project)
      //console.log("Shop changed "+vm.autoTrigger);
-    console.log("Trigger in shop: "+vm.autoTrigger)
+    //console.log("Trigger in shop: "+vm.autoTrigger)
     if(!vm.autoTrigger){
-      console.log("clear project")
+     // console.log("clear project")
       vm.project ={};
       vm.selectedDevelopmentID = -1 ;
     }
@@ -863,15 +865,15 @@ $scope.$watch("vm.reviewTitle",function(newValue,oldValue){
      
     }
     function projectSelectedItemChange(item,project) {
-      console.log("Project changed")
-      console.log(project)
-      console.log(item)
+     // console.log("Project changed")
+      //console.log(project)
+      //console.log(item)
       if(typeof item=="undefined")return false;
      // reviewer.update = true;
       //console.log(project);
       //console.log(item);
       vm.selectedProject.id = item.id;
-      console.log("Trigger in project: "+vm.autoTrigger)
+      //console.log("Trigger in project: "+vm.autoTrigger)
       if(!vm.autoTrigger){
         vm.selectedDevelopmentID = -1
         

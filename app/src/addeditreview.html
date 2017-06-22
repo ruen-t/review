@@ -78,7 +78,7 @@
                               md-search-text-change="vm.shopSearchTextChange(vm.shop, vm.shop.searchText)"
                               md-search-text="vm.shop.searchText"
                               md-selected-item-change="vm.shopSelectedItemChange(item,shop)"
-                              md-items="item in vm.shopQuerySearch(shop.searchText)"
+                              md-items="item in vm.shopQuerySearch(vm.shop.searchText)"
                               md-item-text="item.shop_name_en"
                               md-min-length="0"
                               placeholder="Shop's name">
