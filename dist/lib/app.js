@@ -1418,7 +1418,8 @@ var fetched = false;
         vm.startDate = new Date(data.review_date_start);
         vm.endDate = new Date(data.review_date_end);
         vm.selectedDevelopmentID=data.development;
-
+        vm.selectedProject.id = data.project;
+       
         $('#startdate').datetimepicker({
            defaultDate: data.review_date_start
         });
@@ -1466,10 +1467,10 @@ var fetched = false;
           callAPI(getProjectByIDAPI+project_id,"GET",function(response){
             var project_data = response.data[0];
            
-            
+             
             fetchDataWithCallBack(getProjectListAPI,function(response){
                if(response.data){
-                 vm.autoTrigger = true;
+                 
                   
                   var data = response.data;
                   vm.projects= data;
@@ -1477,31 +1478,28 @@ var fetched = false;
                   callAPI(getShopByIDAPI+project_data.shop,"GET",function(response){
                   var shop_data = response.data[0];
                   vm.selectedProject.shop = shop_data;
-                  vm.shop ={};
+                 
                   fetchDataWithCallBack(getShopAPI,function(response){
                    if(response.data){
-                      array =[]
-                      var data = response.data;
-                      vm.shops= data;
-                      vm.shop ={};
-                      vm.shop.shopObj = shop_data;
-                      vm.project = {};
-                      vm.project.projectObj = project_data;
-                      vm.selectedShopID = shop_data.id;
+                    var data = response.data;
+                     vm.shops= data;
+                    
+                     //vm.selectedShopID = shop_data.id;
+                     vm.autoTrigger = true;
+                     vm.shop.shopObj = shop_data;
+                     vm.project.projectObj = project_data;
+                      
                     // vm.autoTrigger = false;
                     }
                  })
                 })
           }
        })
-           
             
-            vm.selectedProject.project_name =project_data.project_name;
-            vm.selectedProject.shop.id = project_data.shop;
             
           })
         })
-        vm.selectedProject.id = data.project;
+        
         vm.selectedType = data.review_type;
         vm.comment = data.review_comment;
         vm.reviewers =[];
@@ -1710,8 +1708,8 @@ $scope.$watch("vm.reviewTitle",function(newValue,oldValue){
        vm.validateTitleObj.required=true;
     }
     vm.validateTitleObj.pattern = !re.test(vm.reviewTitle);
-    console.log(vm.reviewTitle)
-    console.log(vm.validateTitleObj)
+    //console.log(vm.reviewTitle)
+    //console.log(vm.validateTitleObj)
 }
   function saveButtonClick(){
 
@@ -2060,10 +2058,10 @@ $scope.$watch("vm.reviewTitle",function(newValue,oldValue){
     }
     function projectQuerySearch (query) {
       if(!query)return vm.projects;
-      console.log(query);
+      //console.log(query);
       var results =[];
       var lowercaseQuery = angular.lowercase(query);
-      console.log(lowercaseQuery);
+      //console.log(lowercaseQuery);
       //console.log(vm.projects);
       for(var i=0;i<vm.projects.length;i++){
         var filter_value = angular.lowercase(vm.projects[i].project_name);
@@ -2083,15 +2081,15 @@ $scope.$watch("vm.reviewTitle",function(newValue,oldValue){
 
     function searchTextChange(reviewer,text) {
       reviewer.update= true;
-      $log.info('Text changed to ' + text);
+      $log.info('Reviewer changed to ' + text);
     }
     function shopSearchTextChange(shop,text) {
      
-      $log.info('Text changed to ' + text);
+      $log.info('Shop changed to ' + text);
     }
-     function projectSearchTextChange(shop,text) {
+     function projectSearchTextChange(project,text) {
      
-      $log.info('Text changed to ' + text);
+      $log.info('Project changed to ' + text);
     }
 
 
@@ -2105,15 +2103,18 @@ $scope.$watch("vm.reviewTitle",function(newValue,oldValue){
       
     }
     function shopSelectedItemChange(item,shop) {
-      if(!item)return false;
+      console.log("Shop changed")
+      console.log(item)
+      console.log(shop)
+      if(typeof item=="undefined")return false;
      // reviewer.update = true;
-      console.log(shop);
-     console.log(item);
+      
      vm.selectedShopID = item.id;
      //console.log(vm.project)
      //console.log("Shop changed "+vm.autoTrigger);
-    
+    console.log("Trigger in shop: "+vm.autoTrigger)
     if(!vm.autoTrigger){
+      console.log("clear project")
       vm.project ={};
       vm.selectedDevelopmentID = -1 ;
     }
@@ -2122,12 +2123,15 @@ $scope.$watch("vm.reviewTitle",function(newValue,oldValue){
      
     }
     function projectSelectedItemChange(item,project) {
-      if(!item)return false;
+      console.log("Project changed")
+      console.log(project)
+      console.log(item)
+      if(typeof item=="undefined")return false;
      // reviewer.update = true;
       //console.log(project);
       //console.log(item);
       vm.selectedProject.id = item.id;
-     
+      console.log("Trigger in project: "+vm.autoTrigger)
       if(!vm.autoTrigger){
         vm.selectedDevelopmentID = -1
         
