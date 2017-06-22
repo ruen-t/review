@@ -40,5 +40,6 @@
       "ACTION":"詳細",
       "LOGIN":"ログイン",
       "LOADMORE":"読み込む",
-      "DATE_SELECT":"日付"
+      "DATE_SELECT":"日付",
+      "NONE": "なし"
 }

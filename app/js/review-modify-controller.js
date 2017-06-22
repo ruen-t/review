@@ -96,11 +96,17 @@ var fetched = false;
     var date_str = d.toDateString()
     console.log(d.toDateString())
     $('#startdate').datetimepicker({
-      defaultDate:date_str
+      defaultDate:date_str,
+      format : 'YYYY/MM/DD HH:mm', 
+      sideBySide: true,
+      collapse: false
     });
       $('#enddate').datetimepicker({
          useCurrent: false,//Important! See issue #1075
-         defaultDate:date_str
+         defaultDate:date_str,
+         format : 'YYYY/MM/DD HH:mm',
+         sideBySide: true,
+         collapse: false
     });
        //$('#enddate').data("DateTimePicker").date((moment(d).add(1, 'hours')));
       /*
@@ -149,11 +155,17 @@ var fetched = false;
         vm.selectedProject.id = data.project;
        
         $('#startdate').datetimepicker({
-           defaultDate: data.review_date_start
+           defaultDate: data.review_date_start,
+            format : 'YYYY/MM/DD HH:mm',
+         sideBySide: true,
+         collapse: false
         });
         $('#enddate').datetimepicker({
           defaultDate: data.review_date_end,
-            useCurrent: false //Important! See issue #1075
+            useCurrent: false, //Important! See issue #1075
+             format : 'YYYY/MM/DD HH:mm',
+         sideBySide: true,
+         collapse: false
         });
          $("#startdate").on("dp.change", function (e) {
           if(e.date != e.defaultDate){
