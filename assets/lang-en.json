@@ -38,7 +38,8 @@
       "DOCUMENT_URL":"Document URL",
       "ACTION":"Detail",
       "LOADMORE":"Load more",
-      "DATE_SELECT":"Date"
+      "DATE_SELECT":"Date",
+      "NONE": "None"
 
     
 }
