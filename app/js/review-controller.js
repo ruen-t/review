@@ -1,6 +1,9 @@
 var review =[
 //{id:1,date:"2017-01-11T05:18:27",selected:true,shop:"BRAND",project:"CharaTV",development:"Check for bugs",type:"CDR",location:"AA3I",comment:"hello"},
 ];
+const THISWEEK = 1;
+const NEXTWEEK = 2;
+const LASTWEEK = 3;
 angular.module('review', ['datatables', 'ngResource','ngMaterial','datatables.scroller','datatables.buttons'])
 .controller('ReviewController', ReviewController)
 .config(function($mdIconProvider) {
@@ -55,6 +58,7 @@ function ReviewController($routeParams,$location,$timeout,$scope, $resource,$mdD
     vm.gotoAddPage = gotoAddPage;
     vm.gotoEditPage = gotoEditPage;
     vm.gotoContentPage = gotoContentPage;
+    vm.getWeekData = getWeekData;
     vm.dtInstance = {};
     vm.dateFilter = false;
     vm.dateQuery = "";
@@ -242,6 +246,34 @@ function ReviewController($routeParams,$location,$timeout,$scope, $resource,$mdD
 
 
  }
+ function getWeekData(period){ 
+   var curr = vm.current_start_date;
+
+  let first = curr.getDate() - curr.getDay();
+  console.log(curr.getDate());
+  console.log(curr.getDay());
+  if(period==NEXTWEEK){
+    first+=7;
+    console.log("NEXT "+ first);
+  }
+  else if(period==LASTWEEK){
+  
+    first-=7;
+    console.log("LAST "+first)
+  }else{
+    console.log("NOW "+first)
+  }
+  var last = first + 6; // last day is the first day + 6
+
+  var firstday = new Date(curr.setDate(first));
+  var lastday = new Date(curr.setDate(last));
+  var start_date_str = toJSONLocal(firstday);
+  var end_date_str = toJSONLocal(lastday);
+  console.log("WeekStartDate: "+ start_date_str);
+  console.log("WeekEndDate: "+end_date_str);
+ 
+ }
+ 
 function getCookie(cname) {
     var name = cname + "=";
     var decodedCookie = decodeURIComponent(document.cookie);
@@ -283,12 +315,15 @@ function toJSONLocal (date) {
     var startdateParam = $routeParams.startdate;
     var enddateParam = $routeParams.enddate;
     var dateParam =startdateParam+"|"+enddateParam;
+    vm.current_start_date = new Date(startdateParam);
+    vm.current_end_date = new Date(enddateParam);
     date = dateParam;
     console.log("fetch:"+dateParam);
     customDateRange = true;
   }
   else{
     var start = new Date();
+    vm.current_start_date = start;
    start.setDate(1);
   start.setMonth(start.getMonth()-vm.currentRange);
   var end = new Date();

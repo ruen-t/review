@@ -8,6 +8,9 @@ md-sidenav.md-closed.md-locked-open-add-active {
     width: 85vw !important;
     max-width: 200px !important;
 } 
+body {
+	padding-top: 60px
+}
 abbr[title] { text-decoration: underline; text-decoration: underline dotted; }
 a {text-decoration: none}
 
