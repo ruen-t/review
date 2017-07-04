@@ -130,7 +130,6 @@ function MainController($translate,$resource,$scope,$rootScope) {
     this.message = "hello";
     var headHeight = $('header').outerHeight();
 
-
     $('body').css('padding-top', headHeight + 30);
      $('body').css('visibility', "visible");
     
