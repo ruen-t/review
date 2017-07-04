@@ -97,8 +97,7 @@ function onSignIn(googleUser) {
  function getCookie(cname) {
     var name = cname + "=";
     var decodedCookie = decodeURIComponent(document.cookie);
-    var ca = decodedCookie.replace(";",",").split(',');
-    console.log(ca)
+    var ca = decodedCookie.replace(",",";").split(';');
     for(var i = 0; i <ca.length; i++) {
         var c = ca[i];
         while (c.charAt(0) == ' ') {

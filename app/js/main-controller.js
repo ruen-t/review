@@ -132,6 +132,8 @@ function MainController($translate,$resource,$scope,$rootScope) {
 
 
     $('body').css('padding-top', headHeight + 30);
+     $('body').css('visibility', "visible");
+    
   vm.changeLanguage = function (langKey) {
     $translate.use(langKey);
   };

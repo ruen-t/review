@@ -60,7 +60,7 @@ function ReviewController($routeParams,$location,$timeout,$scope, $resource,$mdD
     vm.gotoContentPage = gotoContentPage;
     vm.getWeekData = getWeekData;
     vm.dtInstance = {};
-    vm.dateFilter = false;
+    vm.dateFilter = true;
     vm.dateQuery = "";
 
     vm.refreshFlag = false;
@@ -277,7 +277,7 @@ function ReviewController($routeParams,$location,$timeout,$scope, $resource,$mdD
 function getCookie(cname) {
     var name = cname + "=";
     var decodedCookie = decodeURIComponent(document.cookie);
-    var ca = decodedCookie.replace(";",",").split(',');
+    var ca = decodedCookie.replace(",",";").split(';');
     for(var i = 0; i <ca.length; i++) {
         var c = ca[i];
         while (c.charAt(0) == ' ') {
