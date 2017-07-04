@@ -1,10 +1,5 @@
-$(function(){
-    var headHeight = $('header').outerHeight();
-
-    $('body').css('padding-top', headHeight + 40);
-});
 var hostName= "http://pt-reviewtool-vmg.wni.co.jp/easyreviewapi/";
-
+var getJangoToken = hostName+"auth/convert-token/"
 var getEmployeeAPI = hostName+"employee/";
 var getUserInfo = hostName+"employee/current/"
 var getEmployeeByIDAPI = hostName+"employee/?id=";
@@ -466,17 +461,17 @@ function onSignIn(googleUser) {
     console.log(json)
     vm.http({
               method: 'POST',
-              url:  "http://pt-reviewtool-vmg.wni.co.jp/easyreviewapi/auth/convert-token/",
+              url:  getJangoToken,
               data:json,
               headers: { 'Content-Type': 'application/json' }
             }).then(function successCallback(response) {
-                
+                console.log("success request Jango token");
                 console.log(response);
                 var today = new Date();
                 var tomorrow = new Date()
                 tomorrow.setDate(today.getDate()+1);
                 //console.log(tomorrow);
-                document.cookie = "token_django="+response.data.access_token+"; expires="+today
+                document.cookie = "token_django="+response.data.access_token+", expires="+today
                vm.loggedIn = true;
                 console.log(document.cookie);
                 console.log(getCookie("token_django"))
@@ -514,7 +509,8 @@ function onSignIn(googleUser) {
  function getCookie(cname) {
     var name = cname + "=";
     var decodedCookie = decodeURIComponent(document.cookie);
-    var ca = decodedCookie.split(';');
+    var ca = decodedCookie.replace(";",",").split(',');
+    console.log(ca)
     for(var i = 0; i <ca.length; i++) {
         var c = ca[i];
         while (c.charAt(0) == ' ') {
@@ -722,6 +718,9 @@ function ManualController ($resource,$translate,$rootScope) {
 var review =[
 //{id:1,date:"2017-01-11T05:18:27",selected:true,shop:"BRAND",project:"CharaTV",development:"Check for bugs",type:"CDR",location:"AA3I",comment:"hello"},
 ];
+const THISWEEK = 1;
+const NEXTWEEK = 2;
+const LASTWEEK = 3;
 angular.module('review', ['datatables', 'ngResource','ngMaterial','datatables.scroller','datatables.buttons'])
 .controller('ReviewController', ReviewController)
 .config(function($mdIconProvider) {
@@ -776,6 +775,7 @@ function ReviewController($routeParams,$location,$timeout,$scope, $resource,$mdD
     vm.gotoAddPage = gotoAddPage;
     vm.gotoEditPage = gotoEditPage;
     vm.gotoContentPage = gotoContentPage;
+    vm.getWeekData = getWeekData;
     vm.dtInstance = {};
     vm.dateFilter = false;
     vm.dateQuery = "";
@@ -963,10 +963,38 @@ function ReviewController($routeParams,$location,$timeout,$scope, $resource,$mdD
 
 
  }
+ function getWeekData(period){ 
+   var curr = vm.current_start_date;
+
+  let first = curr.getDate() - curr.getDay();
+  console.log(curr.getDate());
+  console.log(curr.getDay());
+  if(period==NEXTWEEK){
+    first+=7;
+    console.log("NEXT "+ first);
+  }
+  else if(period==LASTWEEK){
+  
+    first-=7;
+    console.log("LAST "+first)
+  }else{
+    console.log("NOW "+first)
+  }
+  var last = first + 6; // last day is the first day + 6
+
+  var firstday = new Date(curr.setDate(first));
+  var lastday = new Date(curr.setDate(last));
+  var start_date_str = toJSONLocal(firstday);
+  var end_date_str = toJSONLocal(lastday);
+  console.log("WeekStartDate: "+ start_date_str);
+  console.log("WeekEndDate: "+end_date_str);
+ 
+ }
+ 
 function getCookie(cname) {
     var name = cname + "=";
     var decodedCookie = decodeURIComponent(document.cookie);
-    var ca = decodedCookie.split(';');
+    var ca = decodedCookie.replace(";",",").split(',');
     for(var i = 0; i <ca.length; i++) {
         var c = ca[i];
         while (c.charAt(0) == ' ') {
@@ -1004,12 +1032,15 @@ function toJSONLocal (date) {
     var startdateParam = $routeParams.startdate;
     var enddateParam = $routeParams.enddate;
     var dateParam =startdateParam+"|"+enddateParam;
+    vm.current_start_date = new Date(startdateParam);
+    vm.current_end_date = new Date(enddateParam);
     date = dateParam;
     console.log("fetch:"+dateParam);
     customDateRange = true;
   }
   else{
     var start = new Date();
+    vm.current_start_date = start;
    start.setDate(1);
   start.setMonth(start.getMonth()-vm.currentRange);
   var end = new Date();
@@ -1452,14 +1483,6 @@ var fetched = false;
            
         });
 
-       /* for(i =0;i< data.reviewmember_set.length;i++){
-          callAPI(getEmployeeByIDAPI+data.reviewmember_set[i].employee,"GET",function(response){
-            var employee_data = response.data[0];
-            console.log(employee_data);
-            vm.reviewers.push({employee_data})
-          })
-
-        }*/
 
         
 
@@ -1521,7 +1544,7 @@ var fetched = false;
           vm.reviewers.push({id:data.reviewmember_set[i].id,update:false,employee:reviewer.employee,role:reviewer.role});
         }
         fetchDataWithCallBack(getEmployeeAPI,function (response){
-          //console.log(response);
+          console.log(response);
            if(response.data){
             vm.employees = response.data;
               for (i in vm.reviewers){
@@ -1532,6 +1555,13 @@ var fetched = false;
                     }
                   }
               }
+              console.log("REVIEWER!!!")
+              console.log(vm.reviewers);
+              vm.reviewers.sort(function(a, b){
+                if(a.employeeObj.employee_name < b.employeeObj.employee_name) return -1;
+                if(a.employeeObj.employee_name > b.employeeObj.employee_name) return 1;
+                return 0;
+            })
              // console.log(vm.reviewers);
            }
             
@@ -1724,8 +1754,6 @@ $scope.$watch("vm.reviewTitle",function(newValue,oldValue){
     //console.log(vm.validateTitleObj)
 }
   function saveButtonClick(){
-
-   
     //console.log(vm.projectID);
     vm.reviewers.forEach(function(v){ delete v.$$hashKey; delete v.object });
        vm.startDate=  $("#startdate").find("input").val();
@@ -1808,7 +1836,6 @@ $scope.$watch("vm.reviewTitle",function(newValue,oldValue){
           });
     });
     console.log(vm.documents)
-   
 
   }
   function requestRemoveMember(id){
@@ -1949,7 +1976,30 @@ $scope.$watch("vm.reviewTitle",function(newValue,oldValue){
     });
 
   }
-  
+  function fetchDataAndSort(url,arrayname,sortKey){
+    $http({
+      method: 'GET',
+      url:  url,
+      //data:$.param({control_op:0}),
+      headers: { 'Content-Type': 'application/json',
+                  'Accept': 'application/json' ,
+                  'Authorization': vm.token_str }
+    }).then(function successCallback(response) {
+ 
+      if(response.data){
+        array =[]
+        var data = response.data;
+        vm[arrayname]= data;
+         vm[arrayname].sort(function(a, b){
+          if(a[sortKey] < b[sortKey]) return -1;
+          if(a[sortKey]  > b[sortKey]) return 1;
+          return 0;
+      })
+      }
+    }, function errorCallback(data, status, headers, config) {
+    });
+
+  }
   function fetchData(url,arrayname){
     $http({
       method: 'GET',
@@ -1964,18 +2014,14 @@ $scope.$watch("vm.reviewTitle",function(newValue,oldValue){
         array =[]
         var data = response.data;
         vm[arrayname]= data;
-        //if(arrayname="revTypes")console.log(response)
-      // if(arrayname=="shops")console.log(data)
 
       }
     }, function errorCallback(data, status, headers, config) {
-      // called asynchronously if an error occurs
-      // or server returns response with an error status.
     });
 
   }
   function fetchMember(){
-    fetchData(getEmployeeAPI,"employees")
+    fetchDataAndSort(getEmployeeAPI,"employees","employee_name")
    }
   function fetchPlace(){
     fetchData(getMeetingSpaceAPI,"places");
@@ -1995,10 +2041,10 @@ $scope.$watch("vm.reviewTitle",function(newValue,oldValue){
     fetchData(getProjectByShopAPI+shopID,"projects")
   }
   function fetchProject(){
-    fetchData(getProjectListAPI,"projects")
+    fetchDataAndSort(getProjectListAPI,"projects","project_name")
   }
   function fetchShop(){
-    fetchData(getShopAPI,"shops")
+    fetchDataAndSort(getShopAPI,"shops","shop_name_en")
   }
   //============================== Auto complete ========================
   var self = this;
@@ -2007,7 +2053,7 @@ $scope.$watch("vm.reviewTitle",function(newValue,oldValue){
     self.isDisabled    = false;
 
     // list of `state` value/display objects
-    self.states        = getEmployee();
+    self.state      = getEmployee();
     self.querySearch   = querySearch;
     self.selectedItemChange = selectedItemChange;
     self.searchTextChange   = searchTextChange;
@@ -2019,6 +2065,9 @@ $scope.$watch("vm.reviewTitle",function(newValue,oldValue){
     self.projectQuerySearch   = projectQuerySearch;
     self.projectSelectedItemChange = projectSelectedItemChange;
     self.projectSearchTextChange   = projectSearchTextChange;
+    self.shopSorted = false
+    self.projectSorted = false
+    self.employeeSorted = false
 
    
 
@@ -2039,7 +2088,17 @@ $scope.$watch("vm.reviewTitle",function(newValue,oldValue){
       alert("Sorry! You'll need to create a Constitution for " + state + " first!");
     }
     function querySearch (query) {
-      if(!query)return vm.employees;
+      if(!query){
+         if(!vm.employeeSorted){
+         vm.employees.sort(function(a, b){
+          if(a.employee_name < b.employee_name) return -1;
+          if(a.employee_name > b.employee_name) return 1;
+          return 0;
+      })
+       vm.employeeSorted = true;
+      }
+        return vm.employees;
+      }
       var results =[];
       var lowercaseQuery = angular.lowercase(query);
       for(var i=0;i<vm.employees.length;i++){
@@ -2050,15 +2109,31 @@ $scope.$watch("vm.reviewTitle",function(newValue,oldValue){
 
         }
       }
-      console.log(results)
+      results.sort(function(a, b){
+          if(a.employee_name < b.employee_name) return -1;
+          if(a.employee_name > b.employee_name) return 1;
+          return 0;
+      })
+      //console.log(results)
      return results;
     }
     function shopQuerySearch (query) {
-      console.log("SHOP query search: "+query)
-      if(!query)return vm.shops;
+      //console.log("SHOP query search: "+query)
+      if(!query){
+        if(!vm.shopSorted){
+        vm.shops.sort(function(a, b){
+          if(a.shop_name_en < b.shop_name_en) return -1;
+          if(a.shop_name_en > b.shop_name_en) return 1;
+          return 0;
+      })
+        vm.shopSorted = true;
+
+      }
+        return vm.shops;
+      }
       var results =[];
       var lowercaseQuery = angular.lowercase(query);
-      console.log(lowercaseQuery)
+      //console.log(lowercaseQuery)
       for(var i=0;i<vm.shops.length;i++){
         var filter_value = angular.lowercase(vm.shops[i].shop_name_en);
         
@@ -2067,12 +2142,27 @@ $scope.$watch("vm.reviewTitle",function(newValue,oldValue){
 
         }
       }
-      console.log(results)
+      //console.log(results)
+      results.sort(function(a, b){
+          if(a.shop_name_en < b.shop_name_en) return -1;
+          if(a.shop_name_en > b.shop_name_en) return 1;
+          return 0;
+      })
      return results;
     }
     function projectQuerySearch (query) {
-      if(!query)return vm.projects;
-    console.log(query);
+      if(!query){
+         if(!vm.projectSorted){
+           vm.projects.sort(function(a, b){
+          if(a.project_name < b.project_name) return -1;
+          if(a.project_name > b.project_name) return 1;
+          return 0;
+        })
+        vm.projectSorted = true;
+        }
+        return vm.projects;
+      }
+   //console.log(query);
       var results =[];
       var lowercaseQuery = angular.lowercase(query);
       //console.log(lowercaseQuery);
@@ -2086,18 +2176,25 @@ $scope.$watch("vm.reviewTitle",function(newValue,oldValue){
         }
         if(filter_value.indexOf(lowercaseQuery)>=0){
           results.push(vm.projects[i]);
-
         }
+        
       }
-      console.log(results)
+      //console.log(results)
+      results.sort(function(a, b){
+          if(a.project_name < b.project_name) return -1;
+          if(a.project_name > b.project_name) return 1;
+          return 0;
+      })
      return results;
     }
 
     function searchTextChange(reviewer,text) {
       reviewer.update= true;
+     
       $log.info('Reviewer changed to ' + text);
     }
     function shopSearchTextChange(shop,text) {
+      
      
       $log.info('Shop changed to ' + text);
     }
@@ -2117,33 +2214,17 @@ $scope.$watch("vm.reviewTitle",function(newValue,oldValue){
       
     }
     function shopSelectedItemChange(item,shop) {
-     // console.log("Shop changed")
-     // console.log(item)
-      //console.log(shop)
+
       if(typeof item=="undefined")return false;
-     // reviewer.update = true;
-      
-     vm.selectedShopID = item.id;
-     //console.log(vm.project)
-     //console.log("Shop changed "+vm.autoTrigger);
-    //console.log("Trigger in shop: "+vm.autoTrigger)
-    if(!vm.autoTrigger){
-     // console.log("clear project")
-      vm.project ={};
-      vm.selectedDevelopmentID = -1 ;
-    }
-    
-     //vm.selectedProject.id= -1;
-     
+       vm.selectedShopID = item.id;
+      if(!vm.autoTrigger){
+       // console.log("clear project")
+       vm.project ={};
+       vm.selectedDevelopmentID = -1 ;
+      }
     }
     function projectSelectedItemChange(item,project) {
-     // console.log("Project changed")
-      //console.log(project)
-      //console.log(item)
       if(typeof item=="undefined")return false;
-     // reviewer.update = true;
-      //console.log(project);
-      //console.log(item);
       vm.selectedProject.id = item.id;
       //console.log("Trigger in project: "+vm.autoTrigger)
       if(!vm.autoTrigger){
@@ -2157,7 +2238,8 @@ $scope.$watch("vm.reviewTitle",function(newValue,oldValue){
 
     
     function getEmployee(){
-      return $http({
+      console.log("GET EMPLOYEE")
+       return $http({
       method: 'GET',
       url:  getEmployeeAPI,
       //data:$.param({control_op:0}),
@@ -2170,6 +2252,11 @@ $scope.$watch("vm.reviewTitle",function(newValue,oldValue){
        
         var data = response.data;
         vm.employees= data;
+         vm.employees.sort(function(a, b){
+          if(a.employee_name < b.employee_name) return -1;
+          if(a.employee_name > b.employee_name) return 1;
+          return 0;
+      })
         return vm.employees;
       // if(arrayname=="shops")console.log(data)
 

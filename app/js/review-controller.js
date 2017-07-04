@@ -277,7 +277,7 @@ function ReviewController($routeParams,$location,$timeout,$scope, $resource,$mdD
 function getCookie(cname) {
     var name = cname + "=";
     var decodedCookie = decodeURIComponent(document.cookie);
-    var ca = decodedCookie.split(';');
+    var ca = decodedCookie.replace(";",",").split(',');
     for(var i = 0; i <ca.length; i++) {
         var c = ca[i];
         while (c.charAt(0) == ' ') {

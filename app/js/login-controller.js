@@ -49,17 +49,17 @@ function onSignIn(googleUser) {
     console.log(json)
     vm.http({
               method: 'POST',
-              url:  "http://pt-reviewtool-vmg.wni.co.jp/easyreviewapi/auth/convert-token/",
+              url:  getJangoToken,
               data:json,
               headers: { 'Content-Type': 'application/json' }
             }).then(function successCallback(response) {
-                
+                console.log("success request Jango token");
                 console.log(response);
                 var today = new Date();
                 var tomorrow = new Date()
                 tomorrow.setDate(today.getDate()+1);
                 //console.log(tomorrow);
-                document.cookie = "token_django="+response.data.access_token+"; expires="+today
+                document.cookie = "token_django="+response.data.access_token+", expires="+today
                vm.loggedIn = true;
                 console.log(document.cookie);
                 console.log(getCookie("token_django"))
@@ -97,7 +97,8 @@ function onSignIn(googleUser) {
  function getCookie(cname) {
     var name = cname + "=";
     var decodedCookie = decodeURIComponent(document.cookie);
-    var ca = decodedCookie.split(';');
+    var ca = decodedCookie.replace(";",",").split(',');
+    console.log(ca)
     for(var i = 0; i <ca.length; i++) {
         var c = ca[i];
         while (c.charAt(0) == ' ') {

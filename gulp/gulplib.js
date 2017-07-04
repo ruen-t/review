@@ -68,7 +68,7 @@ gulp.task('bower', function() {
    bower()
     .pipe(jsFilter)
     .pipe(concat('vendor.js'))
-    //.pipe(uglify())
+    .pipe(uglify())
     .pipe(gulp.dest(dist.js))
     //.pipe(jsFilter.restore())
     bower().pipe(cssFilter)
