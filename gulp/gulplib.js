@@ -68,7 +68,7 @@ gulp.task('bower', function() {
    bower()
     .pipe(jsFilter)
     .pipe(concat('vendor.js'))
-    .pipe(uglify())
+    //.pipe(uglify())
     .pipe(gulp.dest(dist.js))
     //.pipe(jsFilter.restore())
     bower().pipe(cssFilter)
@@ -134,7 +134,7 @@ gulp.task('livereload', ['bower', 'css', 'js', 'watch'], function() {
 
 gulp.task('scp', shell.task([
   
-  'scp -r dist/* ruen-t@172.16.252.110:/usr/local/www/apache24/data/easyreview'
+  'scp -r dist/* pt-reviewtool-vmg.wni.co.jp:/usr/local/www/apache24/data/easyreview'
 ]))
 gulp.task('injectbuild', function () {
   
@@ -179,5 +179,5 @@ gulp.task('default', ['bower', 'css', 'js', 'livereload']) // development
 gulp.task('build', ['bower', 'compress','minifyhtml','minifyJSON','minifyIMG','injectbuild']) // build for production
 gulp.task('deploy', ['build'], shell.task([
   
-  'scp -r dist/* ruen-t@172.16.252.110:/usr/local/www/apache24/data/easyreview'
+  'scp -r dist/* pt-reviewtool-vmg.wni.co.jp:/usr/local/www/apache24/data/easyreview'
 ]))
