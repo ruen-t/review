@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html ng-app="main">
+<head>
+  
+<base href="/easyreviewDev/">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>Review</title>
+   <!-- build:css -->
+  <!-- endinject -->
+  <!-- bower:css -->
+  <!-- endbower -->
+  
+ 
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <meta name="google-signin-client_id"
+  content="708429447572-i3chgu26nfh79i5gg8sss95jktvr85vb.apps.googleusercontent.com">
+<script src="https://apis.google.com/js/platform.js" async defer></script>
+  <!-- inject:css -->
+  <!-- endinject -->
+  
+</head>
+<header>
+  <logo></logo>
+</header>
+<body ng-controller="MainController as vm" style="visibility: hidden;">
+
+<div ng-controller="AppCtrl as sideCtrl" layout="column" style="height:100%;" ng-cloak>
+
+  <section layout="row" flex>
+
+    <!--md-sidenav
+        class="md-sidenav-left"
+        md-component-id="left"
+      md-is-locked-open="$mdMedia('gt-md')"
+        md-whiteframe="4"-->
+  <md-sidenav
+        class="md-sidenav-left"
+        md-component-id="left"
+     
+        md-whiteframe="4">
+      <md-toolbar layout="row"  layout-align="center center"
+
+        ng-controller="LeftCtrl" class="md-theme-indigo">
+
+        <h1 class="md-toolbar-tools">{{'MENU'|translate}}</h1>
+        <i ng-click="close()"  class="material-icons">close</i>
+        <div>&nbsp&nbsp&nbsp&nbsp&nbsp</div>
+ 
+
+      </md-toolbar>
+     <md-content layout-padding >
+       
+      <md-list flex>
+        
+        <md-list-item  ng-repeat="item in sideCtrl.data" href={{item.href}} class="md-3-line"  ng-click="null">
+         
+          <div  layout="row"  layout-align="left center" class="md-list-item-text" layout="column">
+            <i  class="material-icons" >{{item.icon}}</i>
+            <div>&nbsp&nbsp&nbsp</div>
+            <h3>{{item.name}}</h3> 
+          </div>
+          
+        </md-list-item>
+        
+       
+      </md-list>
+   
+        <p hide show-gt-md>
+     
+
+        </p>
+      </md-content>
+
+    </md-sidenav>
+
+    <md-content flex layout-padding>
+
+      <div layout="column" layout-align="top center">
+        
+        
+      <div flex style="width: 100%">
+      <!--main-page></main-page-->
+      <ng-view></ng-view>
+    </div>
+
+    </md-content>
+
+   
+
+  </section>
+
+</div>
+
+   <!-- bower:js -->
+  <!-- endbower -->
+  <!-- inject:js -->
+  <!-- endinject -->
+
+  <!-- build:js -->
+  <!-- endinject -->
+
+</body>
+</html>

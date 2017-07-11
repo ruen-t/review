@@ -1,0 +1,171 @@
+<md-content layout-padding>
+    <div>
+
+      <form name="userForm" class="content">
+    
+
+        <div layout-gt-xs="row" class="saveButton">
+            <md-button class="add" ng-click="vm.redirectToEdit()" >{{ 'EDIT' | translate }}</md-button>
+        
+        </div>
+        <div class="form_title">
+        <div ><i class="material-icons">&#xE02E;</i><h3>  {{'REVIEW_CONTENT'|translate}}</h3></div>
+        
+        </div>
+
+
+        <div style="margin-top: 20px;">
+            
+        <div layout-gt-xs="row">
+          
+           <md-input-container flex="20">
+           
+             <div>{{'REVIEW_TITLE'|translate}}</div>
+          </md-input-container>
+          <md-input-container  flex="60">
+             <div>{{vm.review.review_title}}</div>
+          </md-input-container>
+        </div >
+
+        <div layout-gt-xs="row">
+          
+           
+             <md-input-container flex="20">
+               <div>{{'START_DATE'|translate}}</div>
+            </md-input-container>
+            <md-input-container  flex="30">
+               <div>{{vm.review.review_date_start|date:'yyyy-MM-dd  (HH:mm)' }}</div>
+            </md-input-container>
+               <md-input-container flex="20">
+               <div>{{'END_DATE'|translate}}</div>
+            </md-input-container>
+            <md-input-container  flex="30">
+               <div>{{vm.review.review_date_end|date:'yyyy-MM-dd  (HH:mm)' }}</div>
+            </md-input-container>
+
+          </div >
+         <div layout-gt-xs="row">
+          
+           <md-input-container flex="25">
+             <div>{{'LOCATION'|translate}}</div>
+          </md-input-container>
+          <md-input-container  flex="25">
+             <div>{{vm.review.review_location.meetspace_name_en}}</div>
+          </md-input-container>
+           <md-input-container flex="25">
+             <div>{{'REVIEW_TYPE'|translate}}</div>
+          </md-input-container>
+          <md-input-container  flex="25">
+             <div>{{vm.review.review_type.revtype_name_en}}</div>
+          </md-input-container>
+        </div >
+        <div layout-gt-xs="row">
+          
+           <md-input-container flex="15">
+             <div>{{'PROJECT'|translate}}</div>
+          </md-input-container>
+          <md-input-container  flex="20">
+             <div>{{vm.review.project.project_name}}</div>
+          </md-input-container>
+           <md-input-container flex="15">
+             <div>{{'DEVELOPMENT'|translate}}</div>
+          </md-input-container>
+          <md-input-container  flex="20">
+             <div>{{vm.review.development.development_code}}</div>
+          </md-input-container>
+           <md-input-container flex="15">
+             <div>{{'SHOP_NAME'|translate}}</div>
+          </md-input-container>
+             <md-input-container  flex="15">
+             <div>{{vm.review.shop.shop_name_en}}</div>
+          </md-input-container>
+        </div >
+        <div layout-gt-xs="row">
+          <md-input-container class="md-block" flex-gt-xs>
+          <label>{{'COMMENT'|translate}}</label>
+          <textarea ng-model="vm.review.review_comment"  rows="2" md-select-on-focus disabled></textarea>
+        </md-input-container>
+        </div>
+
+
+          
+
+        
+
+          <div >
+            <div layout-gt-xs="row">
+              <div class="reviewMember">{{ 'REVIEW_MEMBER' | translate}}  </div>
+
+            </div>
+            <div layout-gt-xs="row" ng-repeat="reviewer in vm.reviewers" >
+              
+              <md-input-container  flex="30">
+               <div >{{reviewer.role_data.role_name_en}}</div>
+              </md-input-container>
+              <md-input-container flex="30">
+                <div>{{reviewer.employee_data.employee_name}}</div>
+              </md-input-container>
+             
+            </div>
+          </div>
+
+           <div >
+            <div layout-gt-xs="row">
+              <div class="reviewMember">{{ 'DOCUMENT' | translate}}  </div>
+
+            </div>
+            <div layout-gt-xs="row" ng-repeat="document in vm.documents" >
+              <md-input-container  flex="20">
+               <div >{{document.title}}</div>
+              </md-input-container>
+              <md-input-container  flex="10">
+               <div >{{vm.documentTypes.get(document.type)}}</div>
+              </md-input-container>
+              <md-input-container flex="30">
+                <div>{{document.url}}</div>
+              </md-input-container>
+             
+            </div>
+          </div>
+        <div class="ui comments">
+  <h1 class="ui dividing header">{{ 'FEEDBACK' | translate}}</h1>
+  
+  
+  <div class="comment">
+   <md-content>
+    <md-list>
+      <md-list-item class="md-3-line" ng-repeat="feedbackObj in vm.feedbackList">
+        
+        <div class="md-list-item-text">
+          <h3>{{feedbackObj.giver.employee_name}}</h3>
+         
+          <pre>{{feedbackObj.feedback}}</pre>
+        </div>
+        <md-divider  ng-if="!$last"></md-divider>
+      </md-list-item>
+    </md-list>
+  </md-content>
+    <!--div class="content_c" ng-repeat="feedbackObj in vm.feedbackList">
+
+      <a class="author"><font size="2">{{feedbackObj.giver.employee_name}}</font></a>
+      
+      <div class="text" >
+       <font size="1">{{feedbackObj.feedback}}</font> 
+      </div>
+      
+  </div-->
+  <form class="ui reply form">
+    <div class="field" >
+      <textarea ng-model= "vm.feedback" rows="8" cols="80"></textarea>
+    </div>
+    <div class="ui blue labeled submit icon button" ng-click="vm.addFeedback()">
+      <i class="icon edit"></i> {{ 'ADD_FEEDBACK' | translate}} 
+    </div>
+  </form>
+</div>
+     
+
+      </form>
+      
+    </div>
+  </md-content>

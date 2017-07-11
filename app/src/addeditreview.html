@@ -1,0 +1,293 @@
+<md-content layout-padding>
+    <div>
+
+        <form name="userForm" class="addReview">
+
+            <div layout-gt-xs="row" class="saveButton">
+                <md-button class="add" ng-click="vm.saveButtonClick()" ng-show="vm.state==0">{{ 'ADD' | translate }}</md-button>
+                <md-button class="edit" ng-click="vm.editButtonClick()" ng-show="vm.state==1">{{ 'SAVE' | translate }}</md-button>
+            </div>
+            <div class="form_title">
+                <i class="material-icons">&#xE02E;</i>
+                <div ng-show="vm.state==0">
+                    <h3>{{'ADD_REVIEW_PAGE'|translate}}</h3>
+                </div>
+                <div ng-show="vm.state==1">
+                    <h3>{{'EDIT_REVIEW_PAGE'|translate}}</h3>
+                </div>
+            </div>
+
+
+            <div style="margin-top: 20px;">
+
+
+                <div style="{padding-bottom: 0}" layout-gt-xs="row">
+            <form name="titleForm">
+                    <md-input-container class="md-block" flex-gt-sm>
+                        <label>{{ 'REVIEW_TITLE' | translate }}</label>
+                       
+                        <input type="text"  name="title" ng-change="vm.validateTitle()" ng-model="vm.reviewTitle" ng-pattern="/^.+(\[NEW\]|\[MAINTE\]|\[VUP\])$/" placeholder=" Title should end in [NEW], [VUP], or [MAINTE]." required>
+                         <div ng-messages="titleForm.title.$error" ng-show="vm.validateTitleObj.required||vm.validateTitleObj.pattern" >
+                         <div ng-message="required" ng-show="vm.validateTitleObj.required">
+                            This field is required.
+                             </div>
+                          <div ng-message="pattern" ng-show="vm.validateTitleObj.pattern">
+                            Title should end in [NEW], [VUP], or [MAINTE].
+                             </div>
+                        </div>
+                    </md-input-container>
+            </form>
+                  </div>
+                  <div layout-gt-xs="row">
+
+                    {{ 'DATE_SELECT' | translate }}
+                  
+                    <div class="container">
+                        <div class='col-md-5'>
+                            <div class="form-group">
+                                <div class='input-group date' id='startdate'>
+                                    <input data-format="yyyy-MM-dd hh:mm:ss" type='text' 　 class="form-control" />
+                                    <span class="input-group-addon">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class='col-md-5'>
+                            <div class="form-group">
+                                <div class='input-group date' id='enddate'>
+                                    <input　 data-format="yyyy-MM-dd hh:mm:ss" type='text' 　　class="form-control" />
+                                    <span class="input-group-addon">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                   
+                    </div>
+                     <div layout-gt-xs="row">
+                <md-content class="md-padding">
+                        <form ng-submit="$event.preventDefault()">
+                          <md-autocomplete
+
+                              class="shop-name"
+                              ng-disabled="vm.isDisabled"
+                              md-no-cache="vm.noCache"
+                              md-selected-item="vm.shop.shopObj"
+                              md-search-text-change="vm.shopSearchTextChange(vm.shop, vm.shop.searchText)"
+                              md-search-text="vm.shop.searchText"
+                              md-selected-item-change="vm.shopSelectedItemChange(item,shop)"
+                              md-items="item in vm.shopQuerySearch(vm.shop.searchText)"
+                              md-item-text="item.shop_name_en"
+                              md-min-length="0"
+                              placeholder="Shop's name">
+                            <md-item-template>
+                              <span md-highlight-text="vm.shop.searchText" md-highlight-flags="^i">{{item.shop_name_en}}</span>
+                            </md-item-template>
+                            <md-not-found>
+                              No states matching "{{vm.shop.searchText}}" were found.
+                              <a ng-click="vm.ShopNewState(shop.searchText)">Create a new one!</a>
+                            </md-not-found>
+                          </md-autocomplete>
+                          <br/>
+                        </form>
+                      </md-content>
+
+                      <md-content class="md-padding">
+                        <form ng-submit="$event.preventDefault()">
+                          <md-autocomplete
+
+                              class="project-name"
+                              ng-disabled="vm.isDisabled"
+                              md-no-cache="vm.noCache"
+                              md-selected-item="vm.project.projectObj"
+                              md-search-text-change="vm.projectSearchTextChange(vm.project, vm.project.searchText)"
+                              md-search-text="vm.project.searchText"
+                              md-selected-item-change="vm.projectSelectedItemChange(item,vm.project)"
+                              md-items="item in vm.projectQuerySearch(vm.project.searchText)"
+                              md-item-text="item.project_name"
+                              md-min-length="0"
+                              placeholder="Project's name">
+                            <md-item-template>
+                              <span md-highlight-text="vm.project.searchText" md-highlight-flags="^i">{{item.project_name}}</span>
+                            </md-item-template>
+                            <md-not-found>
+                              No states matching "{{project.searchText}}" were found.
+                              <a ng-click="vm.projectNewState(vm.project.searchText)">Create a new one!</a>
+                            </md-not-found>
+                          </md-autocomplete>
+                          <br/>
+                        </form>
+                      </md-content>
+                        <md-input-container class="md-block" flex-gt-sm ng-show="vm.projectSelected">
+                        <label>{{ 'DEVELOPMENT_CODE' | translate }}</label>
+                        <md-select ng-model="vm.selectedDevelopmentID" placeholder="{{ 'DEVELOPMENT_CODE' | translate }}" 　required>
+                            <md-option ng-repeat="dev in vm.developments" value="{{dev.id}}">
+                                {{dev.development_code+": "+dev.development_detail}}
+                            </md-option>
+                        </md-select>
+                    </md-input-container>
+                    
+                </div>
+
+                <!--div layout-gt-xs="row">
+                
+        <md-input-container class="md-block" flex-gt-sm>
+                        <label>{{ 'SHOP_NAME' | translate }}</label>
+                        <md-select ng-model="vm.selectedShopID" placeholder="{{ 'SHOP_NAME' | translate }}">
+                            <md-option ng-repeat="shop in vm.shops" value="{{shop.id}}">
+                                {{shop.shop_name_en}}
+                            </md-option>
+                        </md-select>
+        </md-input-container>
+                    <md-input-container class="md-block" flex-gt-sm>
+                        <label>{{ 'PROJECT_NAME' | translate }}</label>
+                        <md-select ng-model="vm.selectedProject.id" placeholder="{{ 'PROJECT_NAME' | translate }}">
+                            <md-option ng-repeat="project in vm.projects" value="{{project.id}}">
+                                {{project.project_name}}
+                            </md-option>
+                        </md-select>
+                    </md-input-container>
+                    <md-input-container class="md-block" flex-gt-sm ng-show="vm.projectSelected">
+                        <label>{{ 'DEVELOPMENT_CODE' | translate }}</label>
+                        <md-select ng-model="vm.selectedDevelopmentID" placeholder="{{ 'DEVELOPMENT_CODE' | translate }}" 　required>
+                            <md-option ng-repeat="dev in vm.developments" value="{{dev.id}}">
+                                {{dev.development_code}}
+                            </md-option>
+                        </md-select>
+                    </md-input-container>
+                    
+                </div-->
+
+              
+
+                <div layout-gt-xs="row">
+
+                    <md-input-container class="md-block" flex-gt-sm>
+                        <label>{{ 'REVIEW_TYPE' | translate }}</label>
+                        <md-select ng-model="vm.selectedType" placeholder="{{ 'REVIEW_TYPE' | translate }}" 　required>
+                            <md-option ng-repeat="value in vm.revTypes" value="{{value.id}}">
+                                {{value.revtype_code}}
+                            </md-option>
+                        </md-select>
+                    </md-input-container>
+
+                    <md-input-container class="md-block" flex-gt-sm>
+                        <label>{{ 'LOCATION' | translate }}</label>
+                        <md-select ng-model="vm.selectedPlace" placeholder="{{ 'LOCATION' | translate }}" 　required>
+                            <md-option ng-repeat="value in vm.places" value="{{value.id}}">
+                                {{value.meetspace_name_en}}
+                            </md-option>
+                        </md-select>
+                    </md-input-container>
+
+
+
+                </div>
+
+
+
+                <div>
+                    <div layout-gt-xs="row">
+                        <div class="reviewMember">{{ 'REVIEW_MEMBER' | translate}} <i class="material-icons" ng-click="vm.addReviewMember()">add_box</i>
+                        </div>
+
+                    </div>
+                    <div layout-gt-xs="row" ng-repeat="reviewer in vm.reviewers">
+                        <md-input-container class="md-block" flex-gt-sm>
+                            <label>{{ 'ROLE' | translate }}</label>
+                            <md-select ng-model="reviewer.role" placeholder="{{ 'ROLE' | translate }}" 　required>
+                                <md-option ng-repeat="value in vm.roles" value="{{value.id}}">
+                                    {{value.role_name_en}}
+                                </md-option>
+                            </md-select>
+                        </md-input-container>
+    
+
+                        <!--md-input-container class="md-block" flex-gt-sm>
+                            <label>{{ 'EMPLOYEE' | translate }}</label>
+                            <md-select ng-model="reviewer.employee" placeholder="{{ 'EMPLOYEE' | translate }}" 　required>
+                                <md-option ng-repeat="employee in vm.employees" value="{{employee.id}}">
+                                    {{employee.employee_name}}
+                                </md-option>
+                            </md-select>
+                        </md-input-container-->
+                        <md-content class="md-padding">
+                        <form ng-submit="$event.preventDefault()">
+                          <md-autocomplete
+
+                              class="staff-name"
+                              ng-disabled="!reviewer.update"
+                              md-no-cache="vm.noCache"
+                              md-selected-item="reviewer.employeeObj"
+                              md-search-text-change="vm.searchTextChange(reviewer, reviewer.searchText)"
+                              md-search-text="reviewer.searchText"
+                              md-selected-item-change="vm.selectedItemChange(item,reviewer)"
+                              md-items="item in vm.querySearch(reviewer.searchText)"
+                              md-item-text="item.employee_name"
+                              md-min-length="0"
+                              placeholder="Staff's name">
+                            <md-item-template>
+                              <span md-highlight-text="reviewer.searchText" md-highlight-flags="^i">{{item.employee_name}}</span>
+                            </md-item-template>
+                            <md-not-found>
+                              No states matching "{{reviewer.searchText}}" were found.
+                              <a ng-click="vm.newState(reviewer.searchText)">Create a new one!</a>
+                            </md-not-found>
+                          </md-autocomplete>
+                          <br/>
+                        </form>
+                      </md-content>
+                        <md-input-container>
+
+                            <md-button md-no-ink ng-click="vm.removeReviewerMember($index)">-</md-button>
+                        </md-input-container>
+                    </div>
+                </div>
+
+
+                <div layout-gt-xs="row">
+                    <md-input-container class="md-block" flex-gt-xs>
+                        <label>{{ 'COMMENTS' | translate }}</label>
+                        <textarea rows="2" ng-model="vm.comment" md-select-on-focus>test</textarea>
+                    </md-input-container>
+                </div>
+
+                <div>
+                    <div layout-gt-xs="row">
+                        <div class="reviewMember">{{ 'DOCUMENT' | translate}} <i class="material-icons" ng-click="vm.addDocument()">add_box</i>
+                        </div>
+
+
+                    </div>
+                    <div layout-gt-xs="row" ng-repeat="document in vm.documents">
+                        <md-input-container class="md-block" flex-gt-sm>
+                            <label>{{ 'DOCUMENT_TYPE' | translate }}</label>
+                            <md-select ng-model="document.type" placeholder="{{ 'DOCUMENT_TYPE' | translate }}">
+                                <md-option ng-repeat="type in vm.documentTypes" value="{{type.id}}">
+                                    {{type.doctype_name_en}}
+                                </md-option>
+                            </md-select>
+                        </md-input-container>
+                        <md-input-container class="md-block" flex-gt-xs>
+                            <label>{{ 'DOCUMENT_TITLE' | translate }}</label>
+                            <input type="text" ng-model="document.title">
+                        </md-input-container>
+                        <md-input-container class="md-block" flex-gt-xs>
+                            <label>{{ 'DOCUMENT_URL' | translate }}</label>
+                            <input type="text" ng-model="document.url">
+                        </md-input-container>
+                        <md-input-container>
+
+                            <md-button md-no-ink ng-click="vm.removeDocument($index)">-</md-button>
+                        </md-input-container>
+                    </div>
+
+                </div>
+
+
+
+        </form>
+        </div>
+</md-content>
