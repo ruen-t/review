@@ -163,10 +163,14 @@ gulp.task('compress-css', ['css'], function() {
     .pipe(cssmin())
     .pipe(gulp.dest(dist.vendor))*/
 })
-gulp.task('minifyIMG',function(){
-  return gulp.src(['./assets/*.gif','./assets/*.jpg'])
+gulp.task('minifyIMG',['favicon'],function(){
+  return gulp.src(['./assets/*.gif','./assets/*.jpg','./assets/*.png'])
         .pipe(imagemin())
         .pipe(gulp.dest('dist/assets'))
+})
+gulp.task('favicon',function(){
+  return gulp.src(['./assets/icon_fav/*'])
+        .pipe(gulp.dest('dist/assets/icon_fav'))
 })
 gulp.task('compress-js', ['js'], function() {
   /*return gulp.src(dist.js+"vendor.js")

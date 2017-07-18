@@ -59,7 +59,13 @@ function onSignIn(googleUser) {
                 var tomorrow = new Date()
                 tomorrow.setDate(today.getDate()+1);
                 //console.log(tomorrow);
-                document.cookie = "token_django="+response.data.access_token+", expires="+today
+                document.cookie = "";
+                var isFirefox = typeof InstallTrigger !== 'undefined';
+                if(isFirefox){
+                  $.cookie('token_django', response.data.access_token, { expires: 1});
+                }else{
+                  document.cookie = "token_django="+response.data.access_token+"; expires="+today
+                }
                vm.loggedIn = true;
                 console.log(document.cookie);
                 console.log(getCookie("token_django"))
