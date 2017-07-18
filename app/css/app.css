@@ -69,6 +69,10 @@ header .right { text-align: right; }
 * {
 	box-sizing: border-box;
 }
+.md-button[disabled] span{
+  color : rgba(0, 0, 0, 0.26);
+  background-color: transparent;
+}
 a #follow-button .btn{
 	width:200px;
 }

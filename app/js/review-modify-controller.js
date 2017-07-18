@@ -906,7 +906,7 @@ $scope.$watch("vm.reviewTitle",function(newValue,oldValue){
      // reviewer.update = true;
       reviewer.employeeObj=item;
       reviewer.employee = item.id;
-      //console.log(reviewer);
+      console.log(reviewer);
      //console.log(item);
       
     }

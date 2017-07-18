@@ -40,13 +40,13 @@
               <md-menu-divider></md-menu-divider>
               
               <md-menu-item>
-                <md-button ng-disabled="!vm.checkSelected()"  ng-click="vm.gotoEditPage()">
+                <md-button ng-disabled="!vm.hasSelected"  ng-click="vm.gotoEditPage()">
                  {{'EDIT'|translate}}
                 </md-button>
               </md-menu-item>
               
               <md-menu-item>
-                <md-button ng-disabled="!vm.checkSelected()" ng-click="vm.deleteReview()">
+                <md-button ng-disabled="!vm.hasSelected" ng-click="vm.deleteReview()">
                   {{'DELETE'|translate}}
                   
                 </md-button>
