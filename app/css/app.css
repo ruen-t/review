@@ -290,3 +290,6 @@ button .save:hover{
 		margin: 0;
 		padding: 5px 10px;
 	}
+.comments{
+	max-width:70%;
+}

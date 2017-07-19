@@ -128,9 +128,8 @@
             </div>
           </div>
         <div class="ui comments">
-  <h1 class="ui dividing header">{{ 'FEEDBACK' | translate}}</h1>
-  
-  
+  <h2 >{{ 'FEEDBACK' | translate}}</h2>
+  <md-divider></md-divider>
   <div class="comment">
    <md-content>
     <md-list>
@@ -154,13 +153,13 @@
       </div>
       
   </div-->
-  <form class="ui reply form">
+  <form >
     <div class="field" >
       <textarea ng-model= "vm.feedback" rows="8" cols="80"></textarea>
     </div>
-    <div class="ui blue labeled submit icon button" ng-click="vm.addFeedback()">
-      <i class="icon edit"></i> {{ 'ADD_FEEDBACK' | translate}} 
-    </div>
+    <md-button class="md-raised" style="background-color:#0B4199;color:white" ng-click="vm.addFeedback()">
+      {{ 'ADD_FEEDBACK' | translate}} 
+    </md-button>
   </form>
 </div>
      
