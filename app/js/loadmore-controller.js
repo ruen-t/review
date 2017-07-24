@@ -16,7 +16,7 @@ function LoadMoreController ($mdDialog,$location,$rootScope) {
       var end_date_str = toJSONLocal(endDate);
       console.log(start_date_str)
       console.log(end_date_str)
-       $location.path( "/review/"+start_date_str+"/"+end_date_str);
+       $location.path( "/review/"+start_date_str+"/"+end_date_str+"/"+start_date_str);
       $mdDialog.hide();
    }
    function cancel(){

@@ -325,12 +325,12 @@ function toJSONLocal (date) {
     var start = new Date();
     vm.current_start_date = start;
    start.setDate(1);
-  start.setMonth(start.getMonth()-vm.currentRange);
-  var end = new Date();
-   end.setDate(1);
-  end.setMonth(end.getMonth()+vm.currentRange);
+   start.setMonth(start.getMonth()-vm.currentRange);
+  vm.current_end_date = new Date();
+   vm.current_end_date.setDate(1);
+  vm.current_end_date.setMonth(vm.current_end_date.getMonth()+vm.currentRange);
   var start_date_str = toJSONLocal(start);
-  var end_date_str = toJSONLocal(end);
+  var end_date_str = toJSONLocal(vm.current_end_date);
    date = start_date_str+"|"+end_date_str;
   }
   vm.dateQuery = date;
@@ -441,9 +441,13 @@ function toggleDateFilter(flag){
 }
 function changeday(day){
   //console.log(day)
+  console.log("ChangeDate")
  if(!vm.dateFilter)return;
   var currentDate;
 //console.log(tomorrow.toLocaleDateString())
+  if($routeParams.currentDate){
+    vm.reviewDate = new Date($routeParams.currentDate)
+  }
   if(vm.reviewDate){
     var currentDate = new Date(vm.reviewDate)
    // console.log(currentDate.toLocaleDateString())
@@ -464,10 +468,32 @@ function sameDate(date1,date2){
  // console.log(d1.getTime() === d2.getTime())
   return d1.getTime() === d2.getTime();
 }
+function dataOutOfRange(date){
+return date>=vm.current_start_date&&date<=vm.current_end_date
+}
+function updateDataWithDate(date){
+  var start = new Date(date)
+  start.setDate(1);
+   start.setMonth(start.getMonth()-vm.currentRange);
+ var end = new Date(date);
+  end.setDate(1);
+  end.setMonth(end.getMonth()+vm.currentRange);
+  var start_date_str = toJSONLocal(start);
+  var end_date_str = toJSONLocal(end);
+  var current_date_str = toJSONLocal(date);
+  var dateParam = start_date_str+"|"+end_date_str;
+   console.log(dateParam)
+  $location.path( "/review/"+start_date_str+"/"+end_date_str+"/"+current_date_str);
+}
 function datatableSearch(val){
- // console.log("SearchDate")
+  console.log("SearchDate")
+   if(!vm.dateFilter)return;
   //console.log(val)
   var dateObj = new Date(val);
+ var inRnage = dataOutOfRange(dateObj);
+ if(!inRnage){
+  updateDataWithDate(dateObj)
+ }
   var month = dateObj.getUTCMonth() + 1; //months from 1-12
 var day = dateObj.getDate();
 var year = dateObj.getFullYear();
