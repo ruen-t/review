@@ -120,6 +120,13 @@ function ReviewController($routeParams,$location,$timeout,$scope, $resource,$mdD
 
                 if(vm.countRender==0){
                     vm.fetchData();
+                     var start = new Date();
+                      vm.current_start_date = start;
+                    start.setDate(1);
+                    start.setMonth(start.getMonth()-vm.currentRange);
+                    vm.current_end_date = new Date();
+                    vm.current_end_date.setDate(1);
+                    vm.current_end_date.setMonth(vm.current_end_date.getMonth()+vm.currentRange);
                 }
 
                 vm.countRender++;
