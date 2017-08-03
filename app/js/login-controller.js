@@ -26,7 +26,9 @@ function LoginController ($routeParams,$resource,$translate,$http,$location) {
        
 function getUserProfile(){
    var profile = getJsonCookie("easyreview_profile");
-   return  JSON.parse(profile)
+   if(profile){
+     return  JSON.parse(profile);
+   }else return "";
 
 }
 
