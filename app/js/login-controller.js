@@ -14,7 +14,8 @@ function LoginController ($routeParams,$resource,$translate,$http,$location) {
 	vm.requestDJangoToken = requestDJangoToken;
 	vm.signOut = signOut;
   vm.loggedIn = false;
- 
+  vm.profile = getUserProfile();
+  console.log(vm.profile)
   var token = getCookie("token_django");
   if(token){
     vm.loggedIn = true;
@@ -23,7 +24,11 @@ function LoginController ($routeParams,$resource,$translate,$http,$location) {
 }
 
        
+function getUserProfile(){
+   var profile = getJsonCookie("easyreview_profile");
+   return  JSON.parse(profile)
 
+}
 
 
 function onSignIn(googleUser) {
@@ -31,22 +36,23 @@ function onSignIn(googleUser) {
     //var client_id = "BufEoI2OhtOiVwCLpdrPFZrqXHO3Fd9Zk5xmY4mK";
     console.log("onSignIn")
     var client_id ="I2IAnOzO7QorjqfgXX4YbBUJ6w5ASt8w5qWcwbW1";
+    var profile_obj = {"id":profile.getId(),"name":profile.getName(),"image": profile.getImageUrl(), "email":profile.getEmail()};
     console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
     console.log('Name: ' + profile.getName());
     console.log('Image URL: ' + profile.getImageUrl());
     console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
     var authData = googleUser.getAuthResponse(true);
+    var today = new Date();
     console.log(authData);
+    document.cookie = "easyreview_profile="+JSON.stringify(profile_obj)+"; expires="+today
     var data = {"grant_type": "convert_token", "client_id":client_id, "backend":"google-oauth2", "token":authData.access_token}
     var json_data = JSON.stringify(data);
     vm.requestDJangoToken(json_data);
-    
-    
+    vm.profile = profile_obj;
   }
 
-
+  
   function requestDJangoToken(json){
-    console.log(json)
     vm.http({
               method: 'POST',
               url:  getJangoToken,
@@ -67,8 +73,8 @@ function onSignIn(googleUser) {
                   document.cookie = "token_django="+response.data.access_token+"; expires="+today
                 }
                vm.loggedIn = true;
-                console.log(document.cookie);
-                console.log(getCookie("token_django"))
+                //console.log(document.cookie);
+                console.log("Bearer:"+getCookie("token_django"))
                 if(vm.routeParams.state){
                   var state = parseInt(vm.routeParams.state);
                   switch(state){
@@ -99,7 +105,21 @@ function onSignIn(googleUser) {
                 // or server returns response with an error status.
               });
   }
-
+  function getJsonCookie(cname) {
+    var name = cname + "=";
+    var decodedCookie = decodeURIComponent(document.cookie);
+    var ca = decodedCookie.split(';');
+    for(var i = 0; i <ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0) == ' ') {
+            c = c.substring(1);
+        }
+        if (c.indexOf(name) == 0) {
+            return c.substring(name.length, c.length);
+        }
+    }
+    return "";
+}
  function getCookie(cname) {
     var name = cname + "=";
     var decodedCookie = decodeURIComponent(document.cookie);

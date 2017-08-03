@@ -553,18 +553,23 @@ function deleteReview(){///reviewtoolapi/review/{id}/delete/
                 // this callback will be called asynchronously
                 // when the response is available
                 console.log(response);
-                 vm.fetchData();
+                // vm.fetchData();
                 swal(
                   'Deleted!',
                   'Your file has been deleted.',
                   'success'
+                ).then(
+                  function () {
+                   location.reload();
+                  }
                 )
-               
+              
                 
                // $scope.$apply();
               }, function errorCallback(data, status, headers, config) {
                 // called asynchronously if an error occurs
                 // or server returns response with an error status.
+                location.reload();
               });
     
    } 

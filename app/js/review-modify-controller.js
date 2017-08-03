@@ -317,7 +317,9 @@ var fetched = false;
   vm.removeDocument = removeDocument;
   vm.editButtonClick = editButtonClick;
   vm.validateTitle = validateTitle;
+  vm.backToReview = backToReview;
   vm.validateTitleObj = {pattern:false,required:false};
+  
 
 $scope.$watch("vm.selectedShopID",function(newValue,oldValue){
    if(vm.selectedShopID>0){
@@ -437,6 +439,9 @@ $scope.$watch("vm.reviewTitle",function(newValue,oldValue){
 
        });
 
+  }
+  function backToReview(){
+    $location.path( "/" );
   }
   function validateTitle() {
     console.log("validated")

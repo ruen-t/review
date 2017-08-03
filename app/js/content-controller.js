@@ -1,7 +1,7 @@
 angular.module('content',[])
 .controller('ContentController', ContentController);
 
-function ContentController ($location,$http,$routeParams,$translate,$rootScope) {
+function ContentController ($scope,$location,$http,$routeParams,$translate,$rootScope) {
 	var vm = this;
   vm.documentTypes = new Map();
   var token = getCookie("token_django");
@@ -16,6 +16,11 @@ function ContentController ($location,$http,$routeParams,$translate,$rootScope) 
    vm.feedbackCount =0 ;
    vm.addFeedback = addFeedback;
    vm.redirectToEdit = redirectToEdit;
+   vm.backToReview = backToReview;
+   vm.canEditFeedback = canEditFeedback;
+   vm.toggleEditFeedback = toggleEditFeedback;
+   vm.editFeedback = editFeedback;
+   vm.deleteFeedback = deleteFeedback;
   //console.log(vm.reviewID)
 	vm.isEnglish = false;
    $rootScope.$on("english",function(){
@@ -26,6 +31,7 @@ function ContentController ($location,$http,$routeParams,$translate,$rootScope) 
    		//console.log("hello japanese");
    		vm.isEnglish = false;
    });
+   vm.profile = getUserProfile()
    if(vm.reviewID){
       fetchReview();
       fetchReviewMember();
@@ -33,11 +39,14 @@ function ContentController ($location,$http,$routeParams,$translate,$rootScope) 
       fetchFeedback();
       fetchDocumentType();
       fetchDocument();
-
    }
    function redirectToEdit(){
     $location.path( "/editReview/"+vm.reviewID);
    }
+    function backToReview(){
+      $location.path( "/" );
+    }
+
   function getCurrentUserInfo(){
      $http({
          method: 'GET',
@@ -57,11 +66,72 @@ function ContentController ($location,$http,$routeParams,$translate,$rootScope) 
       // or server returns response with an error status.
     });
   }
-
+  function canEditFeedback(giver){
+    if (typeof giver == 'undefined')return false;
+    if (giver.employee_email==vm.profile.email)return true;
+    else return false;
+  }
+  function toggleEditFeedback(feedbackObj){
+    feedbackObj.edit = true;
+  }
+  function editFeedback(feedbackObj){
+    feedbackObj.edit = false;
+    var feedback_giver = feedbackObj.feedback_giver
+      var feedback = feedbackObj.feedback;
+      var reviewID = feedbackObj.review;
+      var data ={feedback:feedback,feedback_giver:feedback_giver,review:reviewID};
+      $http({
+         method: 'PATCH',
+         url:  editFeedbackAPI+feedbackObj.id+"/",
+         data:data,
+         headers: { 'Content-Type': 'application/json',
+                  'Accept': 'application/json' ,
+                  'Authorization': token_str }
+       }).then(function successCallback(response) {
+        console.log(response)
+      
+     }, function errorCallback(data, status, headers, config) {
+      // called asynchronously if an error occurs
+      // or server returns response with an error status.
+    });
+  }
+  function requestDeleteFeedback(feedbackObj){
+      $http({
+         method: 'DELETE',
+         url:  editFeedbackAPI+feedbackObj.id+"/",
+         headers: { 'Content-Type': 'application/json',
+                  'Accept': 'application/json' ,
+                  'Authorization': token_str }
+       }).then(function successCallback(response) {
+          console.log(response)
+      
+     }, function errorCallback(data, status, headers, config) {
+      // called asynchronously if an error occurs
+      // or server returns response with an error status.
+    });
+  }
+  function deleteFeedback(feedbackObj){
+      swal({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        type: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it!'
+    }).then(function () {
+      for(var i = 0;i<vm.feedbackList.length;i++){
+        if(vm.feedbackList[i].id ==feedbackObj.id){
+          vm.feedbackList.splice(i,1);
+          break;
+        }
+      }
+      $scope.$apply()
+      requestDeleteFeedback(feedbackObj);
+      
+    });
+  }
    function addFeedback(){
-    
-    
-
       var feedback_giver = vm.userInfo.id;
       var feedback = vm.feedback;
       var reviewID = vm.reviewID;
@@ -117,7 +187,7 @@ function ContentController ($location,$http,$routeParams,$translate,$rootScope) 
                  'Accept': 'application/json' ,
                  'Authorization': token_str }
     }).then(function successCallback(response) {
-      //console.log(response)
+      console.log(response)
       if(response.data){
         vm.feedbackList = response.data;
         for (var i =0;i<vm.feedbackList.length;i++){
@@ -135,6 +205,7 @@ function ContentController ($location,$http,$routeParams,$translate,$rootScope) 
             }
             //console.log(vm.feedbackList);
           })
+          vm.feedbackList[i].edit = false;
         }
        
 

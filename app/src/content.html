@@ -9,7 +9,7 @@
         
         </div>
         <div class="form_title">
-        <div ><i class="material-icons">&#xE02E;</i><h3>  {{'REVIEW_CONTENT'|translate}}</h3></div>
+        <div ><i class="material-icons" ng-click="vm.backToReview()" >arrow_back</i><h3>  {{'REVIEW_CONTENT'|translate}}</h3></div>
         
         </div>
 
@@ -138,7 +138,13 @@
         <div class="md-list-item-text">
           <h3>{{feedbackObj.giver.employee_name}}</h3>
          
-          <pre>{{feedbackObj.feedback}}</pre>
+          <div layout="row" >
+            <div flex="80" ng-show="!feedbackObj.edit"><pre >{{feedbackObj.feedback}}</pre> </div>
+            <div flex="80" ng-show="feedbackObj.edit" ><textarea ng-model= "feedbackObj.feedback" rows="8" cols="80"></textarea></div>
+            <div flex="10" ng-show="vm.canEditFeedback(feedbackObj.giver) && !feedbackObj.edit"> <md-button class="md-primary" target="_blank" ng-click="vm.toggleEditFeedback(feedbackObj)" >{{'EDIT'|translate}}</md-button> </div>
+            <div flex="10" ng-show="vm.canEditFeedback(feedbackObj.giver) && feedbackObj.edit "> <md-button class="md-primary" target="_blank" ng-click="vm.editFeedback(feedbackObj)" >{{'SAVE'|translate}}</md-button> </div>
+            <div flex="10" ng-show="vm.canEditFeedback(feedbackObj.giver) && !feedbackObj.edit "><md-button class="md-primary" target="_blank" ng-click="vm.deleteFeedback(feedbackObj)">{{'DELETE'|translate}}</md-button> </div>
+          <div>
         </div>
         <md-divider  ng-if="!$last"></md-divider>
       </md-list-item>

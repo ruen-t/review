@@ -29,7 +29,8 @@ var deleteAPI = hostName+"review/edit/";
 
 var getFeedbackAPI=hostName+"review/feedbacks/?review=";
 var addFeedbackAPI=hostName+"review/feedbacks/";
-var editFeedbackAPI=hostName+"review/feedback/";
+var editFeedbackAPI=hostName+"review/feedback/edit/";
+
 
 var getReviewMemberAPI= hostName+"review/members/?review=";
 var deleteReviewMemberAPI= hostName+"review/member/edit/";
@@ -38,4 +39,4 @@ var addReviewMemberAPI= hostName+"review/members/";
 var getReviewDocumentAPI = hostName+"review/documents/?review=";
 var addDocumentAPI = hostName+"review/documents/";
 var deleteDocumentAPI = hostName+"review/document/edit/";
-var reportAPI = "http://pt-reviewtool-vmg.wni.co.jp/easyreviewapi/report/?key=DATE&query=";
+var reportAPI = hostName+"easyreviewapi/report/?key=DATE&query=";

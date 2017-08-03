@@ -98,7 +98,19 @@
 </style>
 <div ng-app="LoginForm" class="container">
     
-
+<md-card ng-show="vm.loggedIn"> 
+  <md-card-title>
+    <md-card-title-media>
+      <div class=" card-media" layout>
+       	<img ng-src="{{vm.profile.image}}"/>
+      </div>
+    </md-card-title-media>
+    <md-card-title-text>
+      <span class="md-headline">{{vm.profile.name}}</span>
+      <span class="md-subhead description">{{vm.profile.email}}</span>
+    </md-card-title-text>
+  </md-card-title>
+</md-card>
     <div class="omb_login">
     	<h3 class="omb_authTitle" ng-show="!vm.loggedIn">Login or <a href="https://mail.google.com/mail/signup
 ">Sign up</a></h3>
