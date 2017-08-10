@@ -98,15 +98,13 @@ var fetched = false;
     $('#startdate').datetimepicker({
       defaultDate:date_str,
       format : 'YYYY/MM/DD HH:mm', 
-      sideBySide: true,
-      collapse: false
+     
     });
       $('#enddate').datetimepicker({
          useCurrent: false,//Important! See issue #1075
          defaultDate:date_str,
          format : 'YYYY/MM/DD HH:mm',
-         sideBySide: true,
-         collapse: false
+         
     });
        //$('#enddate').data("DateTimePicker").date((moment(d).add(1, 'hours')));
       /*
@@ -157,15 +155,13 @@ var fetched = false;
         $('#startdate').datetimepicker({
            defaultDate: data.review_date_start,
             format : 'YYYY/MM/DD HH:mm',
-         sideBySide: true,
-         collapse: false
+         
         });
         $('#enddate').datetimepicker({
           defaultDate: data.review_date_end,
             useCurrent: false, //Important! See issue #1075
              format : 'YYYY/MM/DD HH:mm',
-         sideBySide: true,
-         collapse: false
+        
         });
          $("#startdate").on("dp.change", function (e) {
           if(e.date != e.defaultDate){
@@ -327,6 +323,7 @@ $scope.$watch("vm.selectedShopID",function(newValue,oldValue){
      if(!vm.autoTrigger){
        fetchProjectByShop(vm.selectedShopID);
        console.log("Fetch Project")
+       
      }
     
    }
@@ -433,7 +430,10 @@ $scope.$watch("vm.reviewTitle",function(newValue,oldValue){
             '',
             'success'
           ).then(function(){
-              $location.path( "/" );
+            var start_date_reload_path = toJSONLocal(start_date_obj);
+            end_date_obj.setDate(end_date_obj.getDate()+1)
+             var end_date_reload_path = toJSONLocal(end_date_obj)
+          $location.path( "/review/"+start_date_reload_path+"/"+end_date_reload_path+"/"+start_date_reload_path);
               $scope.$apply();
           });
 
@@ -443,6 +443,11 @@ $scope.$watch("vm.reviewTitle",function(newValue,oldValue){
   function backToReview(){
     $location.path( "/" );
   }
+  function toJSONLocal (date) {
+  var local = new Date(date);
+  local.setMinutes(date.getMinutes() - date.getTimezoneOffset());
+  return local.toJSON().slice(0, 10);
+}
   function validateTitle() {
     console.log("validated")
     var re = /^.+(\[NEW\]|\[MAINTE\]|\[VUP\])$/gi;
@@ -466,7 +471,7 @@ $scope.$watch("vm.reviewTitle",function(newValue,oldValue){
     var end_date_obj = new Date(vm.endDate)
     //console.log(start_date_obj)
    // console.log(end_date_obj)
-
+  
     var start_date =new Date(start_date_obj.getTime() - (start_date_obj.getTimezoneOffset() * 60000)).toJSON()
     var end_date =  new Date(end_date_obj.getTime() - (end_date_obj.getTimezoneOffset() * 60000)).toJSON()
     //console.log(start_date);
@@ -513,8 +518,10 @@ $scope.$watch("vm.reviewTitle",function(newValue,oldValue){
             '',
             'success'
           ).then(function(){
-              console.log("change Location");
-              $location.path( "/" );
+            var start_date_reload_path = toJSONLocal(start_date_obj);
+            end_date_obj.setDate(end_date_obj.getDate()+1)
+             var end_date_reload_path = toJSONLocal(end_date_obj)
+          $location.path( "/review/"+start_date_reload_path+"/"+end_date_reload_path+"/"+start_date_reload_path);
               $scope.$apply()
           });
        
@@ -718,6 +725,7 @@ $scope.$watch("vm.reviewTitle",function(newValue,oldValue){
         vm[arrayname]= data;
 
       }
+      
     }, function errorCallback(data, status, headers, config) {
     });
 
@@ -740,7 +748,7 @@ $scope.$watch("vm.reviewTitle",function(newValue,oldValue){
      fetchData(getRoleAPI,"roles");
   }
  function fetchProjectByShop(shopID){
-    fetchData(getProjectByShopAPI+shopID,"projects")
+    fetchDataAndSort(getProjectByShopAPI+shopID,"projects","project_name")
   }
   function fetchProject(){
     fetchDataAndSort(getProjectListAPI,"projects","project_name")
@@ -994,3 +1002,5 @@ $scope.$watch("vm.reviewTitle",function(newValue,oldValue){
 }]);
 
 
+//window.onbeforeunload = function() { return "You work will be lost."; };
+//window.onhashchange = function() { return "You work will be lost."; };

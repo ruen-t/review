@@ -82,7 +82,7 @@
         </div >
         <div layout-gt-xs="row">
           <md-input-container class="md-block" flex-gt-xs>
-          <label>{{'COMMENT'|translate}}</label>
+          <label>{{'COMMENTS'|translate}}</label>
           <textarea ng-model="vm.review.review_comment"  rows="2" md-select-on-focus disabled></textarea>
         </md-input-container>
         </div>
@@ -136,7 +136,7 @@
       <md-list-item class="md-3-line" ng-repeat="feedbackObj in vm.feedbackList">
         
         <div class="md-list-item-text">
-         <div layout="row" > <h3>{{feedbackObj.giver.employee_name}}</h3><h4> -  {{ 'UPDATED_AT' | translate}} 12:00</h4> </div>
+         <div layout="row" > <h3>{{feedbackObj.giver.employee_name}}</h3><h4>  &nbsp &nbsp &nbsp{{ 'UPDATED_AT' | translate}} {{feedbackObj.updated_at | date:'medium'}} </h4> </div>
          
           <div layout="row" >
             <div flex="80" ng-show="!feedbackObj.edit"><pre >{{feedbackObj.feedback}}</pre> </div>

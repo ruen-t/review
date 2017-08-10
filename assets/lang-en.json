@@ -39,7 +39,8 @@
       "ACTION":"Detail",
       "LOADMORE":"Load more",
       "DATE_SELECT":"Date",
-      "NONE": "None"
+      "NONE": "None",
+      "UPDATED_AT":"updated at"
 
     
 }

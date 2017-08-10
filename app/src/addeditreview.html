@@ -124,7 +124,7 @@
                         <label>{{ 'DEVELOPMENT_CODE' | translate }}</label>
                         <md-select ng-model="vm.selectedDevelopmentID" placeholder="{{ 'DEVELOPMENT_CODE' | translate }}" 　required>
                             <md-option ng-repeat="dev in vm.developments" value="{{dev.id}}" >
-                                {{dev.development_detail.length === 0 ?  dev.development_code+": -" :  dev.development_code+": "+dev.development_detail}}
+                                {{(dev.development_detail.length === 0 || dev.development_detail === null) ?  dev.development_code+": -" :  dev.development_code+": "+dev.development_detail}}
                             </md-option>
                             
                         </md-select>

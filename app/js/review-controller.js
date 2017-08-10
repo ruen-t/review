@@ -327,6 +327,7 @@ function toJSONLocal (date) {
     date = dateParam;
     console.log("fetch:"+dateParam);
     customDateRange = true;
+    vm.dateFilter = false;
   }
   else{
     var start = new Date();

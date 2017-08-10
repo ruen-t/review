@@ -41,5 +41,6 @@
       "LOGIN":"ログイン",
       "LOADMORE":"読み込む",
       "DATE_SELECT":"日付",
-      "NONE": "なし"
+      "NONE": "なし",
+      "UPDATED_AT":"更新時間"
 }
