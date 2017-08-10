@@ -49,7 +49,7 @@ var selectedProject ={
   id:-1,project_name:"-------",shop:{id:17,shop_code:"NOCODE",shop_name_en:"---------",shop_name_jp:"---------"}
 }
 
-var ReviewModifyController =['$routeParams','$location','$scope','$resource','$translate',"$http","$log","$timeout", "$q", function ($routeParams,$location,$scope,$resource,$translate,$http,$log,$timeout, $q) {
+var ReviewModifyController =['$rootScope','$routeParams','$location','$scope','$resource','$translate',"$http","$log","$timeout", "$q", function ($rootScope,$routeParams,$location,$scope,$resource,$translate,$http,$log,$timeout, $q) {
   var vm = this;
   var token = getCookie("token_django");
   if(!token){
@@ -69,7 +69,7 @@ var ReviewModifyController =['$routeParams','$location','$scope','$resource','$t
   console.log(vm.editId)
 
     vm.reviewers = [
-  {update:true,employee:[],role:-1 },
+  {update:true,employee:[],role:-1 }, {update:true,employee:[],role:-1 }
  /* {id:2,role:2 },*/
 ];
     vm.members = members;
@@ -346,7 +346,7 @@ $scope.$watch("vm.reviewTitle",function(newValue,oldValue){
    }
   
  })
- 
+
   
 
 

@@ -273,7 +273,7 @@ button .save:hover{
 	margin-left: 10px; font-weight: 800;
 }
 .form_title{
-	width: 230px;margin-left: -23px;margin-top:-3px;padding: 20px;background-color: #0B4199;color: white;font-weight: 800;display: -webkit-box;display: -webkit-flex;display: flex;border-radius: 3px;
+	width: 250px;margin-left: -23px;margin-top:-3px;padding: 20px;background-color: #0B4199;color: white;font-weight: 800;display: -webkit-box;display: -webkit-flex;display: flex;border-radius: 3px;
 }
 .custom-combobox {
 		position: relative;

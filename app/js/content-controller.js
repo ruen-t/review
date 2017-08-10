@@ -21,6 +21,7 @@ function ContentController ($scope,$location,$http,$routeParams,$translate,$root
    vm.toggleEditFeedback = toggleEditFeedback;
    vm.editFeedback = editFeedback;
    vm.deleteFeedback = deleteFeedback;
+   vm.feedbackEditState = false;
   //console.log(vm.reviewID)
 	vm.isEnglish = false;
    $rootScope.$on("english",function(){
@@ -73,9 +74,12 @@ function ContentController ($scope,$location,$http,$routeParams,$translate,$root
   }
   function toggleEditFeedback(feedbackObj){
     feedbackObj.edit = true;
+    vm.feedbackEditState = true;
+    
   }
   function editFeedback(feedbackObj){
     feedbackObj.edit = false;
+    vm.feedbackEditState = false;
     var feedback_giver = feedbackObj.feedback_giver
       var feedback = feedbackObj.feedback;
       var reviewID = feedbackObj.review;
