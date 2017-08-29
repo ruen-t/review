@@ -178,7 +178,7 @@
                         <label>{{ 'LOCATION' | translate }}</label>
                         <md-select ng-model="vm.selectedPlace" placeholder="{{ 'LOCATION' | translate }}" 　required>
                             <md-option ng-repeat="value in vm.places" value="{{value.id}}">
-                                {{value.meetspace_name_en}}
+                                {{vm.isEnglish ? value.meetspace_name_en : value.meetspace_name_jp}}
                             </md-option>
                         </md-select>
                     </md-input-container>
@@ -260,7 +260,7 @@
                             <label>{{ 'DOCUMENT_TYPE' | translate }}</label>
                             <md-select ng-model="document.type" placeholder="{{ 'DOCUMENT_TYPE' | translate }}">
                                 <md-option ng-repeat="type in vm.documentTypes" value="{{type.id}}">
-                                    {{type.doctype_name_en}}
+                                     {{vm.isEnglish ?type.doctype_name_en : type.doctype_name_jp}}
                                 </md-option>
                             </md-select>
                         </md-input-container>

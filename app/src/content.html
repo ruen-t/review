@@ -119,7 +119,7 @@
                <div >{{document.title}}</div>
               </md-input-container>
               <md-input-container  flex="10">
-               <div >{{vm.documentTypes.get(document.type)}}</div>
+               <div > {{vm.isEnglish ? vm.documentTypesEN.get(document.type) : vm.documentTypesJP.get(document.type)}} </div>
               </md-input-container>
               <md-input-container flex="30">
                 <div>{{document.url}}</div>

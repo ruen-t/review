@@ -183,7 +183,7 @@ gulp.task('default', ['bower', 'css', 'js', 'livereload']) // development
 gulp.task('build', ['bower', 'compress','minifyhtml','minifyJSON','minifyIMG','injectbuild']) // build for production
 gulp.task('deploy', ['build'], shell.task([
   
-  'scp -r dist/* pt-reviewtool-vmg.wni.co.jp:/usr/local/www/apache24/data/easyreviewDev'
+  'scp -r dist/* pt-reviewtool-vmg.wni.co.jp:/usr/local/www/apache24/data/easyreview'
 ]))
 gulp.task('production', ['build'], shell.task([
   

@@ -40,7 +40,7 @@ angular.module('review', ['datatables', 'ngResource','ngMaterial','datatables.sc
 
 var hasSelected=false;
 var scope;
-function ReviewController($routeParams,$location,$timeout,$scope, $resource,$mdDialog,$mdMenu,$http) {
+function ReviewController($rootScope,$routeParams,$location,$timeout,$scope, $resource,$mdDialog,$mdMenu,$http) {
     var vm = this;
      scope = $scope;
      vm.currentRange = 2;
@@ -80,7 +80,7 @@ function ReviewController($routeParams,$location,$timeout,$scope, $resource,$mdD
                     // Target the id column
                     targets: 1,
                     width  : '200px',
-                    type: "date",
+                    type: "text",
 
                 },
                 {
@@ -210,6 +210,7 @@ function ReviewController($routeParams,$location,$timeout,$scope, $resource,$mdD
         };
 
         vm.review=[];
+        enableLanguageSwitching();
         
  
    
@@ -249,10 +250,16 @@ function ReviewController($routeParams,$location,$timeout,$scope, $resource,$mdD
     }, function() {
       $scope.status = 'You cancelled the dialog.';
     });
- 
-
-
  }
+  function enableLanguageSwitching(){
+    vm.isEnglish = false;
+   $rootScope.$on("english",function(){
+         vm.isEnglish=true;
+   });
+   $rootScope.$on("japanese",function(){
+         vm.isEnglish = false;
+   });
+  }
  function getWeekData(period){ 
    var curr = vm.current_start_date;
 
@@ -384,7 +391,7 @@ function toJSONLocal (date) {
                        var reviewersArray=leaderArray.concat(cicArray).concat(qcArray);
 
                       //var manager = data[i].pm+","+data[i].pdm;
-                       vm.review[i]={select:false,id:data[i].id,manager:managerArray,date:data[i].review_date_start,location:data[i].meetspace_name_en,development:data[i].development_code,title:data[i].review_title,type_en:data[i].revtype_name_en,type_code:data[i].revtype_code,type_jp:data[i].revtype_name_jp,reviewers:reviewersArray}
+                       vm.review[i]={select:false,id:data[i].id,manager:managerArray,date:data[i].review_date_start,locationEN:data[i].meetspace_name_en,locationJP:data[i].meetspace_name_jp,development:data[i].development_code,title:data[i].review_title,type_en:data[i].revtype_name_en,type_code:data[i].revtype_code,type_jp:data[i].revtype_name_jp,reviewers:reviewersArray}
                     }
 
                     //console.log(vm.review)
@@ -557,7 +564,7 @@ function deleteReview(){///reviewtoolapi/review/{id}/delete/
                 // vm.fetchData();
                 swal(
                   'Deleted!',
-                  'Your file has been deleted.',
+                  'Your review has been  canceled',
                   'success'
                 ).then(
                   function () {

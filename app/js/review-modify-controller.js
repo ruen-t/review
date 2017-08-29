@@ -62,6 +62,13 @@ var ReviewModifyController =['$rootScope','$routeParams','$location','$scope','$
     }
        
  }
+  vm.isEnglish = false;
+   $rootScope.$on("english",function(){
+         vm.isEnglish=true;
+   });
+   $rootScope.$on("japanese",function(){
+         vm.isEnglish = false;
+   });
     var token_str = 'Bearer '+token;
     vm.token_str= token_str;
    vm.state =0; //0 -> add, 1-> edit
@@ -378,6 +385,12 @@ $scope.$watch("vm.reviewTitle",function(newValue,oldValue){
     });
   }
   function editButtonClick(){
+    var documentChecked = checkDocument();
+    console.log(documentChecked);
+    if(!documentChecked)return;
+
+   
+    
     vm.reviewers.forEach(function(v){ delete v.$$hashKey; delete v.object });
     vm.startDate=  $("#startdate").find("input").val();
       vm.endDate=  $("#enddate").find("input").val();
@@ -441,7 +454,7 @@ $scope.$watch("vm.reviewTitle",function(newValue,oldValue){
 
   }
   function backToReview(){
-    $location.path( "/" );
+   window.history.back()
   }
   function toJSONLocal (date) {
   var local = new Date(date);
@@ -460,8 +473,41 @@ $scope.$watch("vm.reviewTitle",function(newValue,oldValue){
     //console.log(vm.reviewTitle)
     //console.log(vm.validateTitleObj)
 }
+  function checkDocument(){
+   
+    
+      for(var i = 0;i<vm.documents.length;i++){
+        var document = vm.documents[i];
+        console.log(document)
+        if(document.title.length==0){
+          swal(
+              'Cannot save',
+                "Document's title is missing",
+                'warning'
+            )
+          return false;
+          
+          }
+        if(document.type<0){
+           swal(
+              'Cannot save',
+                "Document's type is missing",
+                'warning'
+            )
+           return false;
+           
+        }
+    }
+   
+    console.log("return true")
+   return true;
+   
+  }
   function saveButtonClick(){
     //console.log(vm.projectID);
+    var documentChecked = checkDocument();
+    if(!documentChecked)return;
+    
     vm.reviewers.forEach(function(v){ delete v.$$hashKey; delete v.object });
        vm.startDate=  $("#startdate").find("input").val();
       vm.endDate=  $("#enddate").find("input").val();
@@ -476,6 +522,7 @@ $scope.$watch("vm.reviewTitle",function(newValue,oldValue){
     var end_date =  new Date(end_date_obj.getTime() - (end_date_obj.getTimezoneOffset() * 60000)).toJSON()
     //console.log(start_date);
    // console.log(end_date)
+    
     var json;
     if(vm.selectedDevelopmentID != -1){
       json = {review_title:vm.reviewTitle,review_location:vm.selectedPlace,review_date_start: start_date,review_date_end: end_date,development:vm.selectedDevelopmentID,review_type:vm.selectedType,review_comment:vm.comment}

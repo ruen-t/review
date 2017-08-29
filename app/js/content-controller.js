@@ -3,7 +3,8 @@ angular.module('content',[])
 
 function ContentController ($scope,$location,$http,$routeParams,$translate,$rootScope) {
 	var vm = this;
-  vm.documentTypes = new Map();
+  vm.documentTypesEN = new Map();
+  vm.documentTypesJP = new Map();
   var token = getCookie("token_django");
  if(!token){
        $location.path( "/login/3/"+$routeParams.id);
@@ -45,7 +46,7 @@ function ContentController ($scope,$location,$http,$routeParams,$translate,$root
     $location.path( "/editReview/"+vm.reviewID);
    }
     function backToReview(){
-      $location.path( "/" );
+      window.history.back()
     }
 
   function getCurrentUserInfo(){
@@ -170,12 +171,14 @@ function ContentController ($scope,$location,$http,$routeParams,$translate,$root
  
       if(response.data){
        var data = response.data;
-       vm.documentTypes = new Map();
+       vm.documentTypesEN = new Map();
+       vm.documentTypesJP = new Map();
        console.log(data);
        for(i in data){
-        vm.documentTypes.set(data[i].id,data[i].doctype_code);
+        vm.documentTypesEN.set(data[i].id,data[i].doctype_name_en);
+        vm.documentTypesJP.set(data[i].id,data[i].doctype_name_jp);
        }
-       console.log(vm.documentTypes)
+       
 
       }
     }, function errorCallback(data, status, headers, config) {
@@ -295,7 +298,9 @@ function ContentController ($scope,$location,$http,$routeParams,$translate,$root
           vm.review.review_type = review_type_data;
         });
         //get Project and shop name
+        if(!data.development)return;
          callAPI(getDevelopmentIDAPI+data.development,"GET",function(response){
+           console.log("developmentData"+getDevelopmentIDAPI+data.development)
           console.log(response.data[0]);
           var development_data = response.data[0];
           vm.review.development = development_data;
